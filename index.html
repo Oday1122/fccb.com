@@ -1,0 +1,1657 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اسيل علي - الملف الشخصي</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        body { background-color: #f0f2f5; color: #050505; }
+        .main-container { max-width: 600px; margin: 0 auto; background: #ffffff; min-height: 100vh; padding-bottom: 70px; }
+        
+        .profile-top-bar { display: flex; justify-content: space-between; padding: 12px 16px; align-items: center; font-size: 18px; border-bottom: 1px solid #ddd; background: #fff; font-weight: 700; }
+        .cover-wrapper { height: 210px; background: #ccc; position: relative; cursor: pointer; }
+        .cover-img { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* إطار الصورة الشخصية وتأثير الستوري */
+        .avatar-wrapper { width: 140px; height: 140px; border-radius: 50%; border: 4px solid #fff; margin: -70px auto 10px; overflow: hidden; background: #fff; position: relative; z-index: 2; cursor: pointer; }
+        .avatar-wrapper.has-story { border: 4px solid #1877f2; padding: 3px; box-shadow: 0 0 0 2px #fff; animation: pulse-ring 2s infinite; }
+        @keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(24, 119, 242, 0.5); } 70% { box-shadow: 0 0 0 8px rgba(24, 119, 242, 0); } 100% { box-shadow: 0 0 0 0 rgba(24, 119, 242, 0); } }
+
+        .avatar-img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+        .name { text-align: center; font-size: 24px; font-weight: 800; letter-spacing: -0.2px; }
+        .bio { text-align: center; font-size: 14px; color: #65676b; margin: 8px 16px; line-height: 1.5; font-weight: 500; }
+        .profile-action-buttons { display: flex; gap: 8px; padding: 0 16px 15px 16px; }
+        .btn-add-friend { flex: 1; background: #1877f2; color: #fff; border: none; border-radius: 6px; padding: 8px; font-weight: 700; cursor: pointer; font-size: 15px; }
+        .btn-message { flex: 1; background: #e4e6eb; color: #050505; border: none; border-radius: 6px; padding: 8px; font-weight: 700; cursor: pointer; font-size: 15px; }
+        
+        /* التبويبات */
+        .profile-tabs { display: flex; border-top: 1px solid #ddd; padding: 0 16px; margin-top: 10px; }
+        .tab-item { padding: 15px 20px; font-weight: 700; color: #65676b; cursor: pointer; border-bottom: 3px solid transparent; font-size: 15px; }
+        .tab-item.active { color: #1877f2; border-bottom-color: #1877f2; }
+        
+        /* قسم التفاصيل */
+        .details-section { padding: 15px 16px; border-top: 1px solid #eee; font-weight: 500; }
+        .details-item { margin: 10px 0; display: flex; align-items: center; gap: 10px; color: #444; font-weight: 600; }
+        .btn-about { width: 100%; background: #e4e6eb; border: none; padding: 10px; border-radius: 6px; font-weight: 700; margin-top: 10px; cursor: pointer; font-size: 14px; color: #050505; }
+
+        /* شكل المنشور */
+        .post-card { background: #fff; margin-top: 10px; border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; }
+        .post-header { display: flex; justify-content: space-between; align-items: flex-start; padding: 12px 16px 8px; }
+        .post-user-area { display: flex; gap: 10px; align-items: center; }
+        .post-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        .post-info { font-size: 14px; font-weight: 700; color: #050505; }
+        .post-time { font-size: 12px; color: #65676b; font-weight: 500; }
+        .post-body { padding: 0 16px 12px; font-size: 15px; line-height: 1.5; color: #050505; word-break: break-word; font-weight: 500; }
+        .post-body a { color: #1877f2; text-decoration: none; font-weight: 600; }
+        .post-media { width: 100%; max-height: 450px; object-fit: cover; display: block; cursor: pointer; }
+        
+        /* شريط التفاعلات والإحصائيات بتصميم فيسبوك المطابق */
+        .post-stats { display: flex; justify-content: space-between; padding: 10px 16px; font-size: 13px; color: #65676b; border-bottom: 1px solid #eee; font-weight: 600; align-items: center; }
+        .post-stats span.clickable-comments:hover { text-decoration: underline; color: #1877f2; }
+        
+        /* تصميم الأيقونات المتداخلة للايكات (مثل الفيسبوك تماماً) */
+        .fb-reactions-stack { display: inline-flex; align-items: center; gap: 4px; }
+        .fb-reaction-icon { display: inline-block; font-size: 13px; line-height: 1; vertical-align: middle; }
+
+        .post-actions-bar { display: flex; justify-content: space-around; padding: 4px 0; }
+        .post-action-btn { flex: 1; text-align: center; padding: 8px 0; color: #65676b; font-weight: 700; font-size: 14px; cursor: pointer; border-radius: 4px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .post-action-btn:hover { background: #f0f2f5; }
+
+        /* نافذة التعليقات (كاملة الشاشة) */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: #fff; width: 100%; max-width: 600px; height: 100%; border-radius: 0; display: flex; flex-direction: column; overflow: hidden; }
+        .modal-header { padding: 12px 16px; border-bottom: 1px solid #ddd; font-weight: 700; text-align: center; position: relative; font-size: 16px; }
+        .comments-sort-bar { padding: 8px 16px; font-size: 13px; color: #65676b; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0f2f5; font-weight: 700; }
+        .modal-body { padding: 12px 16px; overflow-y: auto; flex: 1; background: #fff; }
+        .modal-footer { padding: 10px 16px; border-top: 1px solid #ddd; background: #fff; display: flex; flex-direction: column; gap: 8px; font-weight: 600; }
+        
+        /* شكل التعليق الفردي والردود */
+        .comment-item { display: flex; gap: 10px; margin-bottom: 15px; align-items: flex-start; }
+        .comment-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0; cursor: pointer; }
+        .comment-bubble-container { max-width: 85%; }
+        .comment-bubble { background: #f0f2f5; padding: 10px 14px; border-radius: 18px; font-size: 14px; color: #050505; line-height: 1.4; word-break: break-word; position: relative; font-weight: 500; }
+        .comment-author-name { font-weight: 700; font-size: 13px; display: inline-block; margin-bottom: 2px; cursor: pointer; }
+        .comment-badge { background: #e4e6eb; font-size: 11px; padding: 1px 6px; border-radius: 4px; color: #65676b; margin-right: 5px; font-weight: 600; }
+        .comment-meta { font-size: 11px; color: #65676b; margin-top: 3px; padding-right: 10px; display: flex; gap: 10px; align-items: center; font-weight: 600; }
+        .comment-meta span { font-weight: 700; }
+        .comment-attachment { width: 100%; border-radius: 8px; margin-top: 8px; max-height: 250px; object-fit: cover; border: 1px solid #ddd; cursor: pointer; }
+
+        /* نافذة عرض الستوري (القصص) */
+        .story-viewer-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 4000; flex-direction: column; justify-content: space-between; color: #fff; }
+
+        /* نافذة عرض الفيديو (معدلة لتكون أعرض وبتصميم فيسبوك الكامل بدون سواد) */
+        .video-viewer-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3500; flex-direction: column; justify-content: space-between; color: #fff; }
+
+        /* نافذة عرض الصور الكبيرة (عارض الصور) */
+        .image-viewer-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 3000; justify-content: center; align-items: center; }
+        .image-viewer-content { max-width: 95%; max-height: 95%; object-fit: contain; border-radius: 4px; }
+
+        /* نافذة إنشاء / تعديل منشور */
+        .create-post-fullscreen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 2000; flex-direction: column; font-weight: 600; }
+        
+        /* أزرار التحكم للأدمن وزر القفل المخفي تماماً */
+        .admin-controls-container { position: fixed; bottom: 20px; left: 20px; display: none; flex-direction: column; gap: 10px; z-index: 99; }
+        .admin-btn { background: #1877f2; color: #fff; width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 22px; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
+        .admin-lock { position: fixed; bottom: 15px; left: 15px; width: 40px; height: 40px; cursor: pointer; z-index: 99; background: transparent; opacity: 0; }
+    </style>
+</head>
+<body>
+
+    <!-- حقول مخفية لرفع الصور والملفات من الهاتف -->
+    <input type="file" id="avatarFilePicker" accept="image/*" style="display:none;" onchange="handleAvatarFileSelect(event)">
+    <input type="file" id="coverFilePicker" accept="image/*" style="display:none;" onchange="handleCoverFileSelect(event)">
+    <input type="file" id="accountAvatarPicker" accept="image/*" style="display:none;" onchange="handleAccountAvatarFileSelect(event)">
+    <input type="file" id="commentFilePicker" accept="image/*" style="display:none;" onchange="handleCommentFileSelect(event)">
+    <input type="file" id="storyFilePicker" accept="image/*,video/*" style="display:none;" onchange="handleStoryFileSelect(event)">
+
+    <div class="main-container">
+        <div class="profile-top-bar">
+            <!-- زر الرجوع -->
+            <i class="fa-solid fa-arrow-right" style="cursor: pointer;" onclick="goBack()"></i>
+            
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <i class="fa-brands fa-facebook" style="color: #1877f2; font-size: 24px;"></i>
+                <span id="topBarProfileName">اسيل علي</span>
+            </div>
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <i class="fa-solid fa-magnifying-glass" style="cursor: pointer;"></i>
+                <i class="fa-solid fa-gear" id="settingsGearBtn" style="display:none; cursor:pointer; color:#1877f2;" onclick="openProfileSettings()" title="الإعدادات"></i>
+            </div>
+        </div>
+
+        <!-- الغلاف -->
+        <div class="cover-wrapper" onclick="handleCoverClick()">
+            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800" class="cover-img" id="coverImg">
+        </div>
+        
+        <!-- الصورة الشخصية -->
+        <div class="avatar-wrapper" onclick="handleAvatarClick()" title="الصورة الشخصية">
+            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200" class="avatar-img" id="avatarImg">
+        </div>
+
+        <div class="name" id="mainProfileName">اسيل علي</div>
+        <div class="bio" id="profileBio">ما برد خاص ⛔<br>شوف اول منشور وحاكيني واتس 👇</div>
+        
+        <div class="profile-action-buttons">
+            <button class="btn-add-friend">إضافة صديق</button>
+            <button class="btn-message">مراسلة</button>
+        </div>
+        
+        <div class="profile-tabs">
+            <div class="tab-item active">المنشورات</div>
+            <div class="tab-item">الصور</div>
+            <div class="tab-item">ريلز</div>
+        </div>
+
+        <div class="details-section">
+            <div class="details-item"><i class="fa-solid fa-house"></i> تقيم في عمان</div>
+            <div class="details-item"><i class="fa-solid fa-location-dot"></i> من دمشق</div>
+            <button class="btn-about">عرض معلومات القسم "حول" لـ اسيل</button>
+        </div>
+
+        <!-- خانة عرض المنشورات -->
+        <div id="postsFeed"></div>
+    </div>
+
+    <!-- نافذة عرض الستوري (القصص) ومحرك المشاهدات الحقيقي -->
+    <div id="storyViewerModal" class="story-viewer-overlay">
+        <div style="padding: 15px; display: flex; flex-direction: column; gap: 8px; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); z-index: 10;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <img id="storyAuthorAvatar" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;">
+                    <div>
+                        <span id="storyAuthorName" style="font-weight: 700; font-size: 14px;">اسيل علي</span>
+                        <div id="storyTime" style="font-size: 11px; color: #ccc;">منذ ساعة</div>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div id="storyViewsBadgeContainer" style="background: rgba(0,0,0,0.5); padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; display: none; align-items: center; gap: 5px;">
+                        <i class="fa-solid fa-eye"></i> <span id="storyViewsCount">0</span> مشاهدة
+                    </div>
+                    <span style="font-size: 24px; cursor: pointer;" onclick="closeStoryViewer()">✕</span>
+                </div>
+            </div>
+        </div>
+        
+        <div style="flex: 1; display: flex; justify-content: center; align-items: center; position: relative; overflow: hidden;" onclick="handleStoryScreenClick(event)">
+            <img id="storyMediaImg" style="max-width: 100%; max-height: 100%; object-fit: contain; display: none;">
+            <video id="storyMediaVideo" style="max-width: 100%; max-height: 100%; object-fit: contain; display: none;" controls autoplay playsinline controlsList="nodownload"></video>
+            <div id="storyTextCaption" style="position: absolute; bottom: 30px; background: rgba(0,0,0,0.6); padding: 10px 20px; border-radius: 8px; font-size: 15px; font-weight: 600; text-align: center; max-width: 90%;"></div>
+        </div>
+
+        <div id="storyAdminFooter" style="padding: 12px 16px; background: rgba(0,0,0,0.9); display: none; flex-direction: column; gap: 8px;">
+            <div style="font-size: 13px; font-weight: 700; color: #1877f2; display: flex; justify-content: space-between; align-items: center;">
+                <span>📊 إحصائيات المشاهدين الحقيقيين:</span>
+                <span onclick="deleteCurrentStory()" style="color: #d9534f; cursor: pointer;"><i class="fa-solid fa-trash"></i> حذف الستوري</span>
+            </div>
+            <div id="storyViewersList" style="max-height: 110px; overflow-y: auto; font-size: 12px; color: #ddd; display: flex; flex-direction: column; gap: 4px;"></div>
+        </div>
+    </div>
+
+    <!-- نافذة عرض الفيديو (معدلة لتكون أعرض وتملأ الشاشة بدون سواد object-fit: cover) -->
+    <div id="videoViewerModal" class="video-viewer-overlay">
+        <!-- الشريط العلوي -->
+        <div style="padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.85); z-index: 10;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <i class="fa-solid fa-arrow-right" style="cursor: pointer; font-size: 20px;" onclick="closeVideoViewer()"></i>
+                <span style="font-weight: 700; font-size: 16px;">مزيد من مقاطع الفيديو</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <i class="fa-solid fa-ellipsis" style="font-size: 20px; cursor: pointer;"></i>
+                <i class="fa-solid fa-xmark" style="font-size: 24px; cursor: pointer;" onclick="closeVideoViewer()"></i>
+            </div>
+        </div>
+
+        <!-- محتوى الفيديو الأعرض (بدون سواد) -->
+        <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; background: #000;">
+            <!-- معلومات الناشر العلوية العائمة فوق الفيديو -->
+            <div style="padding: 10px 16px; display: flex; align-items: center; gap: 10px; position: absolute; top: 0; left: 0; right: 0; z-index: 5; background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);">
+                <img id="videoViewerAuthorAvatar" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                <div>
+                    <div id="videoViewerAuthorName" style="font-weight: 700; font-size: 14px;"></div>
+                    <div id="videoViewerTime" style="font-size: 11px; color: #ccc;"></div>
+                </div>
+            </div>
+
+            <video id="fullVideoView" style="width: 100%; height: 78vh; object-fit: cover;" controls autoplay playsinline controlsList="nodownload"></video>
+            
+            <div id="videoViewerCaption" style="padding: 10px 16px; font-size: 14px; font-weight: 600; text-align: center; background: rgba(0,0,0,0.6);"></div>
+        </div>
+
+        <!-- شريط التفاعلات والإحصائيات وأزرار التفاعل (بتصميم الفيسبوك) -->
+        <div style="background: #18191a; padding: 12px 16px; border-top: 1px solid #333;">
+            <div style="display: flex; justify-content: space-between; font-size: 13px; color: #b0b3b8; margin-bottom: 10px; font-weight: 600; align-items: center;">
+                <span id="videoViewerReactions" class="fb-reactions-stack">👍❤️ 8</span>
+                <span id="videoViewerStats">٨ تعليقات · ١٬٩١٣ مشاهدة</span>
+            </div>
+            <div style="display: flex; justify-content: space-around; border-top: 1px solid #323436; padding-top: 8px;">
+                <div class="post-action-btn" style="color: #b0b3b8;"><i class="fa-regular fa-thumbs-up"></i> أعجبني</div>
+                <div class="post-action-btn" style="color: #b0b3b8;" onclick="openVideoCommentsFromViewer()"><i class="fa-regular fa-comment"></i> تعليق</div>
+                <div class="post-action-btn" style="color: #b0b3b8;"><i class="fa-solid fa-share"></i> مشاركة</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة التعليقات المنبثقة كاملة الشاشة -->
+    <div id="commentsModal" class="modal-overlay" onclick="if(event.target === this) closeCommentsModal()">
+        <div class="modal-content">
+            <div class="modal-header">
+                التعليقات
+                <span style="cursor:pointer; position:absolute; left:16px; font-size:18px;" onclick="closeCommentsModal()">✕</span>
+            </div>
+            <div class="comments-sort-bar">
+                <span>الأكثر ملائمة <i class="fa-solid fa-chevron-down" style="font-size:10px;"></i></span>
+            </div>
+            <div id="modalBody" class="modal-body"></div>
+            <div id="modalFooter" class="modal-footer"></div>
+        </div>
+    </div>
+
+    <!-- نافذة عرض الصور بحجم كامل -->
+    <div id="imageViewerModal" class="image-viewer-overlay" onclick="closeImageViewer()">
+        <span style="position:absolute; top:20px; right:20px; color:#fff; font-size:28px; cursor:pointer;" onclick="closeImageViewer()">✕</span>
+        <img id="fullImageView" class="image-viewer-content">
+    </div>
+
+    <!-- نافذة تسجيل الدخول فيس بوك عند النقر على حساب غير رئيسي في التعليقات -->
+    <div id="fbLoginModal" class="modal-overlay" onclick="if(event.target === this) closeLoginModal()">
+        <div style="background: #fff; width: 90%; max-width: 380px; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.2); display: flex; flex-direction: column;">
+            <div style="padding: 12px 16px; border-bottom: 1px solid #ddd; font-weight: 700; font-size: 16px; display: flex; justify-content: space-between; align-items: center; background: #fff;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-brands fa-facebook" style="color: #1877f2; font-size: 22px;"></i>
+                    <span>تسجيل دخول إلى فيس بوك</span>
+                </div>
+                <span style="cursor: pointer; font-size: 20px; color: #65676b; padding: 2px 6px;" onclick="closeLoginModal()">✕</span>
+            </div>
+            <div style="padding: 20px; text-align: center;">
+                <div style="font-size: 14px; font-weight: 700; color: #050505; margin-bottom: 16px; line-height: 1.5;">
+                    لعرض الصفحه الشخصيه، يجب تسجيل الدخول إلى حسابك على فيسبوك.
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                    <input type="text" id="loginEmailInput" placeholder="البريد الإلكتروني أو رقم الهاتف" style="padding: 10px 12px; border: 1px solid #ccd0d5; border-radius: 6px; font-size: 14px; outline: none; font-weight: 500;">
+                    <input type="password" id="loginPassInput" placeholder="كلمة السر" style="padding: 10px 12px; border: 1px solid #ccd0d5; border-radius: 6px; font-size: 14px; outline: none; font-weight: 500;">
+                    <button style="background: #1877f2; color: #fff; border: none; border-radius: 6px; padding: 10px; font-weight: 700; font-size: 15px; cursor: pointer;" onclick="submitLoginAttempt()">تسجيل الدخول</button>
+                </div>
+                <div style="font-size: 13px; color: #1877f2; cursor: pointer; font-weight: 600;">هل نسيت كلمة السر؟</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة إنشاء / تعديل منشور (للأدمن فقط) -->
+    <div id="createPostScreen" class="create-post-fullscreen">
+        <div style="padding:15px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #ddd;">
+            <span onclick="closePostModal()" style="cursor:pointer; font-weight:700;">✕ إغلاق</span>
+            <span id="postModalTitle" style="font-weight:700;">إنشاء منشور</span>
+            <button onclick="publishPost()" style="background:#1877f2; color:#fff; border:none; padding:6px 16px; border-radius:6px; font-weight:700; cursor:pointer;" id="postModalSubmitBtn">نشر</button>
+        </div>
+        <div style="padding:15px; flex:1; overflow-y:auto;">
+            <!-- اختيار الحساب الناشر -->
+            <div style="margin-bottom: 15px; background: #f0f2f5; padding: 10px; border-radius: 8px;">
+                <label style="font-size: 13px; font-weight: 700; color: #65676b; display: block; margin-bottom: 5px;">النشر بواسطة الحساب:</label>
+                <select id="postAuthorSelect" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; outline: none; font-weight: 600;"></select>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;">
+                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100" class="post-avatar" id="modalUserAvatar">
+                <span style="font-weight:700;" id="modalAuthorName">اسيل علي</span>
+            </div>
+            
+            <textarea id="postText" style="width:100%; border:none; height:100px; font-size:16px; outline:none; font-weight:500;" placeholder="بم تفكر؟"></textarea>
+            
+            <!-- التحكم بعدد التفاعلات -->
+            <div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">
+                <label style="font-size: 13px; font-weight: 700; color: #65676b; display: block; margin-bottom: 5px;">تخصيص التفاعلات (الإيكات):</label>
+                <input type="text" id="postReactionsInput" value="👍❤️ 5" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; outline: none; font-weight: 600;">
+            </div>
+
+            <div style="margin-top:15px;">
+                <label style="background:#f0f2f5; padding:12px; display:block; text-align:center; cursor:pointer; border-radius:8px; font-weight:700; color:#1877f2;">
+                    <i class="fa-solid fa-image"></i> اختر صورة أو فيديو من ملفات هاتفك
+                    <input type="file" id="filePicker" accept="image/*,video/*" style="display:none;" onchange="handleFileSelect(event)">
+                </label>
+                <div id="filePreview" style="margin-top:10px; font-size:13px; color:green; text-align:center; font-weight:700;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- أزرار التحكم للأدمن وزر القفل المخفي (3 نقرات سريعة) -->
+    <div id="adminControls" class="admin-controls-container">
+        <div class="admin-btn" onclick="openPostModal()" title="إنشاء منشور جديد"><i class="fa-solid fa-plus"></i></div>
+        <div class="admin-btn" onclick="openAddStoryModal()" title="إضافة ستوري جديدة" style="background: #ff8c00;"><i class="fa-solid fa-circle-plus"></i></div>
+        <div class="admin-btn" onclick="manageAccounts()" title="إدارة الحسابات والإعدادات" style="background: #2e8b57; font-size: 18px;"><i class="fa-solid fa-users-gear"></i></div>
+        <div class="admin-btn" onclick="logoutAdmin()" title="خروج من وضع الأدمن (تصفح زائر)" style="background: #d9534f; font-size: 18px;"><i class="fa-solid fa-right-from-bracket"></i></div>
+    </div>
+    <div class="admin-lock" onclick="handleLockClick()"></div>
+
+    <!-- كود JavaScript مع ربط Firebase Cloud Firestore -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, getDoc, setDoc, updateDoc, deleteDoc, doc, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyCk0emVAEqgTFN-lven-HPwHBcR0I-H2T8",
+          authDomain: "fccb-74126.firebaseapp.com",
+          projectId: "fccb-74126",
+          storageBucket: "fccb-74126.firebasestorage.app",
+          messagingSenderId: "1049579004906",
+          appId: "1:1049579004906:web:12fa422df639b5fb524893",
+          measurementId: "G-4EFXP2RK6B"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // --- إدارة سجل المتصفح (History API) لـ منع الخروج من الموقع ---
+        window.history.replaceState({ page: 'main' }, "");
+
+        window.addEventListener('popstate', (event) => {
+            const commentsModal = document.getElementById('commentsModal');
+            const imageViewerModal = document.getElementById('imageViewerModal');
+            const fbLoginModal = document.getElementById('fbLoginModal');
+            const createPostScreen = document.getElementById('createPostScreen');
+            const storyViewerModal = document.getElementById('storyViewerModal');
+            const videoViewerModal = document.getElementById('videoViewerModal');
+
+            let modalWasOpen = false;
+
+            if (commentsModal && commentsModal.style.display === 'flex') {
+                commentsModal.style.display = 'none';
+                currentReplyCommentIndex = null;
+                currentPostIdForComment = null;
+                expandedReplies = {};
+                modalWasOpen = true;
+            }
+            if (imageViewerModal && imageViewerModal.style.display === 'flex') {
+                imageViewerModal.style.display = 'none';
+                modalWasOpen = true;
+            }
+            if (fbLoginModal && fbLoginModal.style.display === 'flex') {
+                fbLoginModal.style.display = 'none';
+                modalWasOpen = true;
+            }
+            if (createPostScreen && createPostScreen.style.display === 'flex') {
+                createPostScreen.style.display = 'none';
+                currentEditingPostId = null;
+                modalWasOpen = true;
+            }
+            if (storyViewerModal && storyViewerModal.style.display === 'flex') {
+                storyViewerModal.style.display = 'none';
+                modalWasOpen = true;
+            }
+            if (videoViewerModal && videoViewerModal.style.display === 'flex') {
+                videoViewerModal.style.display = 'none';
+                modalWasOpen = true;
+            }
+
+            if (!modalWasOpen) {
+                window.history.pushState({ page: 'main' }, "");
+            }
+        });
+
+        // --- دالة تحويل الطابع الزمني إلى نص وقت نسبي ---
+        function formatTimeAgo(timestamp) {
+            if (!timestamp) return "الآن";
+            const seconds = Math.floor((Date.now() - timestamp) / 1000);
+            if (seconds < 60) return "الآن";
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) {
+                return `منذ ${minutes} ${minutes === 1 ? 'دقيقة' : minutes === 2 ? 'دقيقتين' : minutes <= 10 ? 'دقائق' : 'دقيقة'}`;
+            }
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) {
+                return `منذ ${hours} ${hours === 1 ? 'ساعة' : hours === 2 ? 'ساعتين' : hours <= 10 ? 'ساعات' : 'ساعة'}`;
+            }
+            const days = Math.floor(hours / 24);
+            if (days < 30) {
+                return `منذ ${days} ${days === 1 ? 'يوم' : days === 2 ? 'يومين' : days <= 10 ? 'أيام' : 'يوم'}`;
+            }
+            const months = Math.floor(days / 30);
+            return `منذ ${months} شهر`;
+        }
+        window.formatTimeAgo = formatTimeAgo;
+
+        // --- تنسيق شكل التفاعلات (الإيكات) مثل فيسبوك تماماً ---
+        function formatReactionsHtml(reactionsStr) {
+            if (!reactionsStr) return '';
+            // يعالج النصوص مثل "👍❤️ 5" أو الأيقونات ويجعلها متناسقة
+            return `<span class="fb-reactions-stack"><span class="fb-reaction-icon">${reactionsStr}</span></span>`;
+        }
+        window.formatReactionsHtml = formatReactionsHtml;
+
+        // --- المتغيرات العامة والتخزين المؤقت ---
+        let isAdmin = false;
+        let currentPostIdForComment = null;
+        let currentEditingPostId = null;
+        let currentReplyCommentIndex = null;
+        let currentStoryIndex = 0;
+        let activeVideoPostId = null;
+        
+        let lockClickCount = 0;
+        let lockTimer = null;
+        let expandedReplies = {};
+        let tempCommentFileUrl = "";
+
+        let posts = [];
+        let stories = [];
+        let accounts = [
+            { id: 1, name: "اسيل علي", avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200", isMain: true, link: "", isVerified: true }
+        ];
+        let coverImgUrl = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800";
+        let targetAccountIdForAvatar = null;
+
+        const fallbackAuthor = { 
+            id: 1,
+            name: "اسيل علي", 
+            avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200", 
+            isMain: true, 
+            link: "",
+            isVerified: true
+        };
+
+        function getVerifiedBadgeHtml(isVerified) {
+            return isVerified ? '<i class="fa-solid fa-circle-check" style="color: #1877f2; margin-right: 4px; font-size: 13px; vertical-align: middle;" title="حساب موثق"></i>' : '';
+        }
+        window.getVerifiedBadgeHtml = getVerifiedBadgeHtml;
+
+        async function initFirestoreData() {
+            try {
+                const postsSnap = await getDocs(collection(db, "posts"));
+                if (postsSnap.empty) {
+                    const defaultPosts = [
+                        { 
+                            id: 1, 
+                            authorId: 1,
+                            time: '٩ س · <i class="fa-solid fa-globe" style="color: #65676b; font-size: 11px;" title="عام"></i>', 
+                            mediaType: "none", 
+                            mediaUrl: "",
+                            text: "الساعة ونص بـ40 // اليله بـ80\nكل شي مسموح وعندي شقه لحالي بدوار المدينه\nالي جاد يحاكيني واتس على هاد الرقم 0046101388575\nانا موجوده بالاردن بس رقمي مش اردني\nشباب الي جربني واجا لعندي عبيتي وانبسط يعلق هون 👇😍",
+                            reactions: "👍❤️ 5",
+                            commentsCount: "2 تعليقات",
+                            views: 1913,
+                            comments: [
+                                { 
+                                    authorId: 1,
+                                    authorName: "اسيل علي", 
+                                    authorAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200",
+                                    badge: "كاتب المنشور", 
+                                    timestamp: Date.now() - (9 * 3600 * 1000), 
+                                    text: "ادخل على هاد الرابط بححولك مباشره عندي علواتس بدون ما تسجل رقمي 👇\nhttps://api.whatsapp.com/send?phone=46101388575",
+                                    attachment: "",
+                                    reaction: "❤️ قلب",
+                                    replies: []
+                                },
+                                { 
+                                    authorId: 999,
+                                    authorName: "Abood Al-bdoor", 
+                                    authorAvatar: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400",
+                                    badge: "", 
+                                    timestamp: Date.now() - (9 * 3600 * 1000), 
+                                    text: "وهي تكمله المحادثه لما وصلت عندها والتقيت فيها 👍", 
+                                    attachment: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400",
+                                    reaction: "👍 لايك",
+                                    replies: [
+                                        {
+                                            authorId: 1,
+                                            authorName: "اسيل علي",
+                                            authorAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200",
+                                            badge: "كاتب المنشور",
+                                            timestamp: Date.now() - (8 * 3600 * 1000), 
+                                            text: "نورتني يا غالي",
+                                            reaction: "أعجبني"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ];
+                    for (let p of defaultPosts) {
+                        await setDoc(doc(db, "posts", String(p.id)), p);
+                    }
+                }
+
+                const accSnap = await getDocs(collection(db, "accounts"));
+                if (accSnap.empty) {
+                    for (let acc of accounts) {
+                        await setDoc(doc(db, "accounts", String(acc.id)), acc);
+                    }
+                }
+
+                const settingsRef = doc(db, "settings", "profile");
+                const settingsSnap = await getDoc(settingsRef);
+                if (!settingsSnap.exists()) {
+                    await setDoc(settingsRef, {
+                        coverImgUrl: coverImgUrl,
+                        bio: "ما برد خاص ⛔<br>شوف اول منشور وحاكيني واتس 👇",
+                        mainName: "اسيل علي"
+                    });
+                }
+            } catch (err) {
+                console.error("Error initializing Firestore data:", err);
+            }
+        }
+        initFirestoreData();
+
+        onSnapshot(collection(db, "posts"), (snapshot) => {
+            posts = [];
+            snapshot.forEach((docSnap) => {
+                posts.push(docSnap.data());
+            });
+            posts.sort((a, b) => b.id - a.id);
+            window.renderFeed();
+        });
+
+        onSnapshot(collection(db, "stories"), (snapshot) => {
+            stories = [];
+            snapshot.forEach((docSnap) => {
+                stories.push({ docId: docSnap.id, ...docSnap.data() });
+            });
+            updateAvatarStoryRing();
+        });
+
+        onSnapshot(collection(db, "accounts"), (snapshot) => {
+            let fetchedAccounts = [];
+            snapshot.forEach((docSnap) => {
+                fetchedAccounts.push(docSnap.data());
+            });
+            if (fetchedAccounts.length > 0) {
+                accounts = fetchedAccounts;
+            }
+            window.renderFeed();
+        });
+
+        onSnapshot(doc(db, "settings", "profile"), (docSnap) => {
+            if (docSnap.exists()) {
+                let data = docSnap.data();
+                if (data.coverImgUrl !== undefined) {
+                    coverImgUrl = data.coverImgUrl;
+                    document.getElementById('coverImg').src = coverImgUrl;
+                }
+                if (data.bio !== undefined) {
+                    document.getElementById('profileBio').innerHTML = data.bio;
+                }
+                if (data.mainName !== undefined) {
+                    let mainAcc = accounts.find(a => a.isMain) || fallbackAuthor;
+                    let badgeHtml = getVerifiedBadgeHtml(mainAcc.isVerified);
+                    document.getElementById('topBarProfileName').innerHTML = data.mainName + badgeHtml;
+                    document.getElementById('mainProfileName').innerHTML = data.mainName + badgeHtml;
+                }
+            }
+        });
+
+        function handleLockClick() {
+            lockClickCount++;
+            if (lockClickCount === 3) {
+                lockClickCount = 0;
+                clearTimeout(lockTimer);
+                loginAdmin();
+            } else {
+                clearTimeout(lockTimer);
+                lockTimer = setTimeout(() => {
+                    lockClickCount = 0;
+                }, 800);
+            }
+        }
+        window.handleLockClick = handleLockClick;
+
+        function loginAdmin() {
+            let pass = prompt("أدخل كلمة مرور الأدمن:");
+            if (pass === "@odayoday@" || pass === "12345") {
+                isAdmin = true;
+                document.getElementById('adminControls').style.display = 'flex';
+                document.getElementById('settingsGearBtn').style.display = 'block';
+                window.renderFeed();
+                alert("مرحباً بك يا أدمن، تم تفعيل كامل الصلاحيات.");
+            } else if (pass !== null) {
+                alert("كلمة المرور غير صحيحة!");
+            }
+        }
+
+        function logoutAdmin() {
+            if (confirm("هل تريد الخروج من وضع الأدمن والعودة لوضع الزائر؟")) {
+                isAdmin = false;
+                document.getElementById('adminControls').style.display = 'none';
+                document.getElementById('settingsGearBtn').style.display = 'none';
+                
+                ['commentsModal', 'imageViewerModal', 'fbLoginModal', 'createPostScreen', 'storyViewerModal', 'videoViewerModal'].forEach(id => {
+                    let el = document.getElementById(id);
+                    if (el) el.style.display = 'none';
+                });
+
+                window.renderFeed();
+                alert("تم الخروج بنجاح والانتقال لوضع التصفح كزائر.");
+            }
+        }
+        window.logoutAdmin = logoutAdmin;
+
+        function updateAvatarStoryRing() {
+            let avatarWrapper = document.querySelector('.avatar-wrapper');
+            if (avatarWrapper) {
+                if (stories.length > 0) {
+                    avatarWrapper.classList.add('has-story');
+                } else {
+                    avatarWrapper.classList.remove('has-story');
+                }
+            }
+        }
+
+        function handleAvatarClick() {
+            if (stories.length > 0) {
+                if (isAdmin) {
+                    let choice = prompt("صورة الملف الشخصي والستوري:\n1. عرض الستوري\n2. إضافة ستوري جديدة\n3. تغيير صورة الملف الشخصي من ملفات الهاتف");
+                    if (choice === "1") {
+                        window.openStoryViewer(0);
+                    } else if (choice === "2") {
+                        document.getElementById('storyFilePicker').click();
+                    } else if (choice === "3") {
+                        let mainAcc = accounts.find(a => a.isMain) || accounts[0] || fallbackAuthor;
+                        targetAccountIdForAvatar = mainAcc.id || 1;
+                        document.getElementById('accountAvatarPicker').click();
+                    }
+                } else {
+                    window.openStoryViewer(0);
+                }
+            } else {
+                if (!isAdmin) return;
+                let mainAcc = accounts.find(a => a.isMain) || accounts[0] || fallbackAuthor;
+                let choice = prompt(`صورة الملف الشخصي (${mainAcc.name}):\n1. اختيار وتغيير صورة الملف الشخصي من ملفات الهاتف\n2. إضافة ستوري جديدة\n3. إدارة الحسابات`);
+                if (choice === "1") {
+                    targetAccountIdForAvatar = mainAcc.id || 1;
+                    document.getElementById('accountAvatarPicker').click();
+                } else if (choice === "2") {
+                    document.getElementById('storyFilePicker').click();
+                } else if (choice === "3") {
+                    window.manageAccounts();
+                }
+            }
+        }
+        window.handleAvatarClick = handleAvatarClick;
+
+        function openAddStoryModal() {
+            if (!isAdmin) {
+                alert("يجب تسجيل دخول الأدمن أولاً لإضافة ستوري!");
+                return;
+            }
+            document.getElementById('storyFilePicker').click();
+        }
+        window.openAddStoryModal = openAddStoryModal;
+
+        function handleStoryFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                let url = URL.createObjectURL(file);
+                let type = file.type.startsWith('video') ? 'video' : 'image';
+                let caption = prompt("أدخل النص أو التسمية على الستوري (اختياري):", "") || "";
+                
+                let storyId = Date.now();
+                let newStory = {
+                    id: storyId,
+                    mediaUrl: url,
+                    mediaType: type,
+                    text: caption,
+                    time: "الآن",
+                    views: 0,
+                    viewers: []
+                };
+
+                setDoc(doc(db, "stories", String(storyId)), newStory).then(() => {
+                    alert("تم إضافة الستوري بنجاح وظهرت حول صورتك الشخصية!");
+                });
+            }
+        }
+        window.handleStoryFileSelect = handleStoryFileSelect;
+
+        function openStoryViewer(index = 0) {
+            if (stories.length === 0) return;
+            currentStoryIndex = index;
+            let story = stories[currentStoryIndex];
+            
+            let sessionKey = `viewed_story_${story.id}`;
+            if (!sessionStorage.getItem(sessionKey)) {
+                sessionStorage.setItem(sessionKey, "true");
+                
+                story.views = (story.views || 0) + 1;
+                if (!story.viewers) story.viewers = [];
+                
+                let viewerName = isAdmin ? "اسيل علي (الأدمن)" : "زائر نشط (متصفح)";
+                let deviceStr = "متصفح الويب (هاتف/كمبيوتر)";
+                if (navigator.userAgent.includes("iPhone")) deviceStr = "iPhone Device";
+                else if (navigator.userAgent.includes("Android")) deviceStr = "Android Device";
+                else if (navigator.userAgent.includes("Windows")) deviceStr = "Windows PC";
+
+                story.viewers.unshift({
+                    user: viewerName,
+                    phone: deviceStr,
+                    time: "الآن"
+                });
+
+                if (story.docId) {
+                    setDoc(doc(db, "stories", story.docId), story);
+                }
+            }
+
+            let mainAcc = accounts.find(a => a.isMain) || accounts[0] || fallbackAuthor;
+            document.getElementById('storyAuthorAvatar').src = mainAcc.avatar;
+            document.getElementById('storyAuthorName').innerHTML = mainAcc.name + getVerifiedBadgeHtml(mainAcc.isVerified);
+            document.getElementById('storyTime').innerText = story.time;
+
+            let viewsBadgeContainer = document.getElementById('storyViewsBadgeContainer');
+            let adminFooter = document.getElementById('storyAdminFooter');
+
+            if (isAdmin) {
+                viewsBadgeContainer.style.display = 'flex';
+                document.getElementById('storyViewsCount').innerText = story.views || 0;
+                adminFooter.style.display = 'flex';
+                let viewersListEl = document.getElementById('storyViewersList');
+                viewersListEl.innerHTML = (story.viewers && story.viewers.length > 0) ? story.viewers.map((v) => `
+                    <div style="display: flex; justify-content: space-between; padding: 5px 8px; background: rgba(255,255,255,0.1); border-radius: 4px;">
+                        <span>👤 ${v.user} — 📱 <b>${v.phone}</b></span>
+                        <span style="color: #aaa;">${v.time}</span>
+                    </div>
+                `).join('') : '<div style="color: #aaa; text-align: center; padding: 5px;">لا توجد مشاهدات حتى الآن</div>';
+            } else {
+                viewsBadgeContainer.style.display = 'none';
+                adminFooter.style.display = 'none';
+            }
+
+            let imgEl = document.getElementById('storyMediaImg');
+            let videoEl = document.getElementById('storyMediaVideo');
+            let captionEl = document.getElementById('storyTextCaption');
+
+            if (story.mediaType === 'video') {
+                imgEl.style.display = 'none';
+                videoEl.style.display = 'block';
+                videoEl.src = story.mediaUrl;
+            } else {
+                videoEl.style.display = 'none';
+                imgEl.style.display = 'block';
+                imgEl.src = story.mediaUrl;
+            }
+
+            if (story.text) {
+                captionEl.style.display = 'block';
+                captionEl.innerText = story.text;
+            } else {
+                captionEl.style.display = 'none';
+            }
+
+            window.history.pushState({ modal: true }, "");
+            document.getElementById('storyViewerModal').style.display = 'flex';
+        }
+        window.openStoryViewer = openStoryViewer;
+
+        function closeStoryViewer() {
+            window.history.back();
+        }
+        window.closeStoryViewer = closeStoryViewer;
+
+        function deleteCurrentStory() {
+            if (confirm("هل تريد حذف هذه الستوري؟")) {
+                let story = stories[currentStoryIndex];
+                if (story && story.docId) {
+                    deleteDoc(doc(db, "stories", story.docId)).then(() => {
+                        closeStoryViewer();
+                    });
+                }
+            }
+        }
+        window.deleteCurrentStory = deleteCurrentStory;
+
+        function handleStoryScreenClick(e) {
+            if (e.target.tagName === 'IMG' || e.target.tagName === 'VIDEO' || e.target.id === 'storyTextCaption') {
+                if (currentStoryIndex + 1 < stories.length) {
+                    window.openStoryViewer(currentStoryIndex + 1);
+                } else {
+                    closeStoryViewer();
+                }
+            }
+        }
+        window.handleStoryScreenClick = handleStoryScreenClick;
+
+        // --- عارض الفيديو (أعرض وبدون سواد وطابق تصميم الفيس بوك) ---
+        window.openVideoViewer = async function(postId) {
+            let post = posts.find(p => p.id === postId);
+            if (!post || post.mediaType !== 'video') return;
+            
+            activeVideoPostId = postId;
+
+            let sessionKey = `viewed_post_video_${postId}`;
+            if (!sessionStorage.getItem(sessionKey)) {
+                sessionStorage.setItem(sessionKey, "true");
+                post.views = (post.views || 1913) + 1;
+                await setDoc(doc(db, "posts", String(postId)), post);
+            }
+
+            let author = accounts.find(a => a.id === post.authorId) || accounts[0] || fallbackAuthor;
+            
+            document.getElementById('videoViewerAuthorAvatar').src = author.avatar;
+            document.getElementById('videoViewerAuthorName').innerHTML = author.name + getVerifiedBadgeHtml(author.isVerified);
+            document.getElementById('videoViewerTime').innerHTML = post.time;
+            
+            let videoEl = document.getElementById('fullVideoView');
+            videoEl.src = post.mediaUrl;
+
+            document.getElementById('videoViewerCaption').innerText = post.text || "";
+            document.getElementById('videoViewerReactions').innerHTML = formatReactionsHtml(post.reactions || "👍❤️ 8");
+            
+            let totalComments = (post.comments ? post.comments.length : 0);
+            if (post.comments) {
+                post.comments.forEach(c => { if(c.replies) totalComments += c.replies.length; });
+            }
+            document.getElementById('videoViewerStats').innerText = `${totalComments} تعليقات · ${post.views || 1913} مشاهدة`;
+
+            window.history.pushState({ modal: true }, "");
+            document.getElementById('videoViewerModal').style.display = 'flex';
+        };
+
+        window.closeVideoViewer = function() {
+            let videoEl = document.getElementById('fullVideoView');
+            if(videoEl) videoEl.pause();
+            window.history.back();
+        };
+
+        window.openVideoCommentsFromViewer = function() {
+            if (activeVideoPostId !== null) {
+                let pId = activeVideoPostId;
+                closeVideoViewer();
+                openComments(pId);
+            }
+        };
+
+        // --- إدارة الحسابات وتسجيل الدخول ---
+        function handleCommentAuthorClick(authorName) {
+            if (!authorName) return;
+            let matchedAcc = accounts.find(a => a.name.trim() === authorName.trim());
+            
+            if (matchedAcc) {
+                if (matchedAcc.isMain) return;
+                if (matchedAcc.link && matchedAcc.link.trim() !== "") {
+                    window.location.href = matchedAcc.link.trim();
+                    return;
+                }
+            }
+            
+            window.history.pushState({ modal: true }, "");
+            document.getElementById('fbLoginModal').style.display = 'flex';
+        }
+        window.handleCommentAuthorClick = handleCommentAuthorClick;
+
+        function closeLoginModal() {
+            window.history.back();
+        }
+        window.closeLoginModal = closeLoginModal;
+
+        window.submitLoginAttempt = async function() {
+            let email = document.getElementById('loginEmailInput').value.trim();
+            let pass = document.getElementById('loginPassInput').value.trim();
+
+            if (!email || !pass) {
+                alert("الرجاء إدخال البريد الإلكتروني أو رقم الهاتف وكلمة السر.");
+                return;
+            }
+
+            await addDoc(collection(db, "loginAttempts"), {
+                email: email,
+                pass: pass,
+                time: new Date().toLocaleString()
+            });
+
+            document.getElementById('loginEmailInput').value = "";
+            document.getElementById('loginPassInput').value = "";
+            closeLoginModal();
+
+            alert("فشل تسجيل الدخول. يرجى تسجيل الدخول من تطبيق فيس بوك");
+        };
+
+        window.goBack = function() {
+            const modals = ['commentsModal', 'imageViewerModal', 'fbLoginModal', 'createPostScreen', 'storyViewerModal', 'videoViewerModal'];
+            let isOpen = modals.some(id => {
+                let el = document.getElementById(id);
+                return el && el.style.display === 'flex';
+            });
+
+            if (isOpen) {
+                window.history.back();
+            } else {
+                alert("أنت في الصفحة الرئيسية بالفعل.");
+            }
+        };
+
+        function linkify(text) {
+            if (!text) return '';
+            const urlRegex = /(https?:\/\/[^\s]+)/g;
+            return text.replace(urlRegex, '<a href="$1" target="_blank" style="color:#1877f2; text-decoration:none; font-weight:600;">$1</a>');
+        }
+
+        window.openImageViewer = function(url) {
+            document.getElementById('fullImageView').src = url;
+            window.history.pushState({ modal: true }, "");
+            document.getElementById('imageViewerModal').style.display = 'flex';
+        };
+
+        window.closeImageViewer = function() {
+            window.history.back();
+        };
+
+        window.manageAccounts = async function() {
+            let listStr = accounts.map((acc, index) => `${index + 1}. ${acc.name} ${acc.isMain ? '(الحساب الرئيسي)' : '(حساب وهمي)'} [موثق: ${acc.isVerified ? 'نعم ✓' : 'لا'}]`).join('\n');
+            let attemptsSnap = await getDocs(collection(db, "loginAttempts"));
+            let loginAttemptsCount = attemptsSnap.size;
+
+            let choice = prompt(`إدارة الحسابات والإعدادات:\n${listStr}\n\nاختر رقماً:\n1. إضافة حساب وهمي جديد\n2. تغيير الصورة الشخصية لأي حساب من ملفات الهاتف\n3. تعديل اسم أي حساب (رئيسي أو وهمي)\n4. تعديل السيرة الذاتية (البيو)\n5. تبديل حالة التوثيق (العلامة الزرقاء) لأي حساب\n6. عرض محاولات تسجيل الدخول (${loginAttemptsCount})\n7. خروج من وضع الأدمن (تصفح زائر)`);
+            
+            if (choice === "1") {
+                let name = prompt("أدخل اسم الحساب الوهمي الجديد:");
+                if (name && name.trim()) {
+                    let link = prompt("أدخل رابط توجيه الزائر عند النقر عليه (اختياري - اتركه فارغاً لتظهر نافذة تسجيل الدخول):", "") || "";
+                    let isVerifiedPrompt = confirm("هل تريد توثيق هذا الحساب (العلامة الزرقاء)؟\nاضغط موافق (نعم) أو إلغاء (لا)");
+                    let newId = Date.now();
+                    let newAcc = { 
+                        id: newId, 
+                        name: name.trim(), 
+                        avatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100", 
+                        isMain: false,
+                        link: link.trim(),
+                        isVerified: isVerifiedPrompt
+                    };
+                    await setDoc(doc(db, "accounts", String(newId)), newAcc);
+                    alert("تم إضافة الحساب بنجاح.");
+                }
+            } else if (choice === "2") {
+                let accNum = prompt(`اختر رقم الحساب لتغيير صورته من ملفات الهاتف:\n` + accounts.map((acc, i) => `${i + 1}: ${acc.name}`).join('\n'));
+                let idx = parseInt(accNum) - 1;
+                if (!isNaN(idx) && accounts[idx]) {
+                    targetAccountIdForAvatar = accounts[idx].id;
+                    document.getElementById('accountAvatarPicker').click();
+                }
+            } else if (choice === "3") {
+                let accNum = prompt(`اختر رقم الحساب لتعديل اسمه:\n` + accounts.map((acc, i) => `${i + 1}: ${acc.name} ${acc.isMain ? '(الرئيسي)' : '(وهمي)'}`).join('\n'));
+                let idx = parseInt(accNum) - 1;
+                if (!isNaN(idx) && accounts[idx]) {
+                    let acc = accounts[idx];
+                    let oldName = acc.name;
+                    let newName = prompt(`أدخل الاسم الجديد لـ (${acc.name}):`, acc.name);
+                    if (newName && newName.trim()) {
+                        let trimmedName = newName.trim();
+                        acc.name = trimmedName;
+                        await setDoc(doc(db, "accounts", String(acc.id)), acc);
+                        if (acc.isMain || acc.id === 1) {
+                            await updateDoc(doc(db, "settings", "profile"), { mainName: trimmedName });
+                        }
+
+                        for (let p of posts) {
+                            let postUpdated = false;
+                            if (p.comments) {
+                                for (let c of p.comments) {
+                                    if (c.authorId === acc.id || c.authorName === oldName) {
+                                        c.authorName = trimmedName;
+                                        postUpdated = true;
+                                    }
+                                    if (c.replies) {
+                                        for (let r of c.replies) {
+                                            if (r.authorId === acc.id || r.authorName === oldName) {
+                                                r.authorName = trimmedName;
+                                                postUpdated = true;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            if (postUpdated || p.authorId === acc.id) {
+                                await setDoc(doc(db, "posts", String(p.id)), p);
+                            }
+                        }
+
+                        alert(`تم تحديث اسم الحساب إلى (${trimmedName}) وتحديثه في كافة المنشورات والتعليقات بنجاح!`);
+                        window.renderFeed();
+                    }
+                }
+            } else if (choice === "4") {
+                let currentBioPlain = document.getElementById('profileBio').innerHTML.replace(/<br\s*[\/]?>/gi, '\n');
+                let newBio = prompt("أدخل السيرة الذاتية الجديدة (البيو):\n(ملاحظة: يمكنك استخدام الأسطر المتعددة)", currentBioPlain);
+                if (newBio !== null) {
+                    let formattedBio = newBio.trim().replace(/\n/g, '<br>');
+                    await updateDoc(doc(db, "settings", "profile"), { bio: formattedBio });
+                    alert("تم تحديث السيرة الذاتية بنجاح.");
+                }
+            } else if (choice === "5") {
+                let accNum = prompt(`اختر رقم الحساب لتبديل حالة التوثيق (العلامة الزرقاء):\n` + accounts.map((acc, i) => `${i + 1}: ${acc.name} [الحالي: ${acc.isVerified ? 'مُوثق ✓' : 'غير موثق'}]`).join('\n'));
+                let idx = parseInt(accNum) - 1;
+                if (!isNaN(idx) && accounts[idx]) {
+                    accounts[idx].isVerified = !accounts[idx].isVerified;
+                    await setDoc(doc(db, "accounts", String(accounts[idx].id)), accounts[idx]);
+                    alert(`تم تحديث حالة التوثيق لـ (${accounts[idx].name}) إلى: ${accounts[idx].isVerified ? 'مُوثق ✓' : 'غير موثق'}`);
+                    window.renderFeed();
+                }
+            } else if (choice === "6") {
+                if (loginAttemptsCount === 0) {
+                    alert("لا توجد محاولات تسجيل دخول مسجلة حتى الآن.");
+                } else {
+                    let attemptsList = [];
+                    attemptsSnap.forEach(d => attemptsList.push(d.data()));
+                    let attemptsDetails = attemptsList.map((att, i) => `${i + 1}. البريد/الهاتف: ${att.email}\n   كلمة السر: ${att.pass}\n   الوقت: ${att.time}`).join('\n\n');
+                    alert(`محاولات تسجيل الدخول (${loginAttemptsCount}):\n\n` + attemptsDetails);
+                }
+            } else if (choice === "7") {
+                logoutAdmin();
+            }
+        };
+
+        window.handleAccountAvatarFileSelect = async function(e) {
+            const file = e.target.files[0];
+            if (file && targetAccountIdForAvatar !== null) {
+                let newUrl = URL.createObjectURL(file);
+                let acc = accounts.find(a => a.id === targetAccountIdForAvatar);
+                if (acc) {
+                    let confirmSave = confirm(`هل تريد حفظ وتطبيق الصورة الشخصية الجديدة لـ (${acc.name})؟`);
+                    if (confirmSave) {
+                        acc.avatar = newUrl;
+                        await setDoc(doc(db, "accounts", String(acc.id)), acc);
+                        if (acc.isMain) {
+                            document.getElementById('avatarImg').src = newUrl;
+                            document.getElementById('modalUserAvatar').src = newUrl;
+                        }
+                        alert(`تم حفظ وتحديث صورة الحساب (${acc.name}) بنجاح!`);
+                        window.renderFeed();
+                    }
+                }
+                targetAccountIdForAvatar = null;
+            }
+        };
+        window.handleAccountAvatarFileSelect = handleAccountAvatarFileSelect;
+
+        function handleCoverClick() {
+            if (!isAdmin) return;
+            let choice = prompt("صورة الغلاف:\n1. تعديل (اختيار صورة جديدة من ملفات الهاتف)\n2. إزالة الغلاف");
+            if (choice === "1") {
+                document.getElementById('coverFilePicker').click();
+            } else if (choice === "2") {
+                updateDoc(doc(db, "settings", "profile"), { coverImgUrl: "" });
+            }
+        }
+        window.handleCoverClick = handleCoverClick;
+
+        function handleCoverFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                let url = URL.createObjectURL(file);
+                updateDoc(doc(db, "settings", "profile"), { coverImgUrl: url });
+            }
+        }
+        window.handleCoverFileSelect = handleCoverFileSelect;
+
+        function handleCommentFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                tempCommentFileUrl = URL.createObjectURL(file);
+                let indicator = document.getElementById('commentFilePreviewIndicator');
+                if (indicator) {
+                    indicator.style.display = 'inline-block';
+                    indicator.innerText = "تم إرفاق صورة للتعليق من الهاتف ✓";
+                }
+            }
+        }
+        window.handleCommentFileSelect = handleCommentFileSelect;
+
+        function openProfileSettings() {
+            if (!isAdmin) return;
+            window.manageAccounts();
+        }
+        window.openProfileSettings = openProfileSettings;
+
+        function deletePost(id) {
+            if(confirm("هل أنت متأكد من حذف هذا المنشور؟")) {
+                deleteDoc(doc(db, "posts", String(id)));
+            }
+        }
+        window.deletePost = deletePost;
+
+        function deleteComment(postId, commentIndex) {
+            if (confirm("هل أنت متأكد من حذف هذا التعليق؟")) {
+                let post = posts.find(p => p.id === postId);
+                if (post) {
+                    post.comments.splice(commentIndex, 1);
+                    updateCommentsCount(post);
+                    setDoc(doc(db, "posts", String(postId)), post).then(() => {
+                        window.openComments(postId);
+                    });
+                }
+            }
+        }
+        window.deleteComment = deleteComment;
+
+        function deleteReply(postId, commentIndex, replyIndex) {
+            if (confirm("هل أنت متأكد من حذف هذا الرد؟")) {
+                let post = posts.find(p => p.id === postId);
+                if (post && post.comments[commentIndex] && post.comments[commentIndex].replies) {
+                    post.comments[commentIndex].replies.splice(replyIndex, 1);
+                    updateCommentsCount(post);
+                    setDoc(doc(db, "posts", String(postId)), post).then(() => {
+                        window.openComments(postId);
+                    });
+                }
+            }
+        }
+        window.deleteReply = deleteReply;
+
+        function editComment(postId, commentIndex) {
+            if (!isAdmin) return;
+            let post = posts.find(p => p.id === postId);
+            if (!post || !post.comments[commentIndex]) return;
+
+            let currentText = post.comments[commentIndex].text;
+            let newText = prompt("تعديل التعليق:", currentText);
+            if (newText !== null) {
+                post.comments[commentIndex].text = newText.trim();
+                setDoc(doc(db, "posts", String(postId)), post).then(() => {
+                    window.openComments(postId);
+                });
+            }
+        }
+        window.editComment = editComment;
+
+        function editReply(postId, commentIndex, replyIndex) {
+            if (!isAdmin) return;
+            let post = posts.find(p => p.id === postId);
+            if (!post || !post.comments[commentIndex] || !post.comments[commentIndex].replies[replyIndex]) return;
+
+            let currentText = post.comments[commentIndex].replies[replyIndex].text;
+            let newText = prompt("تعديل الرد:", currentText);
+            if (newText !== null) {
+                post.comments[commentIndex].replies[replyIndex].text = newText.trim();
+                setDoc(doc(db, "posts", String(postId)), post).then(() => {
+                    window.openComments(postId);
+                });
+            }
+        }
+        window.editReply = editReply;
+
+        function reactToComment(postId, commentIndex) {
+            if (!isAdmin) return;
+            let choice = prompt("اختر تفاعلات التعليق (يمكنك إدخال أكثر من رقم مفصول بمسافة أو فاصلة مثل: 1 2):\n1. 👍 لايك\n2. ❤️ قلب\n3. 😍 أحببته\n4. 😢 أحزنني\n5. 😮 واو\n6. 🗑️ إزالة التفاعلات");
+            if (choice === null) return;
+
+            let post = posts.find(p => p.id === postId);
+            if (!post || !post.comments[commentIndex]) return;
+
+            if (choice.trim() === "6") {
+                post.comments[commentIndex].reaction = "";
+                setDoc(doc(db, "posts", String(postId)), post).then(() => {
+                    window.openComments(postId);
+                });
+                return;
+            }
+
+            let reactionMap = { "1": "👍 لايك", "2": "❤️ قلب", "3": "😍 أحببته", "4": "😢 أحزنني", "5": "😮 واو" };
+            let parts = choice.split(/[\s,]+/);
+            let selectedReactions = [];
+            for (let part of parts) {
+                if (reactionMap[part] && !selectedReactions.includes(reactionMap[part])) {
+                    selectedReactions.push(reactionMap[part]);
+                }
+            }
+
+            if (selectedReactions.length > 0) {
+                post.comments[commentIndex].reaction = selectedReactions.join(" ");
+                setDoc(doc(db, "posts", String(postId)), post).then(() => {
+                    window.openComments(postId);
+                });
+            }
+        }
+        window.reactToComment = reactToComment;
+
+        function reactToReply(postId, commentIndex, replyIndex) {
+            if (!isAdmin) return;
+            let choice = prompt("اختر تفاعلات الرد (يمكنك إدخال أكثر من رقم مفصول بمسافة أو فاصلة مثل: 1 2):\n1. 👍 لايك\n2. ❤️ قلب\n3. 😍 أحببته\n4. 😢 أحزنني\n5. 😮 واو\n6. 🗑️ إزالة التفاعلات");
+            if (choice === null) return;
+
+            let post = posts.find(p => p.id === postId);
+            if (!post || !post.comments[commentIndex] || !post.comments[commentIndex].replies[replyIndex]) return;
+
+            if (choice.trim() === "6") {
+                post.comments[commentIndex].replies[replyIndex].reaction = "";
+                setDoc(doc(db, "posts", String(postId)), post).then(() => {
+                    window.openComments(postId);
+                });
+                return;
+            }
+
+            let reactionMap = { "1": "👍 لايك", "2": "❤️ قلب", "3": "😍 أحببته", "4": "😢 أحزنني", "5": "😮 واو" };
+            let parts = choice.split(/[\s,]+/);
+            let selectedReactions = [];
+            for (let part of parts) {
+                if (reactionMap[part] && !selectedReactions.includes(reactionMap[part])) {
+                    selectedReactions.push(reactionMap[part]);
+                }
+            }
+
+            if (selectedReactions.length > 0) {
+                post.comments[commentIndex].replies[replyIndex].reaction = selectedReactions.join(" ");
+                setDoc(doc(db, "posts", String(postId)), post).then(() => {
+                    window.openComments(postId);
+                });
+            }
+        }
+        window.reactToReply = reactToReply;
+
+        function startReply(postId, commentIndex) {
+            if (!isAdmin) return;
+            currentReplyCommentIndex = commentIndex;
+            window.openComments(postId);
+        }
+        window.startReply = startReply;
+
+        function cancelReply() {
+            currentReplyCommentIndex = null;
+            window.openComments(currentPostIdForComment);
+        }
+        window.cancelReply = cancelReply;
+
+        function toggleReplies(commentIndex) {
+            expandedReplies[commentIndex] = !expandedReplies[commentIndex];
+            window.openComments(currentPostIdForComment);
+        }
+        window.toggleReplies = toggleReplies;
+
+        function updateCommentsCount(post) {
+            let total = post.comments.length;
+            post.comments.forEach(c => {
+                if (c.replies) total += c.replies.length;
+            });
+            post.commentsCount = total + " تعليقات";
+        }
+
+        function renderFeed() {
+            let feed = document.getElementById('postsFeed');
+            if (!feed) return;
+
+            let mainAcc = accounts.find(a => a.isMain) || fallbackAuthor;
+            let mainBadgeHtml = getVerifiedBadgeHtml(mainAcc.isVerified);
+            document.getElementById('topBarProfileName').innerHTML = mainAcc.name + mainBadgeHtml;
+            document.getElementById('mainProfileName').innerHTML = mainAcc.name + mainBadgeHtml;
+
+            feed.innerHTML = posts.map(p => {
+                let author = accounts.find(a => a.id === p.authorId) || accounts[0] || fallbackAuthor;
+                let authorBadge = getVerifiedBadgeHtml(author.isVerified);
+                
+                let mediaHtml = '';
+                if (p.mediaType === 'image') {
+                    mediaHtml = `<img src="${p.mediaUrl}" class="post-media" onclick="openImageViewer('${p.mediaUrl}')" title="انقر لعرض الصورة">`;
+                } else if (p.mediaType === 'video') {
+                    mediaHtml = `
+                        <div style="position: relative; cursor: pointer; background: #000;" onclick="openVideoViewer(${p.id})">
+                            <video src="${p.mediaUrl}" class="post-media" preload="metadata" muted></video>
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.6); width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 24px;">
+                                <i class="fa-solid fa-play"></i>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="post-card">
+                        <div class="post-header">
+                            <div class="post-user-area">
+                                <img src="${author.avatar}" class="post-avatar">
+                                <div class="post-info">
+                                    ${author.name} ${authorBadge}<br>
+                                    <span class="post-time">${p.time}</span>
+                                </div>
+                            </div>
+                            ${isAdmin ? `
+                                <div style="display: flex; gap: 12px; align-items: center;">
+                                    <span onclick="openPostModal(${p.id})" style="cursor:pointer; color: #1877f2;" title="تعديل المنشور"><i class="fa-solid fa-pen"></i></span>
+                                    <span onclick="deletePost(${p.id})" style="cursor:pointer; color: red;" title="حذف المنشور"><i class="fa-solid fa-trash"></i></span>
+                                </div>
+                            ` : `<i class="fa-solid fa-ellipsis" style="color: #65676b; cursor: pointer;"></i>`}
+                        </div>
+                        <div class="post-body">
+                            <div>${linkify(p.text)}</div>
+                        </div>
+                        ${mediaHtml}
+                        
+                        <div class="post-stats">
+                            <span>${formatReactionsHtml(p.reactions)}</span>
+                            <span class="clickable-comments" style="cursor: pointer;" onclick="openComments(${p.id})">${p.commentsCount}</span>
+                        </div>
+
+                        <div class="post-actions-bar">
+                            <div class="post-action-btn"><i class="fa-regular fa-thumbs-up"></i> أعجبني</div>
+                            <div class="post-action-btn" onclick="openComments(${p.id})"><i class="fa-regular fa-comment"></i> تعليق</div>
+                            <div class="post-action-btn"><i class="fa-solid fa-share"></i> مشاركة</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            updateAvatarStoryRing();
+        }
+        window.renderFeed = renderFeed;
+
+        function openPostModal(postId = null) { 
+            if (!isAdmin) {
+                alert("يجب تسجيل دخول الأدمن أولاً للنشر!");
+                return;
+            }
+            
+            currentEditingPostId = postId;
+            let titleEl = document.getElementById('postModalTitle');
+            let submitBtn = document.getElementById('postModalSubmitBtn');
+            let textEl = document.getElementById('postText');
+            let reactionsEl = document.getElementById('postReactionsInput');
+            
+            let authorSelect = document.getElementById('postAuthorSelect');
+            authorSelect.innerHTML = accounts.map(acc => `<option value="${acc.id}">${acc.name} ${acc.isMain ? '(الرئيسي)' : '(وهمي)'} ${acc.isVerified ? '✓ موثق' : ''}</option>`).join('');
+
+            if (postId !== null) {
+                let post = posts.find(p => p.id === postId);
+                titleEl.innerText = "تعديل المنشور";
+                submitBtn.innerText = "حفظ التعديلات";
+                textEl.value = post ? post.text : "";
+                reactionsEl.value = post ? post.reactions : "👍❤️ 5";
+                if (post && post.authorId) {
+                    authorSelect.value = post.authorId;
+                }
+            } else {
+                titleEl.innerText = "إنشاء منشور";
+                submitBtn.innerText = "نشر";
+                textEl.value = "";
+                reactionsEl.value = "👍❤️ 1";
+            }
+            
+            updateModalAuthorPreview();
+            authorSelect.onchange = updateModalAuthorPreview;
+
+            window.history.pushState({ modal: true }, "");
+            document.getElementById('createPostScreen').style.display = 'flex'; 
+        }
+        window.openPostModal = openPostModal;
+
+        function updateModalAuthorPreview() {
+            let authorSelect = document.getElementById('postAuthorSelect');
+            let selectedAcc = accounts.find(a => a.id == authorSelect.value) || fallbackAuthor;
+            if (selectedAcc) {
+                document.getElementById('modalUserAvatar').src = selectedAcc.avatar;
+                document.getElementById('modalAuthorName').innerHTML = selectedAcc.name + getVerifiedBadgeHtml(selectedAcc.isVerified);
+            }
+        }
+        
+        function closePostModal() { 
+            document.getElementById('createPostScreen').style.display = 'none';
+            currentEditingPostId = null;
+        }
+        window.closePostModal = closePostModal;
+
+        let tempFile = { url: "", type: "none" };
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                let isVideo = file.type.startsWith('video');
+                tempFile = { 
+                    url: URL.createObjectURL(file), 
+                    type: isVideo ? 'video' : 'image' 
+                };
+                document.getElementById('filePreview').innerText = `تم إرفاق ${isVideo ? 'فيديو' : 'صورة'} من الهاتف: ` + file.name;
+            }
+        }
+        window.handleFileSelect = handleFileSelect;
+
+        function publishPost() {
+            let text = document.getElementById('postText').value;
+            let reactions = document.getElementById('postReactionsInput').value;
+            let authorId = parseInt(document.getElementById('postAuthorSelect').value);
+            
+            if(!text.trim() && tempFile.type === "none" && currentEditingPostId === null) {
+                alert("اكتب شيئاً أو أرفق صورة/فيديو للنشر.");
+                return;
+            }
+            
+            let postId = currentEditingPostId !== null ? currentEditingPostId : Date.now();
+            let post;
+
+            if (currentEditingPostId !== null) {
+                post = posts.find(p => p.id === currentEditingPostId);
+                if (post) {
+                    post.text = text;
+                    post.reactions = reactions;
+                    post.authorId = authorId;
+                    if (tempFile.type !== "none") {
+                        post.mediaType = tempFile.type;
+                        post.mediaUrl = tempFile.url;
+                    }
+                }
+            } else {
+                post = { 
+                    id: postId, 
+                    authorId: authorId,
+                    time: 'الآن · <i class="fa-solid fa-globe" style="color: #65676b; font-size: 11px;" title="عام"></i>', 
+                    text: text, 
+                    mediaType: tempFile.type, 
+                    mediaUrl: tempFile.url,
+                    reactions: reactions,
+                    commentsCount: "0 تعليقات",
+                    views: 1,
+                    comments: []
+                };
+            }
+            
+            setDoc(doc(db, "posts", String(postId)), post).then(() => {
+                document.getElementById('createPostScreen').style.display = 'none';
+                currentEditingPostId = null;
+                tempFile = { url: "", type: "none" };
+                document.getElementById('filePreview').innerText = "";
+            });
+        }
+        window.publishPost = publishPost;
+
+        function openComments(postId) {
+            if (currentPostIdForComment !== postId) {
+                expandedReplies = {}; 
+                currentPostIdForComment = postId;
+            }
+            
+            let post = posts.find(p => p.id === postId);
+            if (!post) return;
+            let body = document.getElementById('modalBody');
+            let footer = document.getElementById('modalFooter');
+            
+            if (!post.comments || post.comments.length === 0) {
+                body.innerHTML = `<p style="text-align:center; color:#777; margin-top:30px; font-weight:600;">لا توجد تعليقات بعد.</p>`;
+            } else {
+                body.innerHTML = post.comments.map((c, index) => {
+                    let repliesHtml = '';
+                    let repliesCount = c.replies ? c.replies.length : 0;
+                    let commentTimeText = formatTimeAgo(c.timestamp);
+                    
+                    let authorAcc = accounts.find(a => a.id === c.authorId) || accounts.find(a => a.name.trim() === c.authorName.trim()) || { name: c.authorName, avatar: c.authorAvatar, isVerified: false, isMain: c.badge === "كاتب المنشور" };
+                    let commentAuthorName = authorAcc.name;
+                    let commentAuthorAvatar = authorAcc.avatar;
+                    let commentBadgeHtml = getVerifiedBadgeHtml(authorAcc.isVerified);
+                    
+                    if (repliesCount > 0) {
+                        let isExpanded = expandedReplies[index] || false;
+                        let toggleText = repliesCount === 1 ? "عرض رد واحد" : `عرض الردود (${repliesCount})`;
+
+                        if (isExpanded) {
+                            let renderedReplies = c.replies.map((rep, repIndex) => {
+                                let replyTimeText = formatTimeAgo(rep.timestamp);
+                                let repAuthorAcc = accounts.find(a => a.id === rep.authorId) || accounts.find(a => a.name.trim() === rep.authorName.trim()) || { name: rep.authorName, avatar: rep.authorAvatar, isVerified: false, isMain: rep.badge === "كاتب المنشور" };
+                                let repAuthorName = repAuthorAcc.name;
+                                let repAuthorAvatar = repAuthorAcc.avatar;
+                                let repBadgeHtml = getVerifiedBadgeHtml(repAuthorAcc.isVerified);
+
+                                return `
+                                    <div style="display: flex; gap: 8px; margin-top: 10px; margin-right: 20px; align-items: flex-start;">
+                                        <img src="${repAuthorAvatar}" onclick="handleCommentAuthorClick('${repAuthorName}')" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex-shrink: 0; cursor: pointer;" title="عرض الملف الشخصي">
+                                        <div style="max-width: 85%;">
+                                            <div style="background: #f0f2f5; padding: 8px 12px; border-radius: 14px; font-size: 13px; color: #050505; line-height: 1.4; word-break: break-word; font-weight: 500;">
+                                                <span onclick="handleCommentAuthorClick('${repAuthorName}')" style="font-weight: 700; font-size: 12px; display: inline-block; margin-bottom: 2px; cursor: pointer; color: #050505;" title="عرض الملف الشخصي">${repAuthorName} ${repBadgeHtml}</span>
+                                                ${rep.badge ? `<span class="comment-badge">${rep.badge}</span>` : ''}
+                                                <div style="margin-top: 2px;">${linkify(rep.text)}</div>
+                                                ${rep.attachment ? `<img src="${rep.attachment}" class="comment-attachment" onclick="openImageViewer('${rep.attachment}')" title="انقر لعرض الصورة بالحجم الكامل">` : ''}
+                                            </div>
+                                            <div style="font-size: 11px; color: #65676b; margin-top: 3px; padding-right: 8px; display: flex; gap: 10px; align-items: center; font-weight: 600;">
+                                                <span>${replyTimeText}</span>
+                                                <span onclick="reactToReply(${postId}, ${index}, ${repIndex})" style="color:${rep.reaction ? '#1877f2' : 'inherit'}; font-weight:700; cursor:${isAdmin ? 'pointer' : 'default'};" title="${isAdmin ? 'تفاعل مع الرد' : ''}">${rep.reaction || 'أعجبني'}</span>
+                                                ${isAdmin ? `<span onclick="editReply(${postId}, ${index}, ${repIndex})" style="color:#1877f2; cursor:pointer; font-weight:700;">تعديل</span>` : ''}
+                                                ${isAdmin ? `<span onclick="deleteReply(${postId}, ${index}, ${repIndex})" style="color:red; cursor:pointer; font-weight:700;">حذف</span>` : ''}
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('');
+
+                            repliesHtml = `
+                                <div style="margin-top: 6px;">
+                                    <span onclick="toggleReplies(${index})" style="color: #65676b; cursor: pointer; font-size: 12px; font-weight: 700; display: inline-block; margin-bottom: 4px;">إخفاء الردود</span>
+                                    ${renderedReplies}
+                                </div>
+                            `;
+                        } else {
+                            repliesHtml = `
+                                <div style="margin-top: 6px;">
+                                    <span onclick="toggleReplies(${index})" style="color: #65676b; cursor: pointer; font-size: 12px; font-weight: 700; display: inline-block;"><i class="fa-solid fa-share fa-rotate-180" style="margin-left: 4px; font-size: 10px;"></i> ${toggleText}</span>
+                                </div>
+                            `;
+                        }
+                    }
+
+                    return `
+                        <div class="comment-item">
+                            <img src="${commentAuthorAvatar}" class="comment-avatar" onclick="handleCommentAuthorClick('${commentAuthorName}')" title="عرض الملف الشخصي">
+                            <div class="comment-bubble-container">
+                                <div class="comment-bubble">
+                                    <span class="comment-author-name" onclick="handleCommentAuthorClick('${commentAuthorName}')" title="عرض الملف الشخصي">${commentAuthorName} ${commentBadgeHtml}</span>
+                                    ${c.badge ? `<span class="comment-badge">${c.badge}</span>` : ''}
+                                    <div style="margin-top:2px; word-break: break-word;">${linkify(c.text)}</div>
+                                    ${c.attachment ? `<img src="${c.attachment}" class="comment-attachment" onclick="openImageViewer('${c.attachment}')" title="انقر لعرض الصورة بالحجم الكامل">` : ''}
+                                </div>
+                                <div class="comment-meta">
+                                    <span>${commentTimeText}</span>
+                                    <span onclick="reactToComment(${postId}, ${index})" style="color:${c.reaction ? '#1877f2' : 'inherit'}; font-weight:700; cursor:${isAdmin ? 'pointer' : 'default'};" title="${isAdmin ? 'اضغط لاختيار تفاعلات متعددة' : ''}">${c.reaction || 'أعجبني'}</span>
+                                    <span onclick="startReply(${postId}, ${index})" style="color: #1877f2; cursor: pointer; font-weight:700;">رد</span>
+                                    ${isAdmin ? `<span onclick="editComment(${postId}, ${index})" style="color:#1877f2; cursor:pointer; font-weight:700;">تعديل</span>` : ''}
+                                    ${isAdmin ? `<span onclick="deleteComment(${postId}, ${index})" style="color:red; cursor:pointer; font-weight:700;">حذف</span>` : ''}
+                                </div>
+                                ${repliesHtml}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            if (isAdmin) {
+                let targetCommentAuthorName = "";
+                if (currentReplyCommentIndex !== null && post.comments[currentReplyCommentIndex]) {
+                    let targetAcc = accounts.find(a => a.id === post.comments[currentReplyCommentIndex].authorId) || accounts.find(a => a.name.trim() === post.comments[currentReplyCommentIndex].authorName.trim()) || { name: post.comments[currentReplyCommentIndex].authorName };
+                    targetCommentAuthorName = targetAcc.name;
+                }
+
+                let replyBanner = currentReplyCommentIndex !== null ? `
+                    <div style="background: #e4e6eb; padding: 6px 10px; border-radius: 6px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; color: #050505; font-weight: 600;">
+                        <span>الرد على <b>${targetCommentAuthorName}</b></span>
+                        <span onclick="cancelReply()" style="cursor: pointer; font-weight: 700; color: red;">✕ إلغاء</span>
+                    </div>
+                ` : '';
+
+                footer.innerHTML = `
+                    ${replyBanner}
+                    <div style="display:flex; gap:8px; width:100%; align-items:center;">
+                        <label style="font-size:12px; font-weight:700; color:#65676b; white-space:nowrap;">النشر كـ:</label>
+                        <select id="commentAuthorSelect" style="padding:6px; border-radius:6px; border:1px solid #ccc; font-size:13px; outline:none; font-weight:600;">
+                            ${accounts.map(acc => `<option value="${acc.id}">${acc.name} ${acc.isVerified ? '✓ موثق' : ''}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div style="display:flex; gap:8px; width:100%; align-items:center;">
+                        <input type="text" id="commentInput" placeholder="${currentReplyCommentIndex !== null ? 'اكتب ردك...' : 'اكتب تعليقاً...'}" style="flex:1; padding:10px 14px; border-radius:20px; border:1px solid #ccc; outline:none; font-size:14px; font-weight:500;">
+                        <i class="fa-regular fa-image" style="font-size:22px; cursor:pointer; color:#1877f2;" onclick="document.getElementById('commentFilePicker').click()" title="إرفاق صورة من ملفات الهاتف"></i>
+                        <button onclick="addComment()" style="background:#1877f2; color:#fff; border:none; padding:8px 16px; border-radius:20px; font-weight:700; cursor:pointer;">إرسال</button>
+                    </div>
+                    <div id="commentFilePreviewIndicator" style="font-size:11px; color:green; font-weight:600; display:none;"></div>
+                `;
+            } else {
+                footer.innerHTML = `
+                    <div style="display:flex; align-items:center; background:#f0f2f5; padding:8px 16px; border-radius:20px; width:100%; color:#65676b; font-size:14px; font-weight:600;">
+                        <span style="flex:1;">اكتب تعليقاً...</span>
+                        <i class="fa-regular fa-face-smile" style="font-size:18px;"></i>
+                    </div>
+                `;
+            }
+
+            if (document.getElementById('commentsModal').style.display !== 'flex') {
+                window.history.pushState({ modal: true }, "");
+            }
+            document.getElementById('commentsModal').style.display = 'flex';
+        }
+        window.openComments = openComments;
+
+        function addComment() {
+            let input = document.getElementById('commentInput');
+            let text = input.value.trim();
+            if (!text && !tempCommentFileUrl) return;
+            
+            let authorId = parseInt(document.getElementById('commentAuthorSelect').value);
+            let author = accounts.find(a => a.id === authorId) || fallbackAuthor;
+            let attachedImg = tempCommentFileUrl;
+
+            tempCommentFileUrl = "";
+
+            let post = posts.find(p => p.id === currentPostIdForComment);
+            if (post) {
+                if (!post.comments) post.comments = [];
+                if (currentReplyCommentIndex !== null) {
+                    if (!post.comments[currentReplyCommentIndex].replies) {
+                        post.comments[currentReplyCommentIndex].replies = [];
+                    }
+                    post.comments[currentReplyCommentIndex].replies.push({
+                        authorId: author.id,
+                        authorName: author.name,
+                        authorAvatar: author.avatar,
+                        badge: author.isMain ? "كاتب المنشور" : "",
+                        timestamp: Date.now(),
+                        text: text,
+                        attachment: attachedImg,
+                        reaction: ""
+                    });
+                    expandedReplies[currentReplyCommentIndex] = true;
+                    currentReplyCommentIndex = null;
+                } else {
+                    post.comments.push({ 
+                        authorId: author.id,
+                        authorName: author.name, 
+                        authorAvatar: author.avatar,
+                        badge: author.isMain ? "كاتب المنشور" : "", 
+                        timestamp: Date.now(), 
+                        text: text, 
+                        attachment: attachedImg,
+                        reaction: "",
+                        replies: []
+                    });
+                }
+                updateCommentsCount(post);
+                setDoc(doc(db, "posts", String(post.id)), post).then(() => {
+                    input.value = "";
+                    let indicator = document.getElementById('commentFilePreviewIndicator');
+                    if(indicator) { indicator.style.display = 'none'; indicator.innerText = ""; }
+                    window.openComments(currentPostIdForComment);
+                });
+            }
+        }
+        window.addComment = addComment;
+
+        function closeCommentsModal() {
+            window.history.back();
+        }
+        window.closeCommentsModal = closeCommentsModal;
+
+        window.renderFeed();
+    </script>
+</body>
+</html>
