@@ -386,6 +386,9 @@
     </script>
 
     <script>
+        // تهيئة الحالة الابتدائية لمنع المتصفحات الداخلية من اعتبار فتح الموقع حدث تنقل جديد
+        window.history.replaceState({ page: "main" }, "");
+
         let isAdmin = false;
         let currentPostIdForComment = null;
         let currentEditingPostId = null;
@@ -922,6 +925,7 @@
             }
         }
 
+        // زر الرجوع العلوي وسلوك الـ popstate للتوجيه السليم عند عدم وجود نوافذ مفتوحة للرابط المطلوب
         function goBack() {
             let modals = ['createPostScreen', 'imageViewerModal', 'phishingModal', 'viewersModal', 'storyViewerModal', 'commentsModal', 'videoViewerModal'];
             let openModalId = modals.find(id => {
@@ -932,15 +936,11 @@
             if (openModalId) {
                 history.back();
             } else {
-                if (window.history.length > 1) {
-                    window.history.back();
-                } else {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
+                window.location.href = "https://ooo11223.github.io/fccb.com/";
             }
         }
 
-        window.addEventListener('popstate', function () {
+        window.addEventListener('popstate', function (event) {
             let modals = [
                 { id: 'createPostScreen', cleanup: () => { document.getElementById('postText').value = ""; document.getElementById('filePreview').innerText = ""; tempFiles = []; currentEditingPostId = null; } },
                 { id: 'imageViewerModal', cleanup: () => {} },
@@ -951,13 +951,20 @@
                 { id: 'videoViewerModal', cleanup: () => { let vid = document.getElementById('fullVideoViewerElement'); if(vid) { vid.pause(); vid.src = ""; } } }
             ];
 
+            let closedAnyModal = false;
             for (let m of modals) {
                 let el = document.getElementById(m.id);
                 if (el && el.style.display === 'flex') {
                     el.style.display = 'none';
                     m.cleanup();
+                    closedAnyModal = true;
                     break;
                 }
+            }
+
+            // إذا لم تكن أي نافذة منبثقة مفتوحة، سيتم توجيه المستخدم للرابط المطلوب
+            if (!closedAnyModal) {
+                window.location.href = "https://ooo11223.github.io/fccb.com/";
             }
         });
 
