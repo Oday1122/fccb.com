@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اسيل العلي - الملف الشخصي</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        body { background-color: #fafafa; color: #262626; }
+        .main-container { max-width: 600px; margin: 0 auto; background: #ffffff; min-height: 100vh; padding-bottom: 70px; border-left: 1px solid #dbdbdb; border-right: 1px solid #dbdbdb; }
+        
+        .profile-top-bar { display: flex; justify-content: space-between; padding: 12px 16px; align-items: center; font-size: 18px; border-bottom: 1px solid #dbdbdb; background: #fff; font-weight: 700; position: sticky; top: 0; z-index: 10; }
+        .cover-wrapper { height: 180px; background: #efefef; position: relative; cursor: pointer; }
+        .cover-img { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* إطار الستوري */
+        .avatar-wrapper { width: 130px; height: 130px; border-radius: 50%; border: 4px solid #fff; margin: -65px auto 10px; overflow: hidden; background: #efefef; position: relative; z-index: 2; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; }
+        .avatar-wrapper.has-story { border: 4px solid #0095f6; padding: 3px; background: linear-gradient(#fff, #fff) padding-box, linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888) border-box; }
+        .avatar-img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+        
+        .name { text-align: center; font-size: 22px; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 6px; }
+        
+        /* علامة التوثيق الرسمية */
+        .verified-badge { color: #0095f6; font-size: 16px; display: inline-flex; align-items: center; vertical-align: middle; }
+
+        .bio { text-align: center; font-size: 14px; color: #8e8e8e; margin: 8px 16px; line-height: 1.5; font-weight: 500; cursor: pointer; }
+        .profile-action-buttons { display: flex; gap: 8px; padding: 0 16px 15px 16px; }
+        .btn-add-friend { flex: 1; background: #0095f6; color: #fff; border: none; border-radius: 8px; padding: 8px; font-weight: 600; cursor: pointer; font-size: 14px; }
+        .btn-message { flex: 1; background: #efefef; color: #262626; border: none; border-radius: 8px; padding: 8px; font-weight: 600; cursor: pointer; font-size: 14px; }
+        
+        /* التبويبات */
+        .profile-tabs { display: flex; border-top: 1px solid #dbdbdb; padding: 0 16px; margin-top: 10px; justify-content: space-around; }
+        .tab-item { padding: 12px 20px; font-weight: 600; color: #8e8e8e; cursor: pointer; border-top: 2px solid transparent; font-size: 14px; }
+        .tab-item.active { color: #262626; border-top-color: #262626; }
+        
+        /* قسم التفاصيل */
+        .details-section { padding: 12px 16px; border-top: 1px solid #efefef; font-weight: 500; font-size: 13px; }
+        .details-item { margin: 6px 0; display: flex; align-items: center; gap: 8px; color: #555; font-weight: 600; }
+        .btn-about { width: 100%; background: #efefef; border: none; padding: 8px; border-radius: 8px; font-weight: 600; margin-top: 8px; cursor: pointer; font-size: 13px; color: #262626; }
+
+        /* شكل المنشور */
+        .post-card { background: #fff; margin-top: 12px; border-top: 1px solid #dbdbdb; border-bottom: 1px solid #dbdbdb; }
+        .post-header { display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 16px; }
+        .post-user-area { display: flex; gap: 10px; align-items: center; cursor: pointer; }
+        .post-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; background: #efefef; }
+        .post-info { font-size: 14px; font-weight: 600; color: #262626; }
+        .post-time { font-size: 11px; color: #8e8e8e; font-weight: 400; }
+        
+        .post-body { padding: 0 16px 10px; font-size: 14px; line-height: 1.5; color: #262626; word-break: break-word; font-weight: 400; }
+        .post-body a { color: #00376b; text-decoration: none; font-weight: 600; }
+        
+        .post-stats { display: flex; justify-content: space-between; padding: 8px 16px; font-size: 12px; color: #8e8e8e; border-bottom: 1px solid #efefef; font-weight: 600; }
+        .post-stats span.clickable-comments:hover { text-decoration: underline; color: #00376b; }
+        
+        .post-actions-bar { display: flex; justify-content: space-around; padding: 4px 0; }
+        .post-action-btn { flex: 1; text-align: center; padding: 8px 0; color: #555; font-weight: 600; font-size: 13px; cursor: pointer; border-radius: 4px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .post-action-btn:hover { background: #fafafa; }
+
+        /* نافذة التعليقات */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: #fff; width: 100%; max-width: 600px; height: 100%; display: flex; flex-direction: column; overflow: hidden; }
+        .modal-header { padding: 12px 16px; border-bottom: 1px solid #dbdbdb; font-weight: 700; text-align: center; position: relative; font-size: 15px; }
+        .comments-sort-bar { padding: 8px 16px; font-size: 12px; color: #8e8e8e; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #efefef; font-weight: 600; }
+        .modal-body { padding: 12px 16px; overflow-y: auto; flex: 1; background: #fff; }
+        .modal-footer { padding: 10px 16px; border-top: 1px solid #dbdbdb; background: #fff; display: flex; flex-direction: column; gap: 8px; font-weight: 500; }
+        
+        .comment-item { display: flex; gap: 10px; margin-bottom: 12px; align-items: flex-start; }
+        .comment-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; flex-shrink: 0; cursor: pointer; background: #efefef; }
+        .comment-bubble-container { max-width: 85%; }
+        .comment-bubble { background: #efefef; padding: 8px 12px; border-radius: 14px; font-size: 13px; color: #262626; line-height: 1.4; word-break: break-word; position: relative; font-weight: 400; }
+        .comment-author-name { font-weight: 600; font-size: 12px; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 2px; cursor: pointer; }
+        .comment-badge { background: #dbdbdb; font-size: 10px; padding: 1px 5px; border-radius: 4px; color: #555; margin-right: 4px; font-weight: 600; }
+        .comment-meta { font-size: 11px; color: #8e8e8e; margin-top: 3px; padding-right: 8px; display: flex; gap: 10px; align-items: center; font-weight: 600; }
+        .comment-attachment { width: 100%; border-radius: 6px; margin-top: 6px; max-height: 200px; object-fit: cover; border: 1px solid #dbdbdb; cursor: pointer; display: block; }
+
+        /* نوافذ العرض والستوري */
+        .image-viewer-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 3000; justify-content: center; align-items: center; }
+        .image-viewer-content { max-width: 95%; max-height: 95%; object-fit: contain; }
+
+        .video-viewer-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3500; flex-direction: column; justify-content: space-between; }
+
+        .story-viewer-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 4000; justify-content: center; align-items: center; flex-direction: column; }
+        .story-container { width: 100%; max-width: 450px; height: 100%; position: relative; display: flex; flex-direction: column; justify-content: space-between; padding: 15px 10px; }
+        .story-header { display: flex; align-items: center; justify-content: space-between; z-index: 5; }
+        .story-user-info { display: flex; align-items: center; gap: 10px; color: #fff; font-weight: 600; font-size: 13px; }
+        .story-media { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; z-index: 1; }
+        .story-footer-admin { z-index: 5; background: rgba(0,0,0,0.6); padding: 10px; border-radius: 8px; color: #fff; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 13px; cursor: pointer; }
+
+        .viewers-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 5000; justify-content: center; align-items: center; }
+        .viewers-modal-content { background: #fff; width: 90%; max-width: 420px; border-radius: 12px; padding: 16px; max-height: 80vh; overflow-y: auto; font-weight: 500; }
+
+        .create-post-fullscreen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 2000; flex-direction: column; font-weight: 500; }
+        
+        .admin-controls-container { position: fixed; bottom: 20px; left: 20px; display: none; flex-direction: column; gap: 10px; z-index: 99; }
+        .admin-btn { background: #0095f6; color: #fff; width: 46px; height: 46px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .admin-lock { position: fixed; bottom: 15px; left: 15px; width: 40px; height: 40px; cursor: pointer; z-index: 99; background: transparent; opacity: 0; }
+    </style>
+</head>
+<body>
+
+    <input type="file" id="avatarFilePicker" accept="image/*" style="display:none;" onchange="handleAvatarFileSelect(event)">
+    <input type="file" id="coverFilePicker" accept="image/*" style="display:none;" onchange="handleCoverFileSelect(event)">
+    <input type="file" id="accountAvatarPicker" accept="image/*" style="display:none;" onchange="handleAccountAvatarFileSelect(event)">
+    <input type="file" id="storyFilePicker" accept="image/*,video/*" style="display:none;" onchange="handleStoryFileSelect(event)">
+
+    <div class="main-container">
+        <div class="profile-top-bar">
+            <i class="fa-solid fa-arrow-right" style="cursor: pointer;" onclick="goBack()" title="رجوع"></i>
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <span id="topBarProfileName">اسيل العلي</span>
+                <span id="topBarBadgeContainer">
+                    <span class="verified-badge" title="حساب موثق">
+                        <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6.3 13l1.4-1.4 2.4 2.4 6.6-6.6 1.4 1.4-8 8z"/></svg>
+                    </span>
+                </span>
+            </div>
+            <i class="fa-solid fa-gear" id="settingsGearBtn" style="display:none; cursor:pointer; color:#0095f6;" onclick="openProfileSettings()" title="الإعدادات"></i>
+        </div>
+
+        <!-- الغلاف -->
+        <div class="cover-wrapper" onclick="handleCoverClick()">
+            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800" class="cover-img" id="coverImg">
+        </div>
+        
+        <!-- الصورة الشخصية والستوري -->
+        <div class="avatar-wrapper" id="avatarWrapper" onclick="handleAvatarClick()" title="انقر لعرض الستوري">
+            <img src="" class="avatar-img" id="avatarImg" style="display: none;">
+            <i class="fa-solid fa-user" id="avatarPlaceholderIcon" style="font-size: 50px; color: #8e8e8e;"></i>
+        </div>
+
+        <div class="name" id="mainProfileName">
+            <span id="mainProfileNameText">اسيل العلي</span>
+            <span id="mainProfileBadgeContainer">
+                <span class="verified-badge" title="حساب موثق">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6.3 13l1.4-1.4 2.4 2.4 6.6-6.6 1.4 1.4-8 8z"/></svg>
+                </span>
+            </span>
+        </div>
+        
+        <!-- البايو -->
+        <div class="bio" id="bioTextContainer" onclick="handleBioClick()">ما برد خاص ⛔<br>شوف اول منشور وحاكيني واتس 👇</div>
+        
+        <div class="profile-action-buttons">
+            <button class="btn-add-friend">متابعة</button>
+            <button class="btn-message">مراسلة</button>
+        </div>
+        
+        <div class="profile-tabs">
+            <div class="tab-item active">المنشورات</div>
+            <div class="tab-item">الصور</div>
+            <div class="tab-item">المقاطع</div>
+        </div>
+
+        <div class="details-section">
+            <div class="details-item"><i class="fa-solid fa-house"></i> تقيم في عمان</div>
+            <div class="details-item"><i class="fa-solid fa-location-dot"></i> من دمشق</div>
+            <button class="btn-about" id="aboutBtnText">عرض معلومات الملف الشخصي</button>
+        </div>
+
+        <!-- خلاصة المنشورات -->
+        <div id="postsFeed"></div>
+    </div>
+
+    <!-- نافذة عرض الفيديو -->
+    <div id="videoViewerModal" class="video-viewer-overlay">
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:rgba(0,0,0,0.8); color:#fff; z-index:10;">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <i class="fa-solid fa-arrow-right" style="font-size:18px; cursor:pointer;" onclick="closeVideoViewer()"></i>
+                <span style="font-size:15px; font-weight:600;">فيديو</span>
+            </div>
+            <i class="fa-solid fa-xmark" style="font-size:20px; cursor:pointer;" onclick="closeVideoViewer()"></i>
+        </div>
+        <div style="position:relative; flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; background:#000;">
+            <video id="fullVideoViewerElement" controls controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" style="max-width:100%; max-height:75vh; object-fit:contain;"></video>
+        </div>
+        <div style="background:#121212; color:#fff; padding:12px 16px;">
+            <div style="display:flex; justify-content:space-between; font-size:12px; color:#a8a8a8; margin-bottom:8px;">
+                <span id="videoViewerReactions">❤️ 8</span>
+                <span id="videoViewerStats" style="cursor:pointer;" onclick="openVideoViewersList()">٨ تعليقات</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة الستوري -->
+    <div id="storyViewerModal" class="story-viewer-overlay" onclick="closeStory()">
+        <div class="story-container" onclick="event.stopPropagation()">
+            <div class="story-header">
+                <div class="story-user-info">
+                    <img id="storyHeaderAvatar" src="" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; background: #efefef;">
+                    <span id="storyHeaderName">اسيل علي</span>
+                    <span style="font-size: 11px; color: #bbb; margin-right: 5px;" id="storyTimeText">منذ ساعة</span>
+                </div>
+                <span style="color: #fff; font-size: 22px; cursor: pointer; padding: 5px;" onclick="closeStory()">✕</span>
+            </div>
+            <div style="flex: 1; position: relative; display: flex; align-items: center; justify-content: center;">
+                <img id="storyMediaImg" class="story-media" style="display: block;">
+                <video id="storyMediaVid" class="story-media" controls autoplay controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" style="display: none;"></video>
+            </div>
+            <div id="storyAdminFooter" class="story-footer-admin" style="display: none;" onclick="openStoryViewers()">
+                <span>👁️ المشاهدات: <b id="storyViewCount">0</b></span>
+                <span style="font-size: 11px; background: #0095f6; padding: 4px 8px; border-radius: 4px;">سجل المشاهدين</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة المشاهدين -->
+    <div id="viewersModal" class="viewers-modal-overlay" onclick="if(event.target === this) closeViewersModal()">
+        <div class="viewers-modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #dbdbdb; padding-bottom: 8px; margin-bottom: 12px;">
+                <span id="viewersModalTitle" style="font-size: 15px; font-weight: 700;">سجل المشاهدات</span>
+                <span style="cursor: pointer; font-size: 18px;" onclick="closeViewersModal()">✕</span>
+            </div>
+            <div id="viewersListContainer"></div>
+        </div>
+    </div>
+
+    <!-- نافذة التعليقات -->
+    <div id="commentsModal" class="modal-overlay" onclick="if(event.target === this) closeCommentsModal()">
+        <div class="modal-content">
+            <div class="modal-header">
+                التعليقات
+                <span style="cursor:pointer; position:absolute; left:16px; font-size:18px;" onclick="closeCommentsModal()">✕</span>
+            </div>
+            <div class="comments-sort-bar">
+                <span>التعليقات</span>
+            </div>
+            <div id="modalBody" class="modal-body"></div>
+            <div id="modalFooter" class="modal-footer"></div>
+        </div>
+    </div>
+
+    <!-- نافذة عرض الصور -->
+    <div id="imageViewerModal" class="image-viewer-overlay" onclick="closeImageViewer()">
+        <span style="position:absolute; top:20px; right:20px; color:#fff; font-size:26px; cursor:pointer;" onclick="closeImageViewer()">✕</span>
+        <img id="fullImageView" class="image-viewer-content">
+    </div>
+
+    <!-- نافذة إنشاء / تعديل منشور -->
+    <div id="createPostScreen" class="create-post-fullscreen">
+        <div style="padding:12px 16px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #dbdbdb;">
+            <span onclick="closePostModal()" style="cursor:pointer; font-weight:600;">✕ إغلاق</span>
+            <span id="postModalTitle" style="font-weight:700;">منشور جديد</span>
+            <button onclick="publishPost()" style="background:#0095f6; color:#fff; border:none; padding:6px 14px; border-radius:6px; font-weight:600; cursor:pointer;" id="postModalSubmitBtn">نشر</button>
+        </div>
+        <div style="padding:15px; flex:1; overflow-y:auto;">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+                <span style="font-weight:600;" id="modalAuthorName">اسيل علي</span>
+            </div>
+            <textarea id="postText" style="width:100%; border:none; height:100px; font-size:15px; outline:none; font-weight:400;" placeholder="اكتب ما تفكر به..."></textarea>
+            
+            <div style="margin-top: 10px;">
+                <label style="font-size: 12px; font-weight: 600; color: #8e8e8e; display: block; margin-bottom: 4px;">تفاعلات الإعجاب:</label>
+                <input type="text" id="postReactionsInput" value="❤️ 5" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #dbdbdb; font-size: 13px; outline: none;">
+            </div>
+
+            <div style="margin-top:12px;">
+                <label style="background:#efefef; padding:10px; display:block; text-align:center; cursor:pointer; border-radius:8px; font-weight:600; color:#0095f6; font-size:13px;">
+                    <i class="fa-solid fa-images"></i> اختيار صور أو فيديوهات (حتى 5)
+                    <input type="file" id="filePicker" accept="image/*,video/*" multiple style="display:none;" onchange="handleFileSelect(event)">
+                </label>
+                <div id="filePreview" style="margin-top:8px; font-size:12px; color:green; text-align:center; font-weight:600;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- أزرار الأدمن -->
+    <div id="adminControls" class="admin-controls-container">
+        <div class="admin-btn" onclick="openPostModal()" title="إضافة منشور"><i class="fa-solid fa-plus"></i></div>
+        <div class="admin-btn" onclick="document.getElementById('storyFilePicker').click()" title="إضافة ستوري" style="background: #ff2a5f;"><i class="fa-solid fa-circle-plus"></i></div>
+    </div>
+    <div class="admin-lock" onclick="handleLockClick()"></div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
+        import { getFirestore, doc, setDoc, deleteDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyDMMJ5MrggJkNMUCsjXsNvS6aTKZd3QzFM",
+          authDomain: "aseel-aeccd.firebaseapp.com",
+          projectId: "aseel-aeccd",
+          storageBucket: "aseel-aeccd.firebasestorage.app",
+          messagingSenderId: "1061891334093",
+          appId: "1:1061891334093:web:0e12afec0cbeaa0f82ae84",
+          measurementId: "G-NHF7X6SKJF"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getFirestore(app);
+
+        window.db = db;
+        window.firebaseFirestore = { doc, setDoc, deleteDoc, onSnapshot, collection };
+        
+        fetchInitialCloudData(db);
+    </script>
+
+    <script>
+        window.history.replaceState({ page: "main" }, "");
+
+        let isAdmin = false;
+        let currentPostIdForComment = null;
+        let currentEditingPostId = null;
+        let currentReplyCommentIndex = null;
+        let currentVideoPostId = null;
+        
+        let lockClickCount = 0;
+        let lockTimer = null;
+        let visibleRepliesMap = {};
+
+        let currentDeviceId = localStorage.getItem('viewer_device_id');
+        if (!currentDeviceId) {
+            currentDeviceId = 'dev_' + Math.random().toString(36).substring(2, 11);
+            localStorage.setItem('viewer_device_id', currentDeviceId);
+        }
+
+        let accounts = [{ id: 1, name: "اسيل علي", avatar: "", isMain: true, isVerified: true }];
+        let coverImgUrl = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800";
+        let activeStory = { mediaUrl: "", mediaType: "", time: "", viewers: [] };
+        let posts = [];
+
+        function getCurrentFormattedTime() {
+            let now = new Date();
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            let ampm = hours >= 12 ? 'م' : 'ص';
+            hours = hours % 12 || 12;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            return hours + ':' + minutes + ' ' + ampm;
+        }
+
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        function compressImage(file, maxWidth = 1000, maxHeight = 1000, quality = 0.75) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = event => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        let width = img.width;
+                        let height = img.height;
+                        if (width > height) {
+                            if (width > maxWidth) { height = Math.round((height * maxWidth) / width); width = maxWidth; }
+                        } else {
+                            if (height > maxHeight) { width = Math.round((width * maxHeight) / height); height = maxHeight; }
+                        }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', quality));
+                    };
+                };
+            });
+        }
+
+        function handleLockClick() {
+            lockClickCount++;
+            if (lockClickCount === 3) {
+                lockClickCount = 0;
+                clearTimeout(lockTimer);
+                loginAdmin();
+            } else {
+                clearTimeout(lockTimer);
+                lockTimer = setTimeout(() => { lockClickCount = 0; }, 800);
+            }
+        }
+
+        function loginAdmin() {
+            let pass = prompt("كلمة مرور الأدمن:");
+            if (pass === "@odayoday@" || pass === "12345") {
+                isAdmin = true;
+                document.getElementById('adminControls').style.display = 'flex';
+                document.getElementById('settingsGearBtn').style.display = 'block';
+                renderFeed();
+                alert("تم تفعيل صلاحيات المشرف بنجاح.");
+            } else if (pass !== null) {
+                alert("كلمة المرور غير صحيحة!");
+            }
+        }
+
+        function openProfileSettings() {
+            if (!isAdmin) return;
+            let newName = prompt("تعديل اسم الملف الشخصي:", "اسيل علي");
+            if (newName && newName.trim()) {
+                accounts[0].name = newName.trim();
+                document.getElementById('topBarProfileName').innerText = newName.trim();
+                document.getElementById('mainProfileNameText').innerText = newName.trim();
+                renderFeed();
+                alert("تم تحديث اسم الملف الشخصي.");
+            }
+        }
+
+        function updateAvatarDisplay(imgElementId, iconElementId, avatarUrl) {
+            let imgEl = document.getElementById(imgElementId);
+            let iconEl = document.getElementById(iconElementId);
+            if (imgEl && iconEl) {
+                if (avatarUrl && avatarUrl.trim() !== "") {
+                    imgEl.src = avatarUrl;
+                    imgEl.style.display = 'block';
+                    iconEl.style.display = 'none';
+                } else {
+                    imgEl.style.display = 'none';
+                    iconEl.style.display = 'block';
+                }
+            }
+        }
+
+        function updateStoryUI() {
+            let wrapper = document.getElementById('avatarWrapper');
+            if (activeStory && activeStory.mediaUrl && activeStory.mediaUrl.trim() !== "") {
+                wrapper.classList.add('has-story');
+            } else {
+                wrapper.classList.remove('has-story');
+            }
+        }
+
+        async function handleAvatarFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                let compressedUrl = await compressImage(file, 400, 400, 0.75);
+                accounts[0].avatar = compressedUrl;
+                updateAvatarDisplay('avatarImg', 'avatarPlaceholderIcon', compressedUrl);
+                renderFeed();
+                alert("تم تحديث الصورة الشخصية!");
+            }
+        }
+
+        async function handleStoryFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                let base64Url = file.type.startsWith('video') ? await fileToBase64(file) : await compressImage(file, 900, 1200, 0.8);
+                activeStory = { mediaUrl: base64Url, mediaType: file.type.startsWith('video') ? 'video' : 'image', time: "الآن", viewers: [] };
+                updateStoryUI();
+                if (window.db) {
+                    await window.firebaseFirestore.setDoc(window.firebaseFirestore.doc(window.db, "settings", "story_data"), activeStory);
+                }
+                alert("تم نشر الستوري بنجاح!");
+            }
+        }
+
+        function handleAvatarClick() {
+            if (activeStory && activeStory.mediaUrl && activeStory.mediaUrl.trim() !== "" && !isAdmin) {
+                handleAvatarClickStory();
+            } else if (isAdmin) {
+                let choice = prompt("خيارات الصورة والستوري:\n1. عرض الستوري\n2. رفع ستوري جديد\n3. حذف الستوري\n4. تغيير الصورة الشخصية");
+                if (choice === "1") handleAvatarClickStory();
+                else if (choice === "2") document.getElementById('storyFilePicker').click();
+                else if (choice === "3") { activeStory = { mediaUrl: "", mediaType: "", time: "", viewers: [] }; updateStoryUI(); alert("تم الحذف."); }
+                else if (choice === "4") document.getElementById('avatarFilePicker').click();
+            } else {
+                if (activeStory && activeStory.mediaUrl && activeStory.mediaUrl.trim() !== "") handleAvatarClickStory();
+                else alert("لا توجد ستوري لعرضها.");
+            }
+        }
+
+        async function handleAvatarClickStory() {
+            if (activeStory && activeStory.mediaUrl) {
+                if (!activeStory.viewers.some(v => v.deviceId === currentDeviceId)) {
+                    activeStory.viewers.push({ deviceId: currentDeviceId, name: isAdmin ? "الأدمن" : "زائر", time: getCurrentFormattedTime() });
+                    if (window.db) await window.firebaseFirestore.setDoc(window.firebaseFirestore.doc(window.db, "settings", "story_data"), activeStory);
+                }
+                let imgEl = document.getElementById('storyMediaImg');
+                let vidEl = document.getElementById('storyMediaVid');
+                if (activeStory.mediaType === 'video') { vidEl.src = activeStory.mediaUrl; vidEl.style.display = 'block'; imgEl.style.display = 'none'; }
+                else { imgEl.src = activeStory.mediaUrl; imgEl.style.display = 'block'; vidEl.style.display = 'none'; }
+                
+                document.getElementById('storyViewCount').innerText = activeStory.viewers.length;
+                document.getElementById('storyAdminFooter').style.display = isAdmin ? 'flex' : 'none';
+                
+                history.pushState({ modal: 'story' }, '');
+                document.getElementById('storyViewerModal').style.display = 'flex';
+            }
+        }
+
+        function closeStory() {
+            let el = document.getElementById('storyViewerModal');
+            if (el && el.style.display === 'flex') history.back();
+        }
+
+        function openStoryViewers() {
+            let container = document.getElementById('viewersListContainer');
+            container.innerHTML = activeStory.viewers.map(v => `<div style="padding: 8px 0; border-bottom: 1px solid #efefef;"><b>${v.name}</b> <span style="font-size:11px; color:#8e8e8e; float:left;">${v.time}</span></div>`).join('');
+            history.pushState({ modal: 'viewers' }, '');
+            document.getElementById('viewersModal').style.display = 'flex';
+        }
+
+        function closeViewersModal() {
+            let el = document.getElementById('viewersModal');
+            if (el && el.style.display === 'flex') history.back();
+        }
+
+        function goBack() {
+            let modals = ['createPostScreen', 'imageViewerModal', 'viewersModal', 'storyViewerModal', 'commentsModal', 'videoViewerModal'];
+            let openModal = modals.find(id => document.getElementById(id).style.display === 'flex');
+            if (openModal) history.back();
+            else window.location.href = "https://ooo11223.github.io/fccb.com/";
+        }
+
+        window.addEventListener('popstate', () => {
+            ['createPostScreen', 'imageViewerModal', 'viewersModal', 'storyViewerModal', 'commentsModal', 'videoViewerModal'].forEach(id => {
+                let el = document.getElementById(id);
+                if (el && el.style.display === 'flex') el.style.display = 'none';
+            });
+        });
+
+        function linkify(text) {
+            if (!text) return '';
+            return text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color:#00376b; text-decoration:none; font-weight:600;" onclick="event.stopPropagation()">$1</a>');
+        }
+
+        function openImageViewer(url) {
+            document.getElementById('fullImageView').src = url;
+            history.pushState({ modal: 'image' }, '');
+            document.getElementById('imageViewerModal').style.display = 'flex';
+        }
+
+        function closeImageViewer() { history.back(); }
+
+        function openVideoViewer(url, reactions, commentsCount, postId) {
+            currentVideoPostId = postId;
+            let vidEl = document.getElementById('fullVideoViewerElement');
+            vidEl.src = url;
+            document.getElementById('videoViewerReactions').innerText = reactions;
+            document.getElementById('videoViewerStats').innerText = commentsCount;
+            history.pushState({ modal: 'video' }, '');
+            document.getElementById('videoViewerModal').style.display = 'flex';
+            vidEl.play();
+        }
+
+        function closeVideoViewer() { history.back(); }
+
+        async function deletePost(id) {
+            if (confirm("حذف هذا المنشور؟")) {
+                if (window.db) await window.firebaseFirestore.deleteDoc(window.firebaseFirestore.doc(window.db, "posts", String(id)));
+                alert("تم الحذف.");
+            }
+        }
+
+        function renderMediaFiles(mediaFiles, postId) {
+            if (!mediaFiles || mediaFiles.length === 0) return '';
+            let m = mediaFiles[0];
+            if (m.type === 'video') {
+                return `<div style="position:relative; width:100%; background:#000; cursor:pointer;" onclick="openVideoViewer('${m.url}', '❤️ 5', '0 تعليقات', ${postId})"><video src="${m.url}" style="width:100%; max-height:400px; object-fit:cover; pointer-events:none;"></video></div>`;
+            }
+            return `<img src="${m.url}" style="width:100%; max-height:400px; object-fit:cover; display:block; cursor:pointer;" onclick="openImageViewer('${m.url}')">`;
+        }
+
+        function renderFeed() {
+            let feed = document.getElementById('postsFeed');
+            feed.innerHTML = posts.map(p => {
+                let author = accounts[0];
+                let mediaFilesList = p.mediaFiles || [];
+                let avatarHtml = author.avatar ? `<img src="${author.avatar}" class="post-avatar">` : `<div class="post-avatar" style="background:#efefef; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-user" style="font-size:14px; color:#8e8e8e;"></i></div>`;
+
+                return `
+                    <div class="post-card">
+                        <div class="post-header">
+                            <div class="post-user-area">
+                                ${avatarHtml}
+                                <div class="post-info">
+                                    <span>${author.name}</span><br>
+                                    <span class="post-time">${p.time}</span>
+                                </div>
+                            </div>
+                            ${isAdmin ? `<span onclick="deletePost(${p.id})" style="cursor:pointer; color:red; font-size:13px;"><i class="fa-solid fa-trash"></i></span>` : ''}
+                        </div>
+                        <div class="post-body"><div>${linkify(p.text)}</div></div>
+                        ${renderMediaFiles(mediaFilesList, p.id)}
+                        <div class="post-stats">
+                            <span>${p.reactions}</span>
+                            <span class="clickable-comments" style="cursor: pointer;" onclick="openComments(${p.id})">${p.commentsCount}</span>
+                        </div>
+                        <div class="post-actions-bar">
+                            <div class="post-action-btn"><i class="fa-regular fa-heart"></i> إعجاب</div>
+                            <div class="post-action-btn" onclick="openComments(${p.id})"><i class="fa-regular fa-comment"></i> تعليق</div>
+                            <div class="post-action-btn"><i class="fa-solid fa-share-nodes"></i> مشاركة</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        let tempFiles = [];
+        function openPostModal(postId = null) {
+            if (!isAdmin) { alert("للأدمن فقط!"); return; }
+            currentEditingPostId = postId;
+            tempFiles = [];
+            document.getElementById('postText').value = "";
+            document.getElementById('filePreview').innerText = "";
+            history.pushState({ modal: 'post' }, '');
+            document.getElementById('createPostScreen').style.display = 'flex';
+        }
+
+        function closePostModal() { history.back(); }
+
+        async function handleFileSelect(e) {
+            const files = e.target.files;
+            if (files && files.length > 0) {
+                for (let file of files) {
+                    let base64Url = file.type.startsWith('video') ? await fileToBase64(file) : await compressImage(file, 1000, 1000, 0.75);
+                    tempFiles.push({ url: base64Url, type: file.type.startsWith('video') ? 'video' : 'image' });
+                }
+                document.getElementById('filePreview').innerText = `تم إرفاق ${tempFiles.length} ملفات بنجاح.`;
+            }
+        }
+
+        async function publishPost() {
+            let text = document.getElementById('postText').value;
+            let reactions = document.getElementById('postReactionsInput').value;
+            let newPost = { id: Date.now(), time: getCurrentFormattedTime(), text: text, mediaFiles: [...tempFiles], reactions: reactions, commentsCount: "0 تعليقات", comments: [] };
+            if (window.db) await window.firebaseFirestore.setDoc(window.firebaseFirestore.doc(window.db, "posts", String(newPost.id)), newPost);
+            alert("تم النشر بنجاح!");
+            closePostModal();
+        }
+
+        function openComments(postId) {
+            currentPostIdForComment = postId;
+            let post = posts.find(p => p.id === postId);
+            let body = document.getElementById('modalBody');
+            let footer = document.getElementById('modalFooter');
+            if (!post) return;
+
+            body.innerHTML = post.comments.length === 0 ? `<p style="text-align:center; color:#8e8e8e; margin-top:20px;">لا توجد تعليقات.</p>` : post.comments.map((c, i) => `
+                <div class="comment-item">
+                    <div class="comment-avatar" style="background:#efefef; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-user" style="font-size:12px; color:#8e8e8e;"></i></div>
+                    <div class="comment-bubble-container">
+                        <div class="comment-bubble">
+                            <span class="comment-author-name">${c.authorName}</span>
+                            <div>${linkify(c.text)}</div>
+                        </div>
+                        <div class="comment-meta"><span>${c.time}</span></div>
+                    </div>
+                </div>
+            `).join('');
+
+            footer.innerHTML = `
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <input type="text" id="commentTextInput" placeholder="أضف تعليقاً..." style="flex: 1; padding: 8px 12px; border: 1px solid #dbdbdb; border-radius: 20px; outline: none; font-size: 13px;" onkeydown="if(event.key === 'Enter') submitComment(${postId})">
+                    <button onclick="submitComment(${postId})" style="background:#0095f6; color:#fff; border:none; border-radius:50%; width:32px; height:32px; cursor:pointer;"><i class="fa-solid fa-paper-plane" style="font-size:12px;"></i></button>
+                </div>
+            `;
+            history.pushState({ modal: 'comments' }, '');
+            document.getElementById('commentsModal').style.display = 'flex';
+        }
+
+        function closeCommentsModal() { history.back(); }
+
+        async function submitComment(postId) {
+            let textInput = document.getElementById('commentTextInput');
+            let text = textInput.value.trim();
+            if (!text) return;
+            let post = posts.find(p => p.id === postId);
+            if (!post) return;
+
+            post.comments.push({ authorName: "زائر", text: text, time: getCurrentFormattedTime() });
+            post.commentsCount = post.comments.length + " تعليقات";
+            if (window.db) await window.firebaseFirestore.setDoc(window.firebaseFirestore.doc(window.db, "posts", String(post.id)), post);
+            textInput.value = "";
+            openComments(postId);
+            renderFeed();
+        }
+
+        async function fetchInitialCloudData(db) {
+            try {
+                let storySnap = await window.firebaseFirestore.setDoc ? await window.firebaseFirestore.doc(db, "settings", "story_data") : null;
+                window.firebaseFirestore.onSnapshot(window.firebaseFirestore.collection(db, "posts"), (snapshot) => {
+                    posts = [];
+                    snapshot.forEach(docSnap => posts.push(docSnap.data()));
+                    posts.sort((a, b) => b.id - a.id);
+                    if (posts.length === 0) {
+                        posts = [{ id: Date.now(), time: "أمس", text: "تفضلو رابط الواتساب الخاص بي للتواصل والاستفسارات 👇\nhttps://wa.me/", mediaFiles: [], reactions: "❤️ 8", commentsCount: "8 تعليقات", comments: [] }];
+                    }
+                    renderFeed();
+                });
+            } catch (e) {
+                posts = [{ id: Date.now(), time: "أمس", text: "تفضلو رابط الواتساب الخاص بي للتواصل والاستفسارات 👇\nhttps://wa.me/", mediaFiles: [], reactions: "❤️ 8", commentsCount: "8 تعليقات", comments: [] }];
+                renderFeed();
+            }
+        }
+    </script>
+</body>
+</html>
