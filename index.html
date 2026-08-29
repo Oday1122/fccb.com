@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>اسيل علي - الملف الشخصي</title>
+    <title>اسيل العلي - الملف الشخصي</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { 
@@ -21,7 +21,7 @@
         .cover-img { width: 100%; height: 100%; object-fit: cover; }
         
         /* إطار الستوري حول الصورة الشخصية */
-        .avatar-wrapper { width: 140px; height: 140px; border-radius: 50%; border: 4px solid #fff; margin: -70px auto 10px; overflow: hidden; background: #fff; position: relative; z-index: 2; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+        .avatar-wrapper { width: 140px; height: 140px; border-radius: 50%; border: 4px solid #fff; margin: -70px auto 10px; overflow: hidden; background: #e4e6eb; position: relative; z-index: 2; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; }
         .avatar-wrapper.has-story { border: 4px solid #1877f2; padding: 3px; background: linear-gradient(#fff, #fff) padding-box, linear-gradient(45deg, #1877f2, #e4405f, #f58529) border-box; }
         .avatar-img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
         
@@ -49,7 +49,7 @@
         .post-card { background: #fff; margin-top: 10px; border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; }
         .post-header { display: flex; justify-content: space-between; align-items: flex-start; padding: 12px 16px 8px; }
         .post-user-area { display: flex; gap: 10px; align-items: center; cursor: pointer; }
-        .post-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        .post-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: #e4e6eb; }
         .post-info { font-size: 14px; font-weight: 700; color: #050505; }
         .post-time { font-size: 12px; color: #65676b; font-weight: 500; }
         
@@ -74,7 +74,7 @@
         .modal-footer { padding: 10px 16px; border-top: 1px solid #ddd; background: #fff; display: flex; flex-direction: column; gap: 8px; font-weight: 600; }
         
         .comment-item { display: flex; gap: 10px; margin-bottom: 15px; align-items: flex-start; }
-        .comment-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0; cursor: pointer; }
+        .comment-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0; cursor: pointer; background: #e4e6eb; }
         .comment-bubble-container { max-width: 85%; }
         .comment-bubble { background: #f0f2f5; padding: 10px 14px; border-radius: 18px; font-size: 14px; color: #050505; line-height: 1.4; word-break: break-word; position: relative; font-weight: 500; }
         .comment-author-name { font-weight: 700; font-size: 13px; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 2px; cursor: pointer; }
@@ -137,7 +137,7 @@
             
             <div style="display: flex; align-items: center; gap: 8px;">
                 <i class="fa-brands fa-facebook" style="color: #1877f2; font-size: 24px;"></i>
-                <span id="topBarProfileName">اسيل علي</span>
+                <span id="topBarProfileName">اسيل العلي</span>
                 <span id="topBarBadgeContainer">
                     <span class="verified-badge" title="حساب موثق">
                         <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6.3 13l1.4-1.4 2.4 2.4 6.6-6.6 1.4 1.4-8 8z"/></svg>
@@ -155,13 +155,14 @@
             <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800" class="cover-img" id="coverImg">
         </div>
         
-        <!-- الصورة الشخصية وإطار الستوري -->
-        <div class="avatar-wrapper has-story" id="avatarWrapper" onclick="handleAvatarClick()" title="انقر لعرض الستوري أو الخيارات">
-            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200" class="avatar-img" id="avatarImg">
+        <!-- الصورة الشخصية وإطار الستوري (فارغة افتراضياً) -->
+        <div class="avatar-wrapper" id="avatarWrapper" onclick="handleAvatarClick()" title="انقر لعرض الستوري أو الخيارات">
+            <img src="" class="avatar-img" id="avatarImg" style="display: none;">
+            <i class="fa-solid fa-user" id="avatarPlaceholderIcon" style="font-size: 55px; color: #8a8d91;"></i>
         </div>
 
         <div class="name" id="mainProfileName" onclick="handleAccountClick(1)" style="cursor: pointer;">
-            <span id="mainProfileNameText">اسيل علي</span>
+            <span id="mainProfileNameText">اسيل العلي </span>
             <span id="mainProfileBadgeContainer">
                 <span class="verified-badge" title="حساب موثق">
                     <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6.3 13l1.4-1.4 2.4 2.4 6.6-6.6 1.4 1.4-8 8z"/></svg>
@@ -209,7 +210,7 @@
         <div style="position:relative; flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; background:#000; overflow:hidden;">
             <div style="position:absolute; top:10px; right:15px; left:15px; display:flex; justify-content:space-between; align-items:center; z-index:5; pointer-events:none;">
                 <div style="display:flex; align-items:center; gap:10px; pointer-events:auto; cursor:pointer;" onclick="handleAccountClick(1)">
-                    <img id="videoViewerAvatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:1px solid #fff;">
+                    <img id="videoViewerAvatar" src="" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:1px solid #fff; background:#e4e6eb;">
                     <div style="color:#fff; text-shadow:0 1px 3px rgba(0,0,0,0.8);">
                         <div style="font-size:14px; font-weight:700; display:flex; align-items:center; gap:4px;">
                             <span id="videoViewerName">Aseel Ali</span>
@@ -242,7 +243,7 @@
         <div class="story-container" onclick="event.stopPropagation()">
             <div class="story-header">
                 <div class="story-user-info" style="cursor: pointer;" onclick="handleAccountClick(1)">
-                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;">
+                    <img id="storyHeaderAvatar" src="" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; background: #e4e6eb;">
                     <span id="storyHeaderName">اسيل علي <span class="verified-badge"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6.3 13l1.4-1.4 2.4 2.4 6.6-6.6 1.4 1.4-8 8z"/></svg></span></span>
                     <span style="font-size: 11px; color: #ccc; margin-right: 5px;" id="storyTimeText">منذ ساعة</span>
                 </div>
@@ -326,7 +327,10 @@
             </div>
 
             <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;">
-                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100" class="post-avatar" id="modalUserAvatar">
+                <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: #e4e6eb; display: flex; align-items: center; justify-content: center;" id="modalUserAvatarWrapper">
+                    <img src="" class="post-avatar" id="modalUserAvatar" style="display: none; width: 100%; height: 100%;">
+                    <i class="fa-solid fa-user" id="modalUserAvatarIcon" style="font-size: 20px; color: #8a8d91;"></i>
+                </div>
                 <span style="font-weight:700;" id="modalAuthorName">اسيل علي</span>
             </div>
             
@@ -355,7 +359,7 @@
     </div>
     <div class="admin-lock" onclick="handleLockClick()"></div>
 
-    <!-- ربط Firebase SDKs وتعديل المنطق -->
+    <!-- ربط Firebase SDKs واستكمال المنطق البرمجي -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
@@ -401,7 +405,7 @@
         }
 
         let accounts = [
-            { id: 1, name: "اسيل علي", avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200", isMain: true, isVerified: true, link: "" }
+            { id: 1, name: "اسيل علي", avatar: "", isMain: true, isVerified: true, link: "" }
         ];
 
         let coverImgUrl = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800";
@@ -442,7 +446,6 @@
             });
         }
 
-        // تم تحسين دالة الضغط لتقوم بتصغير أي صورة ضخمة وضمان قبولها ورفعها بسلاسة بدون أي مشاكل
         function compressImage(file, maxWidth = 1000, maxHeight = 1000, quality = 0.75) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -518,6 +521,22 @@
             } catch(e) { console.error(e); }
         }
 
+        function updateAvatarDisplay(imgElementId, iconElementId, avatarUrl) {
+            let imgEl = document.getElementById(imgElementId);
+            let iconEl = document.getElementById(iconElementId);
+            if (imgEl && iconEl) {
+                if (avatarUrl && avatarUrl.trim() !== "") {
+                    imgEl.src = avatarUrl;
+                    imgEl.style.display = 'block';
+                    iconEl.style.display = 'none';
+                } else {
+                    imgEl.src = "";
+                    imgEl.style.display = 'none';
+                    iconEl.style.display = 'block';
+                }
+            }
+        }
+
         function updateStoryUI() {
             let wrapper = document.getElementById('avatarWrapper');
             if (activeStory && activeStory.mediaUrl && activeStory.mediaUrl.trim() !== "") {
@@ -540,6 +559,7 @@
                 let badgeHtml = getVerifiedBadgeHtml(mainAcc);
                 document.getElementById('topBarBadgeContainer').innerHTML = badgeHtml;
                 document.getElementById('mainProfileBadgeContainer').innerHTML = badgeHtml;
+                updateAvatarDisplay('avatarImg', 'avatarPlaceholderIcon', mainAcc.avatar);
             }
         }
 
@@ -550,6 +570,7 @@
                 document.getElementById('mainProfileNameText').innerText = mainAcc.name;
                 document.getElementById('aboutBtnText').innerText = `عرض معلومات القسم "حول" لـ ${mainAcc.name}`;
                 document.getElementById('storyHeaderName').innerHTML = `${mainAcc.name} <span class="verified-badge"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6.3 13l1.4-1.4 2.4 2.4 6.6-6.6 1.4 1.4-8 8z"/></svg></span>`;
+                updateAvatarDisplay('storyHeaderAvatar', 'storyHeaderAvatarIcon', mainAcc.avatar);
                 
                 posts.forEach(p => {
                     p.comments.forEach(c => {
@@ -591,7 +612,7 @@
                         updateAccountAvatarAcrossPostsAndComments(mainAcc.id, compressedUrl);
                         await saveAccountsToCloud();
                     }
-                    document.getElementById('avatarImg').src = compressedUrl;
+                    updateAvatarDisplay('avatarImg', 'avatarPlaceholderIcon', compressedUrl);
                     renderFeed();
                     alert("تم تحديث الصورة الشخصية وحفظها سحابياً بنجاح!");
                 } catch(err) {
@@ -610,7 +631,7 @@
                     if (acc) {
                         acc.avatar = compressedUrl;
                         if (acc.isMain) {
-                            document.getElementById('avatarImg').src = compressedUrl;
+                            updateAvatarDisplay('avatarImg', 'avatarPlaceholderIcon', compressedUrl);
                         }
                         updateAccountAvatarAcrossPostsAndComments(acc.id, compressedUrl);
                         await saveAccountsToCloud();
@@ -726,6 +747,7 @@
                 try {
                     let base64Url = file.type.startsWith('video') ? await fileToBase64(file) : await compressImage(file, 900, 1200, 0.8);
                     let type = file.type.startsWith('video') ? 'video' : 'image';
+                    let mainAcc = accounts.find(a => a.isMain);
                     activeStory = {
                         mediaUrl: base64Url,
                         mediaType: type,
@@ -793,7 +815,7 @@
                         deviceId: currentDeviceId,
                         name: isAdmin ? "الأدمن (أنت)" : "زائر (" + currentDeviceId.substring(0, 8) + ")",
                         time: "الآن " + getCurrentFormattedTime(),
-                        avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100"
+                        avatar: ""
                     });
                     await saveStoryToCloud();
                 }
@@ -843,7 +865,9 @@
                 container.innerHTML = activeStory.viewers.map((v) => `
                     <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
                         <div style="display: flex; align-items: center; gap: 10px;">
-                            <img src="${v.avatar}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;">
+                            <div style="width: 36px; height: 36px; border-radius: 50%; background: #e4e6eb; display: flex; align-items: center; justify-content: center; overflow:hidden;">
+                                ${v.avatar ? `<img src="${v.avatar}" style="width: 100%; height: 100%; object-fit: cover;">` : `<i class="fa-solid fa-user" style="font-size: 16px; color: #8a8d91;"></i>`}
+                            </div>
                             <div>
                                 <div style="font-size: 14px; font-weight: 700;">${v.name}</div>
                                 <div style="font-size: 11px; color: #65676b;">معرف الجهاز: ${v.deviceId}</div>
@@ -875,7 +899,9 @@
                 container.innerHTML = viewers.map((v) => `
                     <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
                         <div style="display: flex; align-items: center; gap: 10px;">
-                            <img src="${v.avatar}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;">
+                            <div style="width: 36px; height: 36px; border-radius: 50%; background: #e4e6eb; display: flex; align-items: center; justify-content: center; overflow:hidden;">
+                                ${v.avatar ? `<img src="${v.avatar}" style="width: 100%; height: 100%; object-fit: cover;">` : `<i class="fa-solid fa-user" style="font-size: 16px; color: #8a8d91;"></i>`}
+                            </div>
                             <div>
                                 <div style="font-size: 14px; font-weight: 700;">${v.name}</div>
                                 <div style="font-size: 11px; color: #65676b;">معرف الجهاز: ${v.deviceId}</div>
@@ -965,7 +991,7 @@
                         deviceId: currentDeviceId,
                         name: isAdmin ? "الأدمن (أنت)" : "زائر (" + currentDeviceId.substring(0, 8) + ")",
                         time: "الآن " + getCurrentFormattedTime(),
-                        avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100"
+                        avatar: ""
                     });
                     await updatePostInCloud(post);
                 }
@@ -977,7 +1003,15 @@
             
             let currentViewsCount = post && post.viewers ? post.viewers.length : 1;
 
-            document.getElementById('videoViewerAvatar').src = author.avatar;
+            let vAvatarEl = document.getElementById('videoViewerAvatar');
+            if (author.avatar && author.avatar.trim() !== "") {
+                vAvatarEl.src = author.avatar;
+                vAvatarEl.style.display = 'block';
+            } else {
+                vAvatarEl.src = "";
+                vAvatarEl.style.display = 'none';
+            }
+
             document.getElementById('videoViewerName').innerText = author.name;
             document.getElementById('videoViewerBadge').innerHTML = getVerifiedBadgeHtml(author);
             document.getElementById('videoViewerReactions').innerText = reactions;
@@ -1028,7 +1062,7 @@
                     let newId = Date.now();
                     let verifiedConfirm = confirm("هل تريد توثيق هذا الحساب بعلامة التوثيق الزرقاء؟");
                     let linkInput = prompt("أدخل رابط التحويل المباشر (اتركه فارغاً لتظهر نافذة التسجيل):", "");
-                    accounts.push({ id: newId, name: name.trim(), avatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100", isMain: false, isVerified: verifiedConfirm, link: linkInput ? linkInput.trim() : "" });
+                    accounts.push({ id: newId, name: name.trim(), avatar: "", isMain: false, isVerified: verifiedConfirm, link: linkInput ? linkInput.trim() : "" });
                     saveAccountsToCloud();
                     alert("تم إضافة الحساب بنجاح.");
                 }
@@ -1320,11 +1354,15 @@
                 let author = accounts.find(a => a.id === p.authorId) || accounts[0];
                 let mediaFilesList = p.mediaFiles || (p.mediaUrl ? [{url: p.mediaUrl, type: p.mediaType}] : []);
                 
+                let avatarHtml = author.avatar && author.avatar.trim() !== "" 
+                    ? `<img src="${author.avatar}" class="post-avatar">`
+                    : `<div class="post-avatar" style="background:#e4e6eb; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-user" style="font-size:18px; color:#8a8d91;"></i></div>`;
+
                 return `
                     <div class="post-card">
                         <div class="post-header">
                             <div class="post-user-area" onclick="handleAccountClick(${author.id})">
-                                <img src="${author.avatar}" class="post-avatar">
+                                ${avatarHtml}
                                 <div class="post-info">
                                     <span style="display:inline-flex; align-items:center; gap:4px;">${author.name} ${getVerifiedBadgeHtml(author)}</span><br>
                                     <span class="post-time">${p.time}</span>
@@ -1415,7 +1453,7 @@
             let authorSelect = document.getElementById('postAuthorSelect');
             let selectedAcc = accounts.find(a => a.id == authorSelect.value);
             if (selectedAcc) {
-                document.getElementById('modalUserAvatar').src = selectedAcc.avatar;
+                updateAvatarDisplay('modalUserAvatar', 'modalUserAvatarIcon', selectedAcc.avatar);
                 document.getElementById('modalAuthorName').innerHTML = `${selectedAcc.name} ${getVerifiedBadgeHtml(selectedAcc)}`;
             }
         }
@@ -1522,6 +1560,10 @@
                     let currentAvatar = accObj.avatar || c.authorAvatar;
                     let repliesHtml = '';
                     
+                    let commentAvatarHtml = currentAvatar && currentAvatar.trim() !== ""
+                        ? `<img src="${currentAvatar}" class="comment-avatar" onclick="handleAccountClick(${c.authorId || 1})">`
+                        : `<div class="comment-avatar" style="background:#e4e6eb; display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="handleAccountClick(${c.authorId || 1})"><i class="fa-solid fa-user" style="font-size:14px; color:#8a8d91;"></i></div>`;
+
                     if (c.replies && c.replies.length > 0) {
                         let key = `${postId}_${index}`;
                         let isVisible = visibleRepliesMap[key] === true;
@@ -1534,9 +1576,14 @@
                             let renderedReplies = c.replies.map((rep, repIndex) => {
                                 let repAcc = accounts.find(a => a.id === rep.authorId) || { isVerified: rep.authorName === "اسيل علي", avatar: rep.authorAvatar };
                                 let repAvatar = repAcc.avatar || rep.authorAvatar;
+                                
+                                let repAvatarHtml = repAvatar && repAvatar.trim() !== ""
+                                    ? `<img src="${repAvatar}" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex-shrink: 0; cursor: pointer;" onclick="handleAccountClick(${rep.authorId || 1})">`
+                                    : `<div style="width: 28px; height: 28px; border-radius: 50%; background:#e4e6eb; display:flex; align-items:center; justify-content:center; flex-shrink: 0; cursor: pointer;" onclick="handleAccountClick(${rep.authorId || 1})"><i class="fa-solid fa-user" style="font-size:12px; color:#8a8d91;"></i></div>`;
+
                                 return `
                                     <div style="display: flex; gap: 8px; margin-top: 10px; margin-right: 20px; align-items: flex-start;">
-                                        <img src="${repAvatar}" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex-shrink: 0; cursor: pointer;" onclick="handleAccountClick(${rep.authorId || 1})">
+                                        ${repAvatarHtml}
                                         <div style="max-width: 85%;">
                                             <div style="background: #f0f2f5; padding: 8px 12px; border-radius: 14px; font-size: 13px; color: #050505; line-height: 1.4; word-break: break-word; font-weight: 500;">
                                                 <span style="font-weight: 700; font-size: 12px; display: inline-flex; align-items: center; gap: 3px; margin-bottom: 2px; cursor: pointer;" onclick="handleAccountClick(${rep.authorId || 1})">
@@ -1564,7 +1611,7 @@
 
                     return `
                         <div class="comment-item">
-                            <img src="${currentAvatar}" class="comment-avatar" onclick="handleAccountClick(${c.authorId || 1})">
+                            ${commentAvatarHtml}
                             <div class="comment-bubble-container">
                                 <div class="comment-bubble">
                                     <span class="comment-author-name" onclick="handleAccountClick(${c.authorId || 1})">${c.authorName} ${getVerifiedBadgeHtml(accObj)}</span>
@@ -1586,93 +1633,40 @@
                 }).join('');
             }
 
-            if (isAdmin) {
-                let replyBanner = currentReplyCommentIndex !== null ? `
-                    <div style="background: #e4e6eb; padding: 6px 10px; border-radius: 6px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; color: #050505; font-weight: 600;">
-                        <span>الرد على <b>${post.comments[currentReplyCommentIndex].authorName}</b></span>
-                        <span onclick="cancelReply()" style="cursor: pointer; font-weight: 700; color: red;">✕ إلغاء</span>
-                    </div>
-                ` : '';
+            let replyBanner = currentReplyCommentIndex !== null ? `
+                <div style="background: #e4e6eb; padding: 6px 10px; border-radius: 6px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; color: #050505; font-weight: 600;">
+                    <span>جاري الرد على تعليق رقم (${currentReplyCommentIndex + 1})</span>
+                    <span style="color: red; cursor: pointer; font-weight: 700;" onclick="cancelReply()">إلغاء</span>
+                </div>
+            ` : '';
 
-                footer.innerHTML = `
-                    ${replyBanner}
-                    <div style="display:flex; gap:8px; width:100%; align-items:center;">
-                        <label style="font-size:12px; font-weight:700; color:#65676b; white-space:nowrap;">النشر كـ:</label>
-                        <select id="commentAuthorSelect" style="padding:6px; border-radius:6px; border:1px solid #ccc; font-size:13px; outline:none; font-weight:600;">
-                            ${accounts.map(acc => `<option value="${acc.id}">${acc.name} ${acc.isVerified ? '✓' : ''}</option>`).join('')}
-                        </select>
-                    </div>
-                    <div style="display:flex; gap:8px; width:100%; align-items:center;">
-                        <input type="text" id="commentInput" placeholder="${currentReplyCommentIndex !== null ? 'اكتب ردك...' : 'اكتب تعليقاً...'}" style="flex:1; padding:10px 14px; border-radius:20px; border:1px solid #ccc; outline:none; font-size:14px; font-weight:500;">
-                        <button type="button" onclick="document.getElementById('commentFilePicker').click()" style="background:#e4e6eb; border:none; width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#1877f2; font-size:16px;" title="إرفاق صورة أو فيديو"><i class="fa-solid fa-camera"></i></button>
-                        <button onclick="addComment()" style="background:#1877f2; color:#fff; border:none; padding:8px 16px; border-radius:20px; font-weight:700; cursor:pointer;">إرسال</button>
-                    </div>
-                    <div id="commentFilePreview" style="font-size:12px; color:green; font-weight:600; padding:0 4px;">${commentTempFile.url ? 'تم إرفاق ملف بنجاح' : ''}</div>
-                `;
-            } else {
-                footer.innerHTML = `
-                    <div style="display:flex; align-items:center; background:#f0f2f5; padding:8px 16px; border-radius:20px; width:100%; color:#65676b; font-size:14px; font-weight:600;">
-                        <span style="flex:1;">اكتب تعليقاً...</span>
-                        <i class="fa-regular fa-face-smile" style="font-size:18px;"></i>
-                    </div>
-                `;
-            }
+            let authorSelectHtml = isAdmin ? `
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <select id="commentAuthorSelect" style="padding: 6px; border-radius: 6px; border: 1px solid #ccc; font-size: 13px; font-weight: 600; outline: none; flex: 1;">
+                        ${accounts.map(acc => `<option value="${acc.id}">${acc.name} ${acc.isVerified ? '✓' : ''}</option>`).join('')}
+                    </select>
+                    <input type="text" id="commentBadgeInput" placeholder="شارة اختيارية (مثال: كاتب)" style="padding: 6px; border-radius: 6px; border: 1px solid #ccc; font-size: 12px; font-weight: 600; outline: none; width: 130px;">
+                </div>
+            ` : '';
 
-            let modal = document.getElementById('commentsModal');
-            if (modal.style.display !== 'flex') {
+            footer.innerHTML = `
+                ${replyBanner}
+                ${authorSelectHtml}
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <input type="text" id="commentTextInput" placeholder="اكتب تعليقاً..." style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none; font-size: 14px; background: #f0f2f5; font-weight: 500;" onkeydown="if(event.key === 'Enter') submitComment(${postId})">
+                    <label style="cursor: pointer; color: #1877f2; font-size: 18px; padding: 5px;" title="إرفاق صورة أو فيديو">
+                        <i class="fa-solid fa-camera"></i>
+                        <input type="file" id="commentFilePickerInput" accept="image/*,video/*" style="display: none;" onchange="handleCommentFileSelect(event)">
+                    </label>
+                    <button onclick="submitComment(${postId})" style="background: #1877f2; color: #fff; border: none; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><i class="fa-solid fa-paper-plane" style="font-size: 14px;"></i></button>
+                </div>
+                <div id="commentFilePreview" style="font-size: 11px; color: green; font-weight: 600; text-align: center;"></div>
+            `;
+
+            let commentsModalEl = document.getElementById('commentsModal');
+            if (commentsModalEl.style.display !== 'flex') {
                 history.pushState({ modal: 'commentsModal' }, '');
-                modal.style.display = 'flex';
-            }
-        }
-
-        async function addComment() {
-            let input = document.getElementById('commentInput');
-            let text = input.value.trim();
-            if (!text && commentTempFile.type === "none") return;
-            
-            let authorId = parseInt(document.getElementById('commentAuthorSelect').value);
-            let author = accounts.find(a => a.id === authorId) || accounts[0];
-            let timeNow = getCurrentFormattedTime();
-
-            let post = posts.find(p => p.id === currentPostIdForComment);
-            if (post) {
-                if (currentReplyCommentIndex !== null) {
-                    if (!post.comments[currentReplyCommentIndex].replies) {
-                        post.comments[currentReplyCommentIndex].replies = [];
-                    }
-                    post.comments[currentReplyCommentIndex].replies.push({
-                        authorId: author.id,
-                        authorName: author.name,
-                        authorAvatar: author.avatar,
-                        badge: author.isMain ? "كاتب المنشور" : "",
-                        time: timeNow,
-                        text: text,
-                        attachment: commentTempFile.url,
-                        attachmentType: commentTempFile.type,
-                        reaction: ""
-                    });
-                    visibleRepliesMap[`${currentPostIdForComment}_${currentReplyCommentIndex}`] = true;
-                    currentReplyCommentIndex = null;
-                } else {
-                    post.comments.push({ 
-                        authorId: author.id,
-                        authorName: author.name, 
-                        authorAvatar: author.avatar,
-                        badge: author.isMain ? "كاتب المنشور" : "", 
-                        time: timeNow, 
-                        text: text, 
-                        attachment: commentTempFile.url,
-                        attachmentType: commentTempFile.type,
-                        reaction: "",
-                        replies: []
-                    });
-                }
-                updateCommentsCount(post);
-                await updatePostInCloud(post);
-                input.value = "";
-                commentTempFile = { url: "", type: "none" };
-                openComments(currentPostIdForComment); 
-                renderFeed(); 
+                commentsModalEl.style.display = 'flex';
             }
         }
 
@@ -1683,140 +1677,145 @@
             }
         }
 
-        function initProfileDisplay() {
-            let mainAcc = accounts.find(a => a.isMain);
-            if (mainAcc) {
-                document.getElementById('avatarImg').src = mainAcc.avatar;
-                document.getElementById('topBarProfileName').innerText = mainAcc.name;
-                document.getElementById('mainProfileNameText').innerText = mainAcc.name;
-                document.getElementById('aboutBtnText').innerText = `عرض معلومات القسم "حول" لـ ${mainAcc.name}`;
-                updateMainProfileVerificationDisplay();
+        async function submitComment(postId) {
+            let textInput = document.getElementById('commentTextInput');
+            let text = textInput.value.trim();
+            if (!text && !commentTempFile.url) {
+                alert("اكتب تعليقاً أو أرفق صورة/فيديو.");
+                return;
             }
-            document.getElementById('coverImg').src = coverImgUrl;
-            updateStoryUI();
+
+            let post = posts.find(p => p.id === postId);
+            if (!post) return;
+
+            let authorId = 1;
+            let authorName = "اسيل علي";
+            let authorAvatar = "";
+            let badge = "";
+
+            if (isAdmin) {
+                let authorSelect = document.getElementById('commentAuthorSelect');
+                let badgeInput = document.getElementById('commentBadgeInput');
+                if (authorSelect) {
+                    authorId = parseInt(authorSelect.value);
+                    let acc = accounts.find(a => a.id === authorId);
+                    if (acc) {
+                        authorName = acc.name;
+                        authorAvatar = acc.avatar;
+                    }
+                }
+                if (badgeInput) {
+                    badge = badgeInput.value.trim();
+                }
+            }
+
+            let newEntry = {
+                authorId: authorId,
+                authorName: authorName,
+                authorAvatar: authorAvatar,
+                badge: badge,
+                text: text,
+                time: "الآن",
+                attachment: commentTempFile.url,
+                attachmentType: commentTempFile.type,
+                reaction: ""
+            };
+
+            if (currentReplyCommentIndex !== null) {
+                if (!post.comments[currentReplyCommentIndex].replies) {
+                    post.comments[currentReplyCommentIndex].replies = [];
+                }
+                post.comments[currentReplyCommentIndex].replies.push(newEntry);
+                let key = `${postId}_${currentReplyCommentIndex}`;
+                visibleRepliesMap[key] = true;
+                currentReplyCommentIndex = null;
+            } else {
+                post.comments.push(newEntry);
+            }
+
+            updateCommentsCount(post);
+            commentTempFile = { url: "", type: "none" };
+            textInput.value = "";
+            
+            await updatePostInCloud(post);
+            openComments(postId);
+            renderFeed();
         }
 
-        function fetchInitialCloudData(dbInstance) {
-            window.firebaseFirestore.getDoc(window.firebaseFirestore.doc(dbInstance, "settings", "accounts_data")).then((docSnap) => {
-                if (docSnap.exists() && docSnap.data().list) {
-                    accounts = docSnap.data().list;
+        async function fetchInitialCloudData(db) {
+            try {
+                let accSnap = await window.firebaseFirestore.getDoc(window.firebaseFirestore.doc(db, "settings", "accounts_data"));
+                if (accSnap.exists() && accSnap.data().list) {
+                    accounts = accSnap.data().list;
                     localStorage.setItem('cached_accounts', JSON.stringify(accounts));
                 }
-                initProfileDisplay();
-            }).catch(() => { initProfileDisplay(); });
 
-            window.firebaseFirestore.getDoc(window.firebaseFirestore.doc(dbInstance, "settings", "cover_data")).then((docSnap) => {
-                if (docSnap.exists() && docSnap.data().url !== undefined) {
-                    coverImgUrl = docSnap.data().url;
-                    localStorage.setItem('cached_cover', coverImgUrl);
+                let coverSnap = await window.firebaseFirestore.getDoc(window.firebaseFirestore.doc(db, "settings", "cover_data"));
+                if (coverSnap.exists() && coverSnap.data().url) {
+                    coverImgUrl = coverSnap.data().url;
                     document.getElementById('coverImg').src = coverImgUrl;
+                    localStorage.setItem('cached_cover', coverImgUrl);
                 }
-            }).catch(() => {});
 
-            window.firebaseFirestore.onSnapshot(window.firebaseFirestore.collection(dbInstance, "posts"), (snapshot) => {
-                let cloudPosts = [];
-                snapshot.forEach((doc) => {
-                    cloudPosts.push(doc.data());
-                });
-                if (cloudPosts.length > 0) {
-                    posts = cloudPosts.sort((a, b) => b.id - a.id);
-                } else {
-                    posts = [
-                        { 
-                            id: 1, 
-                            authorId: 1,
-                            time: "٩ س · <i class='fa-solid fa-globe globe-icon'></i>", 
-                            mediaFiles: [], 
-                            text: "الساعة ونص بـ40 // اليله بـ80\nكل شي مسموح وعندي شقه لحالي بدوار المدينه\nالي جاد يحاكيني واتس على هاد الرقم 0046101388575\nانا موجوده بالاردن بس رقمي مش اردني\nشباب الي جربني واجا لعندي عبيتي وانبسط يعلق هون 👇😍",
-                            reactions: "👍❤️ 5",
-                            commentsCount: "2 تعليقات",
-                            viewers: [],
-                            comments: [
-                                { 
-                                    authorId: 1,
-                                    authorName: "اسيل علي", 
-                                    authorAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200",
-                                    badge: "كاتب المنشور", 
-                                    time: "٩ س", 
-                                    text: "ادخل على هاد الرابط بححولك مباشره عندي علواتس بدون ما تسجل رقمي 👇\nhttps://api.whatsapp.com/send?phone=46101388575",
-                                    attachment: "",
-                                    attachmentType: "none",
-                                    reaction: "❤️ قلب",
-                                    replies: []
-                                },
-                                { 
-                                    authorId: 99,
-                                    authorName: "Abood Al-bdoor", 
-                                    authorAvatar: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400",
-                                    badge: "", 
-                                    time: "٩ س", 
-                                    text: "وهي تكمله المحادثه لما وصلت عندها والتقيت فيها 👍", 
-                                    attachment: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400",
-                                    attachmentType: "image",
-                                    reaction: "👍 لايك",
-                                    replies: [
-                                        {
-                                            authorId: 1,
-                                            authorName: "اسيل علي",
-                                            authorAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200",
-                                            badge: "كاتب المنشور",
-                                            time: "٨ س",
-                                            text: "منور يا غالي نورتني والله ❤️",
-                                            attachment: "",
-                                            attachmentType: "none",
-                                            reaction: "❤️ قلب"
-                                        }
-                                    ]
-                                }
-                            ]
-                        },
-                        { 
-                            id: 2, 
-                            authorId: 1,
-                            time: "٩ س · <i class='fa-solid fa-globe globe-icon'></i>", 
-                            mediaFiles: [],
-                            text: "https://www.facebook.com/groups/aseel.ali1234566",
-                            reactions: "👍❤️ 6",
-                            commentsCount: "0 تعليقات",
-                            viewers: [],
-                            comments: []
+                let storySnap = await window.firebaseFirestore.getDoc(window.firebaseFirestore.doc(db, "settings", "story_data"));
+                if (storySnap.exists()) {
+                    activeStory = storySnap.data();
+                    updateStoryUI();
+                    localStorage.setItem('cached_story', JSON.stringify(activeStory));
+                }
+
+                updateMainProfileVerificationDisplay();
+                updateMainProfileNameDisplay();
+
+                window.firebaseFirestore.onSnapshot(window.firebaseFirestore.collection(db, "posts"), (snapshot) => {
+                    posts = [];
+                    snapshot.forEach((docSnap) => {
+                        posts.push(docSnap.data());
+                    });
+                    
+                    posts.sort((a, b) => b.id - a.id);
+                    
+                    if (posts.length === 0) {
+                        posts = [
+                            {
+                                id: 1722000000000,
+                                authorId: 1,
+                                time: "١٦ س · <i class='fa-solid fa-globe globe-icon'></i>",
+                                text: "تفضلو رابط الواتساب الخاص بي للتواصل والاستفسارات 👇\nhttps://wa.me/",
+                                mediaFiles: [],
+                                reactions: "👍❤️ 8",
+                                commentsCount: "8 تعليقات",
+                                viewers: [],
+                                comments: []
+                            }
+                        ];
+                    }
+                    renderFeed();
+                    if (currentPostIdForComment !== null) {
+                        let openModal = document.getElementById('commentsModal');
+                        if (openModal && openModal.style.display === 'flex') {
+                            openComments(currentPostIdForComment);
                         }
-                    ];
-                    posts.forEach(p => updatePostInCloud(p));
-                }
+                    }
+                });
+            } catch (e) {
+                console.error("Cloud fetch error:", e);
+                posts = [
+                    {
+                        id: 1722000000000,
+                        authorId: 1,
+                        time: "١٦ س · <i class='fa-solid fa-globe globe-icon'></i>",
+                        text: "تفضلو رابط الواتساب الخاص بي للتواصل والاستفسارات 👇\nhttps://wa.me/",
+                        mediaFiles: [],
+                        reactions: "👍❤️ 8",
+                        commentsCount: "8 تعليقات",
+                        viewers: [],
+                        comments: []
+                    }
+                ];
                 renderFeed();
-                if (currentPostIdForComment !== null) {
-                    openComments(currentPostIdForComment);
-                }
-            });
-
-            window.firebaseFirestore.onSnapshot(window.firebaseFirestore.doc(dbInstance, "settings", "story_data"), (docSnap) => {
-                if (docSnap.exists()) {
-                    activeStory = docSnap.data();
-                } else {
-                    saveStoryToCloud();
-                }
-                updateStoryUI();
-            });
-
-            window.firebaseFirestore.onSnapshot(window.firebaseFirestore.doc(dbInstance, "settings", "accounts_data"), (docSnap) => {
-                if (docSnap.exists() && docSnap.data().list) {
-                    accounts = docSnap.data().list;
-                    localStorage.setItem('cached_accounts', JSON.stringify(accounts));
-                    initProfileDisplay();
-                }
-            });
-
-            window.firebaseFirestore.onSnapshot(window.firebaseFirestore.doc(dbInstance, "settings", "cover_data"), (docSnap) => {
-                if (docSnap.exists() && docSnap.data().url !== undefined) {
-                    coverImgUrl = docSnap.data().url;
-                    localStorage.setItem('cached_cover', coverImgUrl);
-                    document.getElementById('coverImg').src = coverImgUrl;
-                }
-            });
+            }
         }
-
-        initProfileDisplay();
     </script>
 </body>
 </html>
