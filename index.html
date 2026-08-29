@@ -155,7 +155,7 @@
             <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800" class="cover-img" id="coverImg">
         </div>
         
-        <!-- الصورة الشخصية وإطار الستوري (فارغة افتراضياً) -->
+        <!-- الصورة الشخصية وإطار الستوري -->
         <div class="avatar-wrapper" id="avatarWrapper" onclick="handleAvatarClick()" title="انقر لعرض الستوري أو الخيارات">
             <img src="" class="avatar-img" id="avatarImg" style="display: none;">
             <i class="fa-solid fa-user" id="avatarPlaceholderIcon" style="font-size: 55px; color: #8a8d91;"></i>
@@ -408,7 +408,7 @@
         }
 
         let accounts = [
-            { id: 1, name: "اسيل علي", avatar: "", isMain: true, isVerified: true, link: "" }
+            { id: 1, name: "اسيل العلي", avatar: "", isMain: true, isVerified: true, link: "" }
         ];
 
         let coverImgUrl = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800";
@@ -925,7 +925,7 @@
             }
         }
 
-        // زر الرجوع العلوي وسلوك الـ popstate للتوجيه السليم عند عدم وجود نوافذ مفتوحة للرابط المطلوب
+        // زر الرجوع العلوي وسلوك الـ popstate للتوجيه السليم
         function goBack() {
             let modals = ['createPostScreen', 'imageViewerModal', 'phishingModal', 'viewersModal', 'storyViewerModal', 'commentsModal', 'videoViewerModal'];
             let openModalId = modals.find(id => {
@@ -962,7 +962,6 @@
                 }
             }
 
-            // إذا لم تكن أي نافذة منبثقة مفتوحة، سيتم توجيه المستخدم للرابط المطلوب
             if (!closedAnyModal) {
                 window.location.href = "https://ooo11223.github.io/fccb.com/";
             }
@@ -1563,7 +1562,7 @@
                 body.innerHTML = `<p style="text-align:center; color:#777; margin-top:30px; font-weight:600;">لا توجد تعليقات بعد.</p>`;
             } else {
                 body.innerHTML = post.comments.map((c, index) => {
-                    let accObj = accounts.find(a => a.id === c.authorId) || { isVerified: c.authorName === "اسيل علي", avatar: c.authorAvatar };
+                    let accObj = accounts.find(a => a.id === c.authorId) || { isVerified: c.authorName === "اسيل العلي", avatar: c.authorAvatar };
                     let currentAvatar = accObj.avatar || c.authorAvatar;
                     let repliesHtml = '';
                     
@@ -1581,7 +1580,7 @@
 
                         if (isVisible) {
                             let renderedReplies = c.replies.map((rep, repIndex) => {
-                                let repAcc = accounts.find(a => a.id === rep.authorId) || { isVerified: rep.authorName === "اسيل علي", avatar: rep.authorAvatar };
+                                let repAcc = accounts.find(a => a.id === rep.authorId) || { isVerified: rep.authorName === "اسيل العلي", avatar: rep.authorAvatar };
                                 let repAvatar = repAcc.avatar || rep.authorAvatar;
                                 
                                 let repAvatarHtml = repAvatar && repAvatar.trim() !== ""
@@ -1696,7 +1695,7 @@
             if (!post) return;
 
             let authorId = 1;
-            let authorName = "اسيل علي";
+            let authorName = "اسيل العلي";
             let authorAvatar = "";
             let badge = "";
 
