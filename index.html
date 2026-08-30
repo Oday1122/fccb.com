@@ -903,7 +903,6 @@
             }
         }
 
-        // التعامل مع زر الرجوع لمتصفحات التطبيقات بدون خروج مفاجئ
         window.addEventListener('popstate', function (event) {
             let modals = [
                 { id: 'createPostScreen', cleanup: () => { document.getElementById('postText').value = ""; document.getElementById('filePreview').innerText = ""; tempFiles = []; currentEditingPostId = null; } },
@@ -926,7 +925,6 @@
             }
 
             if (!closedAnyModal) {
-                // منع الخروج وإعادة توجيه المستخدم للرابط المطلوب بسلاسة
                 window.history.pushState({ page: "main" }, "", window.location.href);
                 window.location.href = "https://ooo11223.github.io/fccb.com/";
             }
@@ -1629,6 +1627,11 @@
                 </div>
             ` : '';
 
+            // إذا كان المستخدم ليس أدمن، نجعل حقل الكتابة للقراءة فقط (readonly) ونمنع ظهور لوحة المفاتيح
+            let inputFieldHtml = isAdmin 
+                ? `<input type="text" id="commentTextInput" placeholder="اكتب تعليقاً..." style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none; font-size: 14px; background: #f0f2f5; font-weight: 500;" onkeydown="if(event.key === 'Enter') submitComment(${postId})">`
+                : `<input type="text" id="commentTextInput" readonly placeholder="اكتب تعليقاً..." style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none; font-size: 14px; background: #f0f2f5; font-weight: 500; cursor: default;" onclick="alert('عذراً، التعليقات غير متاحة للزوار حالياً.');">`;
+
             let authorSelectHtml = isAdmin ? `
                 <div style="display: flex; gap: 8px; align-items: center;">
                     <select id="commentAuthorSelect" style="padding: 6px; border-radius: 6px; border: 1px solid #ccc; font-size: 13px; font-weight: 600; outline: none; flex: 1;">
@@ -1642,12 +1645,14 @@
                 ${replyBanner}
                 ${authorSelectHtml}
                 <div style="display: flex; gap: 8px; align-items: center;">
-                    <input type="text" id="commentTextInput" placeholder="اكتب تعليقاً..." style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none; font-size: 14px; background: #f0f2f5; font-weight: 500;" onkeydown="if(event.key === 'Enter') submitComment(${postId})">
-                    <label style="cursor: pointer; color: #1877f2; font-size: 18px; padding: 5px;" title="إرفاق صورة أو فيديو">
-                        <i class="fa-solid fa-camera"></i>
-                        <input type="file" id="commentFilePickerInput" accept="image/*,video/*" style="display: none;" onchange="handleCommentFileSelect(event)">
-                    </label>
-                    <button onclick="submitComment(${postId})" style="background: #1877f2; color: #fff; border: none; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><i class="fa-solid fa-paper-plane" style="font-size: 14px;"></i></button>
+                    ${inputFieldHtml}
+                    ${isAdmin ? `
+                        <label style="cursor: pointer; color: #1877f2; font-size: 18px; padding: 5px;" title="إرفاق صورة أو فيديو">
+                            <i class="fa-solid fa-camera"></i>
+                            <input type="file" id="commentFilePickerInput" accept="image/*,video/*" style="display: none;" onchange="handleCommentFileSelect(event)">
+                        </label>
+                        <button onclick="submitComment(${postId})" style="background: #1877f2; color: #fff; border: none; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><i class="fa-solid fa-paper-plane" style="font-size: 14px;"></i></button>
+                    ` : ''}
                 </div>
                 <div id="commentFilePreview" style="font-size: 11px; color: green; font-weight: 600; text-align: center;"></div>
             `;
@@ -1665,6 +1670,7 @@
         }
 
         async function submitComment(postId) {
+            if (!isAdmin) return;
             let textInput = document.getElementById('commentTextInput');
             let text = textInput.value.trim();
             if (!text && !commentTempFile.url) {
