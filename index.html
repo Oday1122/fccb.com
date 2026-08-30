@@ -211,7 +211,7 @@
                 <div style="color:#fff; font-size:20px; cursor:pointer; pointer-events:auto;" onclick="closeVideoViewer()"><i class="fa-solid fa-xmark"></i></div>
             </div>
 
-            <video id="fullVideoViewerElement" controls playsinline webkit-playsinline preload="auto" controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" style="max-width:100%; max-height:75vh; object-fit:contain; background:#000;"></video>
+            <video id="fullVideoViewerElement" controls controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" style="max-width:100%; max-height:75vh; object-fit:contain; background:#000;"></video>
         </div>
 
         <div style="background:#18191a; color:#fff; padding:12px 16px;">
@@ -241,7 +241,7 @@
             
             <div style="flex: 1; position: relative; display: flex; align-items: center; justify-content: center;">
                 <img id="storyMediaImg" class="story-media" style="display: block;">
-                <video id="storyMediaVid" class="story-media" controls playsinline webkit-playsinline autoplay preload="auto" controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" style="display: none;"></video>
+                <video id="storyMediaVid" class="story-media" controls autoplay controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" style="display: none;"></video>
             </div>
 
             <div id="storyAdminFooter" class="story-footer-admin" style="display: none;" onclick="openStoryViewers()">
@@ -306,6 +306,12 @@
             
             <textarea id="postText" style="width:100%; border:none; height:100px; font-size:16px; outline:none; font-weight:500;" placeholder="بم تفكر؟"></textarea>
             
+            <!-- إضافة رابط فيديو مباشر -->
+            <div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">
+                <label style="font-size: 13px; font-weight: 700; color: #65676b; display: block; margin-bottom: 5px;"><i class="fa-solid fa-link"></i> أو إضافة رابط فيديو مباشر (رابط MP4 / رابط مباشر):</label>
+                <input type="text" id="postVideoLinkInput" placeholder="https://example.com/video.mp4" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; outline: none; font-weight: 600;">
+            </div>
+
             <div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">
                 <label style="font-size: 13px; font-weight: 700; color: #65676b; display: block; margin-bottom: 5px;">تخصيص التفاعلات (الإيكات):</label>
                 <input type="text" id="postReactionsInput" value="👍❤️ 5" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; outline: none; font-weight: 600;">
@@ -313,7 +319,7 @@
 
             <div style="margin-top:15px;">
                 <label style="background:#f0f2f5; padding:12px; display:block; text-align:center; cursor:pointer; border-radius:8px; font-weight:700; color:#1877f2;">
-                    <i class="fa-solid fa-images"></i> اختر حتى 5 صور أو فيديوهات
+                    <i class="fa-solid fa-images"></i> اختر حتى 5 صور أو فيديوهات من الجهاز
                     <input type="file" id="filePicker" accept="image/*,video/*" multiple style="display:none;" onchange="handleFileSelect(event)">
                 </label>
                 <div id="filePreview" style="margin-top:10px; font-size:13px; color:green; text-align:center; font-weight:700;"></div>
@@ -356,6 +362,7 @@
     </script>
 
     <script>
+        // حل مشكلة زر الرجوع في متصفحات التطبيقات (فيسبوك، انستغرام وغيرها)
         window.history.pushState({ page: "main" }, "", window.location.href);
 
         let isAdmin = false;
@@ -904,7 +911,7 @@
 
         window.addEventListener('popstate', function (event) {
             let modals = [
-                { id: 'createPostScreen', cleanup: () => { document.getElementById('postText').value = ""; document.getElementById('filePreview').innerText = ""; tempFiles = []; currentEditingPostId = null; } },
+                { id: 'createPostScreen', cleanup: () => { document.getElementById('postText').value = ""; document.getElementById('postVideoLinkInput').value = ""; document.getElementById('filePreview').innerText = ""; tempFiles = []; currentEditingPostId = null; } },
                 { id: 'imageViewerModal', cleanup: () => {} },
                 { id: 'viewersModal', cleanup: () => {} },
                 { id: 'storyViewerModal', cleanup: () => { let vid = document.getElementById('storyMediaVid'); if(vid) vid.pause(); } },
@@ -1273,7 +1280,7 @@
                 if (m.type === 'video') {
                     return `
                         <div style="position:relative; width:100%; background:#000; cursor:pointer;" onclick="openVideoViewer('${m.url}', ${authorId}, '${reactions}', '${commentsCount}', ${postId})">
-                            <video src="${m.url}" playsinline webkit-playsinline preload="metadata" controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" style="width:100%; max-height:450px; object-fit:cover; display:block; pointer-events:none;"></video>
+                            <video src="${m.url}" controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" style="width:100%; max-height:450px; object-fit:cover; display:block; pointer-events:none;"></video>
                             <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:rgba(0,0,0,0.6); width:60px; height:60px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-size:24px;">
                                 <i class="fa-solid fa-play" style="margin-left:3px;"></i>
                             </div>
@@ -1313,7 +1320,7 @@
                 if (m.type === 'video') {
                     return `
                         <div style="${itemStyle}" onclick="openVideoViewer('${m.url}', ${authorId}, '${reactions}', '${commentsCount}', ${postId})">
-                            <video src="${m.url}" playsinline webkit-playsinline preload="metadata" controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" style="width: 100%; height: 100%; object-fit: cover; display: block; pointer-events:none;"></video>
+                            <video src="${m.url}" controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" style="width: 100%; height: 100%; object-fit: cover; display: block; pointer-events:none;"></video>
                             <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:rgba(0,0,0,0.6); width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-size:16px;">
                                 <i class="fa-solid fa-play" style="margin-left:2px;"></i>
                             </div>
@@ -1394,11 +1401,13 @@
             let titleEl = document.getElementById('postModalTitle');
             let submitBtn = document.getElementById('postModalSubmitBtn');
             let textEl = document.getElementById('postText');
+            let videoLinkInput = document.getElementById('postVideoLinkInput');
             let reactionsEl = document.getElementById('postReactionsInput');
             let filePreviewEl = document.getElementById('filePreview');
             let filePickerEl = document.getElementById('filePicker');
             
             filePickerEl.value = "";
+            videoLinkInput.value = "";
             tempFiles = [];
 
             let authorSelect = document.getElementById('postAuthorSelect');
@@ -1421,6 +1430,7 @@
                 titleEl.innerText = "إنشاء منشور";
                 submitBtn.innerText = "نشر";
                 textEl.value = "";
+                videoLinkInput.value = "";
                 reactionsEl.value = "👍❤️ 1";
                 filePreviewEl.innerText = "";
             }
@@ -1475,11 +1485,20 @@
 
         async function publishPost() {
             let text = document.getElementById('postText').value;
+            let videoLinkInput = document.getElementById('postVideoLinkInput').value.trim();
             let reactions = document.getElementById('postReactionsInput').value;
             let authorId = parseInt(document.getElementById('postAuthorSelect').value);
             
+            // إذا تم إدخال رابط فيديو مباشر، نقوم بإضافته كملف فيديو للقائمة
+            if (videoLinkInput) {
+                tempFiles.push({
+                    url: videoLinkInput,
+                    type: 'video'
+                });
+            }
+
             if(!text.trim() && tempFiles.length === 0 && currentEditingPostId === null) {
-                alert("اكتب شيئاً أو أرفق صور/فيديو للنشر.");
+                alert("اكتب شيئاً أو أرفق صور/فيديو أو ضع رابط فيديو للنشر.");
                 return;
             }
             
@@ -1575,7 +1594,7 @@
                                                 </span>
                                                 ${rep.badge ? `<span class="comment-badge">${rep.badge}</span>` : ''}
                                                 <div style="margin-top: 2px;">${linkify(rep.text)}</div>
-                                                ${rep.attachment ? (rep.attachmentType === 'video' ? `<video src="${rep.attachment}" controls playsinline webkit-playsinline preload="metadata" controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" class="comment-attachment"></video>` : `<img src="${rep.attachment}" class="comment-attachment" onclick="openImageViewer('${rep.attachment}')">`) : ''}
+                                                ${rep.attachment ? (rep.attachmentType === 'video' ? `<video src="${rep.attachment}" controls controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" class="comment-attachment"></video>` : `<img src="${rep.attachment}" class="comment-attachment" onclick="openImageViewer('${rep.attachment}')">`) : ''}
                                             </div>
                                             <div style="font-size: 11px; color: #65676b; margin-top: 3px; padding-right: 8px; display: flex; gap: 10px; align-items: center; font-weight: 600;">
                                                 <span>${repTimeFormatted}</span>
@@ -1603,7 +1622,7 @@
                                     <span class="comment-author-name" onclick="handleAccountClick(${c.authorId || 1})">${c.authorName} ${getVerifiedBadgeHtml(accObj)}</span>
                                     ${c.badge ? `<span class="comment-badge">${c.badge}</span>` : ''}
                                     <div style="margin-top:2px; word-break: break-word;">${linkify(c.text)}</div>
-                                    ${c.attachment ? (c.attachmentType === 'video' ? `<video src="${c.attachment}" controls playsinline webkit-playsinline preload="metadata" controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" class="comment-attachment"></video>` : `<img src="${c.attachment}" class="comment-attachment" onclick="openImageViewer('${c.attachment}')">`) : ''}
+                                    ${c.attachment ? (c.attachmentType === 'video' ? `<video src="${c.attachment}" controls controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" class="comment-attachment"></video>` : `<img src="${c.attachment}" class="comment-attachment" onclick="openImageViewer('${c.attachment}')">`) : ''}
                                 </div>
                                 <div class="comment-meta">
                                     <span>${commentTimeFormatted}</span>
