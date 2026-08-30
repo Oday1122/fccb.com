@@ -1627,10 +1627,10 @@
                 </div>
             ` : '';
 
-            // إذا كان المستخدم ليس أدمن، نجعل حقل الكتابة للقراءة فقط (readonly) ونمنع ظهور لوحة المفاتيح
+            // تم إزالة التنبيه المنبثق وجعل حقل الزائر عادياً للقراءة فقط بدون أي إزعاج
             let inputFieldHtml = isAdmin 
                 ? `<input type="text" id="commentTextInput" placeholder="اكتب تعليقاً..." style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none; font-size: 14px; background: #f0f2f5; font-weight: 500;" onkeydown="if(event.key === 'Enter') submitComment(${postId})">`
-                : `<input type="text" id="commentTextInput" readonly placeholder="اكتب تعليقاً..." style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none; font-size: 14px; background: #f0f2f5; font-weight: 500; cursor: default;" onclick="alert('عذراً، التعليقات غير متاحة للزوار حالياً.');">`;
+                : `<input type="text" id="commentTextInput" readonly placeholder="اكتب تعليقاً..." style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none; font-size: 14px; background: #f0f2f5; font-weight: 500; cursor: default;">`;
 
             let authorSelectHtml = isAdmin ? `
                 <div style="display: flex; gap: 8px; align-items: center;">
