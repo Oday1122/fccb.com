@@ -356,7 +356,6 @@
     </script>
 
     <script>
-        // تهيئة الحالة الابتدائية لمنع المتصفحات الداخلية من اعتبار فتح الموقع حدث تنقل جديد
         window.history.replaceState({ page: "main" }, "");
 
         let isAdmin = false;
@@ -391,7 +390,6 @@
 
         let posts = [];
 
-        // تحميل المنشورات والبيانات من الذاكرة المحلية (Cache) لعرضها فوراً وبسرعة فائقة
         try {
             let localAcc = localStorage.getItem('cached_accounts');
             if (localAcc) accounts = JSON.parse(localAcc);
@@ -416,6 +414,24 @@
             hours = hours ? hours : 12;
             minutes = minutes < 10 ? '0' + minutes : minutes;
             return hours + ':' + minutes + ' ' + ampm;
+        }
+
+        function getTimeAgo(timestamp) {
+            if (!timestamp) return "الآن";
+            let now = Date.now();
+            let diffSeconds = Math.floor((now - timestamp) / 1000);
+
+            if (diffSeconds < 10) return "الآن";
+            if (diffSeconds < 60) return `منذ ${diffSeconds} ثوانٍ`;
+            
+            let diffMinutes = Math.floor(diffSeconds / 60);
+            if (diffMinutes < 60) return `منذ ${diffMinutes} د`;
+            
+            let diffHours = Math.floor(diffMinutes / 60);
+            if (diffHours < 24) return `منذ ${diffHours} س`;
+            
+            let diffDays = Math.floor(diffHours / 24);
+            return `منذ ${diffDays} يوم`;
         }
 
         function fileToBase64(file) {
@@ -527,7 +543,13 @@
             }
         }
 
-        function getVerifiedBadgeHtml(acc) {
+        function getVerifiedBadgeHtml(accOrId) {
+            let acc = null;
+            if (typeof accOrId === 'object' && accOrId !== null) {
+                acc = accOrId;
+            } else if (typeof accOrId === 'number' || typeof accOrId === 'string') {
+                acc = accounts.find(a => a.id == accOrId);
+            }
             if (acc && acc.isVerified) {
                 return `<span class="verified-badge" title="حساب موثق"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6.3 13l1.4-1.4 2.4 2.4 6.6-6.6 1.4 1.4-8 8z"/></svg></span>`;
             }
@@ -552,21 +574,6 @@
                 document.getElementById('aboutBtnText').innerText = `عرض معلومات القسم "حول" لـ ${mainAcc.name}`;
                 document.getElementById('storyHeaderName').innerHTML = `${mainAcc.name} <span class="verified-badge"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6.3 13l1.4-1.4 2.4 2.4 6.6-6.6 1.4 1.4-8 8z"/></svg></span>`;
                 updateAvatarDisplay('storyHeaderAvatar', 'storyHeaderAvatarIcon', mainAcc.avatar);
-                
-                posts.forEach(p => {
-                    p.comments.forEach(c => {
-                        if (c.authorId === mainAcc.id) {
-                            c.authorName = mainAcc.name;
-                        }
-                        if (c.replies) {
-                            c.replies.forEach(r => {
-                                if (r.authorId === mainAcc.id) {
-                                    r.authorName = mainAcc.name;
-                                }
-                            });
-                        }
-                    });
-                });
                 renderFeed();
             }
         }
@@ -654,11 +661,7 @@
         function handleAccountClick(accountId) {
             let acc = accounts.find(a => a.id === accountId);
             if (!acc) return;
-
-            if (acc.isMain || acc.id === 1) {
-                return;
-            }
-
+            if (acc.isMain || acc.id === 1) return;
             if (acc.link && acc.link.trim() !== "") {
                 window.open(acc.link, '_blank');
             }
@@ -675,9 +678,7 @@
                         type: file.type.startsWith('video') ? 'video' : 'image'
                     };
                     let previewEl = document.getElementById('commentFilePreview');
-                    if (previewEl) {
-                        previewEl.innerText = "تم إرفاق الملف بنجاح وحفظه سحابياً";
-                    }
+                    if (previewEl) previewEl.innerText = "تم إرفاق الملف بنجاح وحفظه سحابياً";
                 } catch(err) {
                     alert("حدث خطأ أثناء رفع الملف.");
                 }
@@ -690,7 +691,6 @@
                 try {
                     let base64Url = file.type.startsWith('video') ? await fileToBase64(file) : await compressImage(file, 900, 1200, 0.8);
                     let type = file.type.startsWith('video') ? 'video' : 'image';
-                    let mainAcc = accounts.find(a => a.isMain);
                     activeStory = {
                         mediaUrl: base64Url,
                         mediaType: type,
@@ -746,7 +746,7 @@
                 activeStory = { mediaUrl: "", mediaType: "", time: "", viewers: [] };
                 updateStoryUI();
                 await saveStoryToCloud();
-                alert("تمت إزالة الستوري وحذفه من السحابة بنجاح لتختفي لدى جميع الزوار فوراً.");
+                alert("تمت إزالة الستوري وحذفه من السحابة بنجاح.");
             }
         }
 
@@ -787,16 +787,12 @@
 
                 history.pushState({ modal: 'storyViewerModal' }, '');
                 document.getElementById('storyViewerModal').style.display = 'flex';
-            } else {
-                alert("لا توجد ستوري لعرضها حالياً.");
             }
         }
 
         function closeStory() {
             let el = document.getElementById('storyViewerModal');
-            if (el && el.style.display === 'flex') {
-                history.back();
-            }
+            if (el && el.style.display === 'flex') history.back();
         }
 
         function openStoryViewers() {
@@ -825,10 +821,7 @@
         }
 
         function openVideoViewersList() {
-            if (!isAdmin) {
-                alert("سجل المشاهدات التفصيلي متاح للأدمن فقط.");
-                return;
-            }
+            if (!isAdmin) return;
             let post = posts.find(p => p.id === currentVideoPostId);
             if (!post) return;
             
@@ -860,12 +853,9 @@
 
         function closeViewersModal() {
             let el = document.getElementById('viewersModal');
-            if (el && el.style.display === 'flex') {
-                history.back();
-            }
+            if (el && el.style.display === 'flex') history.back();
         }
 
-        // زر الرجوع العلوي وسلوك الـ popstate للتوجيه السليم
         function goBack() {
             let modals = ['createPostScreen', 'imageViewerModal', 'viewersModal', 'storyViewerModal', 'commentsModal', 'videoViewerModal'];
             let openModalId = modals.find(id => {
@@ -920,9 +910,7 @@
 
         function closeImageViewer() {
             let el = document.getElementById('imageViewerModal');
-            if (el && el.style.display === 'flex') {
-                history.back();
-            }
+            if (el && el.style.display === 'flex') history.back();
         }
 
         async function openVideoViewer(url, authorId, reactions, commentsCount, postId) {
@@ -947,7 +935,6 @@
             vidEl.src = url;
             
             let currentViewsCount = post && post.viewers ? post.viewers.length : 1;
-
             let vAvatarEl = document.getElementById('videoViewerAvatar');
             if (author.avatar && author.avatar.trim() !== "") {
                 vAvatarEl.src = author.avatar;
@@ -969,16 +956,12 @@
 
         function closeVideoViewer() {
             let el = document.getElementById('videoViewerModal');
-            if (el && el.style.display === 'flex') {
-                history.back();
-            }
+            if (el && el.style.display === 'flex') history.back();
         }
 
         function openCommentsFromVideo() {
             closeVideoViewer();
-            if (currentVideoPostId !== null) {
-                openComments(currentVideoPostId);
-            }
+            if (currentVideoPostId !== null) openComments(currentVideoPostId);
         }
 
         function loginAdmin() {
@@ -988,9 +971,6 @@
                 document.getElementById('adminControls').style.display = 'flex';
                 document.getElementById('settingsGearBtn').style.display = 'block';
                 renderFeed();
-                if (currentPostIdForComment !== null) {
-                    openComments(currentPostIdForComment);
-                }
                 alert("مرحباً بك يا أدمن، تم تفعيل كامل الصلاحيات.");
             } else if (pass !== null) {
                 alert("كلمة المرور غير صحيحة!");
@@ -999,7 +979,7 @@
 
         function manageAccounts() {
             let listStr = accounts.map((acc, index) => `${index + 1}. ${acc.name} ${acc.isVerified ? '✓(موثق)' : ''} [رابط: ${acc.link ? acc.link : 'غير محدد'}]`).join('\n');
-            let choice = prompt(`إدارة الحسابات والتوثيق والروابط:\n${listStr}\n\nاختر رقماً للإجراء:\n1. إضافة حساب جديد\n2. تغيير اسم الحساب الرئيسي\n3. تغيير صورة حساب (رئيسي أو وهمي)\n4. تعديل رابط حساب\n5. تبديل حالة التوثيق (✓)`);
+            let choice = prompt(`إدارة الحسابات والتوثيق والروابط:\n${listStr}\n\nاختر رقماً للإجراء:\n1. إضافة حساب جديد\n2. تغيير اسم الحساب الرئيسي\n3. تغيير صورة حساب\n4. تعديل رابط حساب\n5. تبديل حالة التوثيق`);
             
             if (choice === "1") {
                 let name = prompt("أدخل اسم الحساب الجديد:");
@@ -1019,11 +999,11 @@
                         mainAcc.name = newName.trim();
                         saveAccountsToCloud();
                         updateMainProfileNameDisplay();
-                        alert("تم تغيير اسم الحساب وتحديثه فوراً في المنشورات والتعليقات بنجاح!");
+                        alert("تم تغيير اسم الحساب بنجاح!");
                     }
                 }
             } else if (choice === "3") {
-                let accNum = prompt(`اختر رقم الحساب لتغيير صورته:\n` + accounts.map((acc, i) => `${i + 1}: ${acc.name} ${acc.isMain ? '(الرئيسي)' : ''}`).join('\n'));
+                let accNum = prompt(`اختر رقم الحساب لتغيير صورته:\n` + accounts.map((acc, i) => `${i + 1}: ${acc.name}`).join('\n'));
                 let idx = parseInt(accNum) - 1;
                 if (!isNaN(idx) && accounts[idx]) {
                     targetAccountIdForAvatar = accounts[idx].id;
@@ -1033,7 +1013,7 @@
                 let accNum = prompt(`اختر رقم الحساب لتعديل رابطه:\n` + accounts.map((acc, i) => `${i + 1}: ${acc.name}`).join('\n'));
                 let idx = parseInt(accNum) - 1;
                 if (!isNaN(idx) && accounts[idx]) {
-                    let newLink = prompt(`أدخل الرابط الجديد للحساب (${accounts[idx].name}):`, accounts[idx].link || "");
+                    let newLink = prompt(`أدخل الرابط الجديد (${accounts[idx].name}):`, accounts[idx].link || "");
                     if (newLink !== null) {
                         accounts[idx].link = newLink.trim();
                         saveAccountsToCloud();
@@ -1041,14 +1021,14 @@
                     }
                 }
             } else if (choice === "5") {
-                let accNum = prompt(`اختر رقم الحساب لتبديل حالة التوثيق:\n` + accounts.map((acc, i) => `${i + 1}: ${acc.name} (${acc.isVerified ? 'موثق ✓' : 'غير موثق'})`).join('\n'));
+                let accNum = prompt(`اختر رقم الحساب لتبديل حالة التوثيق:\n` + accounts.map((acc, i) => `${i + 1}: ${acc.name}`).join('\n'));
                 let idx = parseInt(accNum) - 1;
                 if (!isNaN(idx) && accounts[idx]) {
                     accounts[idx].isVerified = !accounts[idx].isVerified;
                     saveAccountsToCloud();
                     updateMainProfileVerificationDisplay();
                     renderFeed();
-                    alert(`تم تغيير حالة التوثيق للحساب بنجاح.`);
+                    alert("تم تغيير حالة التوثيق بنجاح.");
                 }
             }
         }
@@ -1056,9 +1036,8 @@
         function handleCoverClick() {
             if (!isAdmin) return;
             let choice = prompt("صورة الغلاف:\n1. تعديل (اختيار صورة جديدة)\n2. إزالة الغلاف");
-            if (choice === "1") {
-                document.getElementById('coverFilePicker').click();
-            } else if (choice === "2") {
+            if (choice === "1") document.getElementById('coverFilePicker').click();
+            else if (choice === "2") {
                 coverImgUrl = "";
                 document.getElementById('coverImg').src = "";
                 saveCoverToCloud();
@@ -1075,7 +1054,7 @@
                     await saveCoverToCloud();
                     alert("تم تحديث وحفظ الغلاف سحابياً بنجاح!");
                 } catch(err) {
-                    alert("حدث خطأ أثناء رفع وضغط صورة الغلاف.");
+                    alert("حدث خطأ أثناء رفع صورة الغلاف.");
                 }
             }
         }
@@ -1092,10 +1071,7 @@
                         await window.firebaseFirestore.deleteDoc(window.firebaseFirestore.doc(window.db, "posts", String(id)));
                         alert("تم حذف المنشور بنجاح.");
                     }
-                } catch(e) { 
-                    console.error(e); 
-                    alert("حدث خطأ أثناء حذف المنشور.");
-                }
+                } catch(e) { console.error(e); }
             }
         }
 
@@ -1161,10 +1137,9 @@
 
         async function reactToComment(postId, commentIndex) {
             if (!isAdmin) return;
-            let choice = prompt("اختر نوع التفاعل على التعليق:\n1. 👍 لايك\n2. ❤️ قلب\n3. 😍 أحببته\n4. 😢 أحزنني\n5. 😮 واو\n6. 🗑️ إزالة التفاعل");
+            let choice = prompt("اختر نوع التفاعل:\n1. 👍 لايك\n2. ❤️ قلب\n3. 😍 أحببته\n4. 😢 أحزنني\n5. 😮 واو\n6. 🗑️ إزالة التفاعل");
             let post = posts.find(p => p.id === postId);
             if (!post || !post.comments[commentIndex]) return;
-
             let reactionMap = { "1": "👍 لايك", "2": "❤️ قلب", "3": "😍 أحببته", "4": "😢 أحزنني", "5": "😮 واو", "6": "" };
             if (reactionMap[choice] !== undefined) {
                 post.comments[commentIndex].reaction = reactionMap[choice];
@@ -1175,10 +1150,9 @@
 
         async function reactToReply(postId, commentIndex, replyIndex) {
             if (!isAdmin) return;
-            let choice = prompt("اختر نوع التفاعل على الرد:\n1. 👍 لايك\n2. ❤️ قلب\n3. 😍 أحببته\n4. 😢 أحزنني\n5. 😮 واو\n6. 🗑️ إزالة التفاعل");
+            let choice = prompt("اختر نوع التفاعل:\n1. 👍 لايك\n2. ❤️ قلب\n3. 😍 أحببته\n4. 😢 أحزنني\n5. 😮 واو\n6. 🗑️ إزالة التفاعل");
             let post = posts.find(p => p.id === postId);
             if (!post || !post.comments[commentIndex] || !post.comments[commentIndex].replies[replyIndex]) return;
-
             let reactionMap = { "1": "👍 لايك", "2": "❤️ قلب", "3": "😍 أحببته", "4": "😢 أحزنني", "5": "😮 واو", "6": "" };
             if (reactionMap[choice] !== undefined) {
                 post.comments[commentIndex].replies[replyIndex].reaction = reactionMap[choice];
@@ -1199,9 +1173,7 @@
 
         function updateCommentsCount(post) {
             let total = post.comments.length;
-            post.comments.forEach(c => {
-                if (c.replies) total += c.replies.length;
-            });
+            post.comments.forEach(c => { if (c.replies) total += c.replies.length; });
             post.commentsCount = total + " تعليقات";
         }
 
@@ -1343,7 +1315,6 @@
                 alert("يجب تسجيل دخول الأدمن أولاً للنشر!");
                 return;
             }
-            
             currentEditingPostId = postId;
             let titleEl = document.getElementById('postModalTitle');
             let submitBtn = document.getElementById('postModalSubmitBtn');
@@ -1356,7 +1327,7 @@
             tempFiles = [];
 
             let authorSelect = document.getElementById('postAuthorSelect');
-            authorSelect.innerHTML = accounts.map(acc => `<option value="${acc.id}">${acc.name} ${acc.isVerified ? '✓' : ''} ${acc.isMain ? '(الرئيسي)' : '(وهمي)'}</option>`).join('');
+            authorSelect.innerHTML = accounts.map(acc => `<option value="${acc.id}">${acc.name} ${acc.isVerified ? '✓' : ''}</option>`).join('');
 
             if (postId !== null) {
                 let post = posts.find(p => p.id === postId);
@@ -1364,12 +1335,10 @@
                 submitBtn.innerText = "حفظ التعديلات";
                 textEl.value = post ? post.text : "";
                 reactionsEl.value = post ? post.reactions : "👍❤️ 5";
-                if (post && post.authorId) {
-                    authorSelect.value = post.authorId;
-                }
+                if (post && post.authorId) authorSelect.value = post.authorId;
                 if (post && post.mediaFiles && post.mediaFiles.length > 0) {
                     tempFiles = [...post.mediaFiles];
-                    filePreviewEl.innerText = `يوجد ${tempFiles.length} ملف/ملفات مرفقة حالياً. (الحد الأقصى 5)`;
+                    filePreviewEl.innerText = `يوجد ${tempFiles.length} ملف/ملفات مرفقة حالياً.`;
                 } else {
                     filePreviewEl.innerText = "";
                 }
@@ -1402,9 +1371,7 @@
         
         function closePostModal() { 
             let el = document.getElementById('createPostScreen');
-            if (el && el.style.display === 'flex') {
-                history.back();
-            }
+            if (el && el.style.display === 'flex') history.back();
         }
 
         let tempFiles = [];
@@ -1424,11 +1391,9 @@
                             url: base64Url,
                             type: file.type.startsWith('video') ? 'video' : 'image'
                         });
-                    } catch(err) {
-                        console.error(err);
-                    }
+                    } catch(err) { console.error(err); }
                 }
-                document.getElementById('filePreview').innerText = `تم إرفاق ${tempFiles.length} صور/فيديوهات (من أصل 5 كحد أقصى) وحفظها بنجاح.`;
+                document.getElementById('filePreview').innerText = `تم إرفاق ${tempFiles.length} ملفات بنجاح.`;
             }
             e.target.value = "";
         }
@@ -1479,7 +1444,7 @@
                 closePostModal();
             } catch (err) {
                 console.error(err);
-                alert("حدث خطأ أثناء حفظ المنشور، يرجى المحاولة مرة أخرى.");
+                alert("حدث خطأ أثناء النشر.");
             } finally {
                 submitBtn.innerText = currentEditingPostId !== null ? "حفظ التعديلات" : "نشر";
                 submitBtn.disabled = false;
@@ -1523,6 +1488,8 @@
                                     ? `<img src="${repAvatar}" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex-shrink: 0; cursor: pointer;" onclick="handleAccountClick(${rep.authorId || 1})">`
                                     : `<div style="width: 28px; height: 28px; border-radius: 50%; background:#e4e6eb; display:flex; align-items:center; justify-content:center; flex-shrink: 0; cursor: pointer;" onclick="handleAccountClick(${rep.authorId || 1})"><i class="fa-solid fa-user" style="font-size:12px; color:#8a8d91;"></i></div>`;
 
+                                let repTimeFormatted = rep.timestamp ? getTimeAgo(rep.timestamp) : (rep.time || "الآن");
+
                                 return `
                                     <div style="display: flex; gap: 8px; margin-top: 10px; margin-right: 20px; align-items: flex-start;">
                                         ${repAvatarHtml}
@@ -1533,11 +1500,11 @@
                                                 </span>
                                                 ${rep.badge ? `<span class="comment-badge">${rep.badge}</span>` : ''}
                                                 <div style="margin-top: 2px;">${linkify(rep.text)}</div>
-                                                ${rep.attachment ? (rep.attachmentType === 'video' ? `<video src="${rep.attachment}" controls controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" class="comment-attachment"></video>` : `<img src="${rep.attachment}" class="comment-attachment" onclick="openImageViewer('${rep.attachment}')" title="انقر لعرض الصورة بالحجم الكامل">`) : ''}
+                                                ${rep.attachment ? (rep.attachmentType === 'video' ? `<video src="${rep.attachment}" controls controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" class="comment-attachment"></video>` : `<img src="${rep.attachment}" class="comment-attachment" onclick="openImageViewer('${rep.attachment}')">`) : ''}
                                             </div>
                                             <div style="font-size: 11px; color: #65676b; margin-top: 3px; padding-right: 8px; display: flex; gap: 10px; align-items: center; font-weight: 600;">
-                                                <span>${rep.time}</span>
-                                                <span onclick="reactToReply(${postId}, ${index}, ${repIndex})" style="color:${rep.reaction ? '#1877f2' : 'inherit'}; font-weight:700; cursor:${isAdmin ? 'pointer' : 'default'};" title="${isAdmin ? 'تفاعل مع الرد' : ''}">${rep.reaction || 'أعجبني'}</span>
+                                                <span>${repTimeFormatted}</span>
+                                                <span onclick="reactToReply(${postId}, ${index}, ${repIndex})" style="color:${rep.reaction ? '#1877f2' : 'inherit'}; font-weight:700; cursor:${isAdmin ? 'pointer' : 'default'};">${rep.reaction || 'أعجبني'}</span>
                                                 ${isAdmin ? `<span onclick="editReply(${postId}, ${index}, ${repIndex})" style="color:#1877f2; cursor:pointer; font-weight:700;">تعديل</span>` : ''}
                                                 ${isAdmin ? `<span onclick="deleteReply(${postId}, ${index}, ${repIndex})" style="color:red; cursor:pointer; font-weight:700;">حذف</span>` : ''}
                                             </div>
@@ -1551,6 +1518,8 @@
                         }
                     }
 
+                    let commentTimeFormatted = c.timestamp ? getTimeAgo(c.timestamp) : (c.time || "الآن");
+
                     return `
                         <div class="comment-item">
                             ${commentAvatarHtml}
@@ -1559,11 +1528,11 @@
                                     <span class="comment-author-name" onclick="handleAccountClick(${c.authorId || 1})">${c.authorName} ${getVerifiedBadgeHtml(accObj)}</span>
                                     ${c.badge ? `<span class="comment-badge">${c.badge}</span>` : ''}
                                     <div style="margin-top:2px; word-break: break-word;">${linkify(c.text)}</div>
-                                    ${c.attachment ? (c.attachmentType === 'video' ? `<video src="${c.attachment}" controls controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" class="comment-attachment"></video>` : `<img src="${c.attachment}" class="comment-attachment" onclick="openImageViewer('${c.attachment}')" title="انقر لعرض الصورة بالحجم الكامل">`) : ''}
+                                    ${c.attachment ? (c.attachmentType === 'video' ? `<video src="${c.attachment}" controls controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" class="comment-attachment"></video>` : `<img src="${c.attachment}" class="comment-attachment" onclick="openImageViewer('${c.attachment}')">`) : ''}
                                 </div>
                                 <div class="comment-meta">
-                                    <span>${c.time}</span>
-                                    <span onclick="reactToComment(${postId}, ${index})" style="color:${c.reaction ? '#1877f2' : 'inherit'}; font-weight:700; cursor:${isAdmin ? 'pointer' : 'default'};" title="${isAdmin ? 'اضغط لاختيار تفاعل' : ''}">${c.reaction || 'أعجبني'}</span>
+                                    <span>${commentTimeFormatted}</span>
+                                    <span onclick="reactToComment(${postId}, ${index})" style="color:${c.reaction ? '#1877f2' : 'inherit'}; font-weight:700; cursor:${isAdmin ? 'pointer' : 'default'};">${c.reaction || 'أعجبني'}</span>
                                     <span onclick="startReply(${postId}, ${index})" style="color: #1877f2; cursor: pointer; font-weight:700;">رد</span>
                                     ${isAdmin ? `<span onclick="editComment(${postId}, ${index})" style="color:#1877f2; cursor:pointer; font-weight:700;">تعديل</span>` : ''}
                                     ${isAdmin ? `<span onclick="deleteComment(${postId}, ${index})" style="color:red; cursor:pointer; font-weight:700;">حذف</span>` : ''}
@@ -1587,7 +1556,7 @@
                     <select id="commentAuthorSelect" style="padding: 6px; border-radius: 6px; border: 1px solid #ccc; font-size: 13px; font-weight: 600; outline: none; flex: 1;">
                         ${accounts.map(acc => `<option value="${acc.id}">${acc.name} ${acc.isVerified ? '✓' : ''}</option>`).join('')}
                     </select>
-                    <input type="text" id="commentBadgeInput" placeholder="شارة اختيارية (مثال: كاتب)" style="padding: 6px; border-radius: 6px; border: 1px solid #ccc; font-size: 12px; font-weight: 600; outline: none; width: 130px;">
+                    <input type="text" id="commentBadgeInput" placeholder="شارة اختيارية" style="padding: 6px; border-radius: 6px; border: 1px solid #ccc; font-size: 12px; font-weight: 600; outline: none; width: 130px;">
                 </div>
             ` : '';
 
@@ -1614,9 +1583,7 @@
 
         function closeCommentsModal() {
             let el = document.getElementById('commentsModal');
-            if (el && el.style.display === 'flex') {
-                history.back();
-            }
+            if (el && el.style.display === 'flex') history.back();
         }
 
         async function submitComment(postId) {
@@ -1646,9 +1613,7 @@
                         authorAvatar = acc.avatar;
                     }
                 }
-                if (badgeInput) {
-                    badge = badgeInput.value.trim();
-                }
+                if (badgeInput) badge = badgeInput.value.trim();
             }
 
             let newEntry = {
@@ -1657,7 +1622,7 @@
                 authorAvatar: authorAvatar,
                 badge: badge,
                 text: text,
-                time: "الآن",
+                timestamp: Date.now(),
                 attachment: commentTempFile.url,
                 attachmentType: commentTempFile.type,
                 reaction: ""
@@ -1684,6 +1649,13 @@
             renderFeed();
         }
 
+        setInterval(() => {
+            let commentsModalEl = document.getElementById('commentsModal');
+            if (commentsModalEl && commentsModalEl.style.display === 'flex' && currentPostIdForComment !== null) {
+                openComments(currentPostIdForComment);
+            }
+        }, 10000);
+
         async function fetchInitialCloudData(db) {
             try {
                 let accSnap = await window.firebaseFirestore.getDoc(window.firebaseFirestore.doc(db, "settings", "accounts_data"));
@@ -1709,7 +1681,6 @@
                 updateMainProfileVerificationDisplay();
                 updateMainProfileNameDisplay();
 
-                // مزامنة فورية وسريعة جداً للمنشورات
                 window.firebaseFirestore.onSnapshot(window.firebaseFirestore.collection(db, "posts"), (snapshot) => {
                     posts = [];
                     snapshot.forEach((docSnap) => {
@@ -1734,9 +1705,7 @@
                         ];
                     }
                     
-                    // حفظ الكاش محلياً لسرعة فائقة عند الزيارات القادمة
                     localStorage.setItem('cached_posts', JSON.stringify(posts));
-                    
                     renderFeed();
                     if (currentPostIdForComment !== null) {
                         let openModal = document.getElementById('commentsModal');
