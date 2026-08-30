@@ -661,9 +661,28 @@
         function handleAccountClick(accountId) {
             let acc = accounts.find(a => a.id === accountId);
             if (!acc) return;
-            if (acc.isMain || acc.id === 1) return;
-            if (acc.link && acc.link.trim() !== "") {
-                window.open(acc.link, '_blank');
+            if (isAdmin) {
+                let choice = prompt(`إدارة الحساب (${acc.name}):\n1. تغيير الصورة الشخصية للحساب\n2. تعديل اسم الحساب\n3. الانتقال للرابط الخاص`);
+                if (choice === "1") {
+                    targetAccountIdForAvatar = acc.id;
+                    document.getElementById('accountAvatarPicker').click();
+                } else if (choice === "2") {
+                    let newName = prompt("أدخل الاسم الجديد:", acc.name);
+                    if (newName !== null && newName.trim() !== "") {
+                        acc.name = newName.trim();
+                        saveAccountsToCloud();
+                        if (acc.isMain) updateMainProfileNameDisplay();
+                        renderFeed();
+                        alert("تم تحديث الاسم بنجاح.");
+                    }
+                } else if (choice === "3") {
+                    if (acc.link && acc.link.trim() !== "") window.open(acc.link, '_blank');
+                    else alert("لا يوجد رابط مخصص لهذا الحساب.");
+                }
+            } else {
+                if (acc.link && acc.link.trim() !== "") {
+                    window.open(acc.link, '_blank');
+                }
             }
         }
 
@@ -979,7 +998,7 @@
 
         function manageAccounts() {
             let listStr = accounts.map((acc, index) => `${index + 1}. ${acc.name} ${acc.isVerified ? '✓(موثق)' : ''} [رابط: ${acc.link ? acc.link : 'غير محدد'}]`).join('\n');
-            let choice = prompt(`إدارة الحسابات والتوثيق والروابط:\n${listStr}\n\nاختر رقماً للإجراء:\n1. إضافة حساب جديد\n2. تغيير اسم الحساب الرئيسي\n3. تغيير صورة حساب\n4. تعديل رابط حساب\n5. تبديل حالة التوثيق`);
+            let choice = prompt(`إدارة الحسابات والتوثيق والروابط:\n${listStr}\n\nاختر رقماً للإجراء:\n1. إضافة حساب جديد\n2. تغيير اسم الحساب\n3. تغيير صورة حساب\n4. تعديل رابط حساب\n5. تبديل حالة التوثيق`);
             
             if (choice === "1") {
                 let name = prompt("أدخل اسم الحساب الجديد:");
@@ -992,18 +1011,20 @@
                     alert("تم إضافة الحساب بنجاح.");
                 }
             } else if (choice === "2") {
-                let mainAcc = accounts.find(a => a.isMain);
-                let newName = prompt("أدخل الاسم الجديد للحساب:", mainAcc ? mainAcc.name : "");
-                if (newName !== null && newName.trim() !== "") {
-                    if (mainAcc) {
-                        mainAcc.name = newName.trim();
+                let accNum = prompt(`اختر رقم الحساب لتعديل اسمه:\n` + accounts.map((acc, i) => `${i + 1}: ${acc.name}`).join('\n'));
+                let idx = parseInt(accNum) - 1;
+                if (!isNaN(idx) && accounts[idx]) {
+                    let newName = prompt(`أدخل الاسم الجديد لـ (${accounts[idx].name}):`, accounts[idx].name);
+                    if (newName !== null && newName.trim() !== "") {
+                        accounts[idx].name = newName.trim();
                         saveAccountsToCloud();
-                        updateMainProfileNameDisplay();
+                        if (accounts[idx].isMain) updateMainProfileNameDisplay();
+                        renderFeed();
                         alert("تم تغيير اسم الحساب بنجاح!");
                     }
                 }
             } else if (choice === "3") {
-                let accNum = prompt(`اختر رقم الحساب لتغيير صورته:\n` + accounts.map((acc, i) => `${i + 1}: ${acc.name}`).join('\n'));
+                let accNum = prompt(`اختر رقم الحساب لتغيير صورته الشخصية:\n` + accounts.map((acc, i) => `${i + 1}: ${acc.name}`).join('\n'));
                 let idx = parseInt(accNum) - 1;
                 if (!isNaN(idx) && accounts[idx]) {
                     targetAccountIdForAvatar = accounts[idx].id;
@@ -1079,12 +1100,32 @@
             if (!isAdmin) return;
             let post = posts.find(p => p.id === postId);
             if (post && post.comments[commentIndex]) {
-                let newText = prompt("تعديل نص التعليق:", post.comments[commentIndex].text);
-                if (newText !== null) {
-                    post.comments[commentIndex].text = newText.trim();
-                    await updatePostInCloud(post);
-                    openComments(postId);
-                    renderFeed();
+                let choice = prompt("اختر ما تريد تعديله للتعليق:\n1. تعديل نص التعليق\n2. تعديل وقت التعليق (أو جعله حسب الوقت الحقيقي)");
+                if (choice === "1") {
+                    let newText = prompt("تعديل نص التعليق:", post.comments[commentIndex].text);
+                    if (newText !== null) {
+                        post.comments[commentIndex].text = newText.trim();
+                        await updatePostInCloud(post);
+                        openComments(postId);
+                        renderFeed();
+                    }
+                } else if (choice === "2") {
+                    let timeChoice = prompt("اختر وضع الوقت:\n1. تعليق بـ وقت حقيقي تلقائي (يتم احتسابه تصاعدياً)\n2. كتابة وقت مخصص (مثلاً: منذ ساعتين، أمس، 10 ص)", post.comments[commentIndex].customTimeString || "");
+                    if (timeChoice === "1") {
+                        delete post.comments[commentIndex].customTimeString;
+                        post.comments[commentIndex].timestamp = Date.now();
+                        await updatePostInCloud(post);
+                        openComments(postId);
+                        alert("تم ضبط التعليق ليتبع الوقت الحقيقي تلقائياً.");
+                    } else if (timeChoice === "2") {
+                        let customVal = prompt("أدخل نص الوقت المخصص:", "منذ ساعة");
+                        if (customVal !== null) {
+                            post.comments[commentIndex].customTimeString = customVal.trim();
+                            await updatePostInCloud(post);
+                            openComments(postId);
+                            alert("تم تحديث الوقت المخصص بنجاح.");
+                        }
+                    }
                 }
             }
         }
@@ -1093,12 +1134,32 @@
             if (!isAdmin) return;
             let post = posts.find(p => p.id === postId);
             if (post && post.comments[commentIndex] && post.comments[commentIndex].replies[replyIndex]) {
-                let newText = prompt("تعديل نص الرد:", post.comments[commentIndex].replies[replyIndex].text);
-                if (newText !== null) {
-                    post.comments[commentIndex].replies[replyIndex].text = newText.trim();
-                    await updatePostInCloud(post);
-                    openComments(postId);
-                    renderFeed();
+                let choice = prompt("اختر ما تريد تعديله للرد:\n1. تعديل نص الرد\n2. تعديل وقت الرد (أو جعله حسب الوقت الحقيقي)");
+                if (choice === "1") {
+                    let newText = prompt("تعديل نص الرد:", post.comments[commentIndex].replies[replyIndex].text);
+                    if (newText !== null) {
+                        post.comments[commentIndex].replies[replyIndex].text = newText.trim();
+                        await updatePostInCloud(post);
+                        openComments(postId);
+                        renderFeed();
+                    }
+                } else if (choice === "2") {
+                    let timeChoice = prompt("اختر وضع الوقت للرد:\n1. رد بـ وقت حقيقي تلقائي\n2. كتابة وقت مخصص", post.comments[commentIndex].replies[replyIndex].customTimeString || "");
+                    if (timeChoice === "1") {
+                        delete post.comments[commentIndex].replies[replyIndex].customTimeString;
+                        post.comments[commentIndex].replies[replyIndex].timestamp = Date.now();
+                        await updatePostInCloud(post);
+                        openComments(postId);
+                        alert("تم ضبط الرد ليتبع الوقت الحقيقي تلقائياً.");
+                    } else if (timeChoice === "2") {
+                        let customVal = prompt("أدخل نص الوقت المخصص:", "منذ دقيقة");
+                        if (customVal !== null) {
+                            post.comments[commentIndex].replies[replyIndex].customTimeString = customVal.trim();
+                            await updatePostInCloud(post);
+                            openComments(postId);
+                            alert("تم تحديث الوقت المخصص للرد بنجاح.");
+                        }
+                    }
                 }
             }
         }
@@ -1488,7 +1549,7 @@
                                     ? `<img src="${repAvatar}" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex-shrink: 0; cursor: pointer;" onclick="handleAccountClick(${rep.authorId || 1})">`
                                     : `<div style="width: 28px; height: 28px; border-radius: 50%; background:#e4e6eb; display:flex; align-items:center; justify-content:center; flex-shrink: 0; cursor: pointer;" onclick="handleAccountClick(${rep.authorId || 1})"><i class="fa-solid fa-user" style="font-size:12px; color:#8a8d91;"></i></div>`;
 
-                                let repTimeFormatted = rep.timestamp ? getTimeAgo(rep.timestamp) : (rep.time || "الآن");
+                                let repTimeFormatted = rep.customTimeString ? rep.customTimeString : (rep.timestamp ? getTimeAgo(rep.timestamp) : "الآن");
 
                                 return `
                                     <div style="display: flex; gap: 8px; margin-top: 10px; margin-right: 20px; align-items: flex-start;">
@@ -1518,7 +1579,7 @@
                         }
                     }
 
-                    let commentTimeFormatted = c.timestamp ? getTimeAgo(c.timestamp) : (c.time || "الآن");
+                    let commentTimeFormatted = c.customTimeString ? c.customTimeString : (c.timestamp ? getTimeAgo(c.timestamp) : "الآن");
 
                     return `
                         <div class="comment-item">
