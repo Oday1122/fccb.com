@@ -145,7 +145,7 @@
         </div>
         
         <!-- الصورة الشخصية وإطار الستوري -->
-        <div class="avatar-wrapper" id="avatarWrapper" onclick="handleAvatarClick()" title="انقر لعرض الستوري أو الخيارات">
+        <div class="avatar-wrapper" id="avatarWrapper" onclick="handleAvatarClick()" title="انقر لعرض الستوري أو تغيير الصورة">
             <img src="" class="avatar-img" id="avatarImg" style="display: none;">
             <i class="fa-solid fa-user" id="avatarPlaceholderIcon" style="font-size: 55px; color: #8a8d91;"></i>
         </div>
@@ -636,6 +636,9 @@
         async function updateAccountAvatarAcrossPostsAndComments(accountId, newAvatarUrl) {
             for (let p of posts) {
                 let updated = false;
+                if (p.authorId === accountId) {
+                    updated = true;
+                }
                 if (p.comments) {
                     p.comments.forEach(c => {
                         if (c.authorId === accountId) {
@@ -727,28 +730,21 @@
 
         function handleAvatarClick() {
             let mainAcc = accounts.find(a => a.isMain);
-            if (activeStory && activeStory.mediaUrl && activeStory.mediaUrl.trim() !== "" && !isAdmin) {
-                handleAvatarClickStory();
-            } else if (isAdmin) {
+            if (isAdmin) {
                 let hasStoryActive = activeStory && activeStory.mediaUrl && activeStory.mediaUrl.trim() !== "";
-                let storyStatus = hasStoryActive ? "1. عرض الستوري الحالي\n2. إزالة / حذف الستوري الحالي\n3. رفع / تغيير الستوري" : "1. رفع / إضافة ستوري جديد";
-                let choice = prompt(`إدارة الصورة الشخصية والستوري:\n${storyStatus}\n4. تغيير الصورة الشخصية للحساب الرئيسي\n5. إدارة الحسابات والصور والتوثيق`);
+                let storyStatus = hasStoryActive ? "1. تغيير الصورة الشخصية مباشرة (فتح ملفات الهاتف)\n2. عرض الستوري الحالي\n3. إزالة / حذف الستوري الحالي\n4. رفع / تغيير الستوري" : "1. تغيير الصورة الشخصية مباشرة (فتح ملفات الهاتف)\n2. رفع / إضافة ستوري جديد";
+                let choice = prompt(`إدارة الصورة الشخصية والستوري:\n${storyStatus}\n5. إدارة الحسابات والصور والتوثيق`);
                 
-                if (hasStoryActive) {
-                    if (choice === "1") handleAvatarClickStory();
-                    else if (choice === "2") removeActiveStory();
-                    else if (choice === "3") document.getElementById('storyFilePicker').click();
-                    else if (choice === "4") {
-                        if (mainAcc) targetAccountIdForAvatar = mainAcc.id;
-                        document.getElementById('accountAvatarPicker').click();
-                    }
+                if (choice === "1") {
+                    if (mainAcc) targetAccountIdForAvatar = mainAcc.id;
+                    document.getElementById('accountAvatarPicker').click();
+                } else if (hasStoryActive) {
+                    if (choice === "2") handleAvatarClickStory();
+                    else if (choice === "3") removeActiveStory();
+                    else if (choice === "4") document.getElementById('storyFilePicker').click();
                     else if (choice === "5") manageAccounts();
                 } else {
-                    if (choice === "1") document.getElementById('storyFilePicker').click();
-                    else if (choice === "4") {
-                        if (mainAcc) targetAccountIdForAvatar = mainAcc.id;
-                        document.getElementById('accountAvatarPicker').click();
-                    }
+                    if (choice === "2") document.getElementById('storyFilePicker').click();
                     else if (choice === "5") manageAccounts();
                 }
             } else {
