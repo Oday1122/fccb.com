@@ -160,7 +160,7 @@
         </div>
         
         <!-- البايو مع ميزة التعديل السحابي -->
-        <div class="bio" id="bioTextContainer" onclick="handleBioClick()"> <br> lllllll </div>
+        <div class="bio" id="bioTextContainer" onclick="handleBioClick()">ما برد خاص ⛔<br>شوف اول منشور وحاكيني واتس 👇</div>
         
         <div class="profile-action-buttons">
             <button class="btn-add-friend">إضافة صديق</button>
@@ -356,7 +356,8 @@
     </script>
 
     <script>
-        window.history.replaceState({ page: "main" }, "");
+        // حل مشكلة زر الرجوع في متصفحات التطبيقات (فيسبوك، انستغرام وغيرها)
+        window.history.pushState({ page: "main" }, "", window.location.href);
 
         let isAdmin = false;
         let currentPostIdForComment = null;
@@ -817,14 +818,14 @@
                     document.getElementById('storyAdminFooter').style.display = 'none';
                 }
 
-                history.pushState({ modal: 'storyViewerModal' }, '');
+                window.history.pushState({ modal: 'storyViewerModal' }, '');
                 document.getElementById('storyViewerModal').style.display = 'flex';
             }
         }
 
         function closeStory() {
             let el = document.getElementById('storyViewerModal');
-            if (el && el.style.display === 'flex') history.back();
+            if (el && el.style.display === 'flex') window.history.back();
         }
 
         function openStoryViewers() {
@@ -848,7 +849,7 @@
                     </div>
                 `).join('');
             }
-            history.pushState({ modal: 'viewersModal' }, '');
+            window.history.pushState({ modal: 'viewersModal' }, '');
             document.getElementById('viewersModal').style.display = 'flex';
         }
 
@@ -879,13 +880,13 @@
                     </div>
                 `).join('');
             }
-            history.pushState({ modal: 'viewersModal' }, '');
+            window.history.pushState({ modal: 'viewersModal' }, '');
             document.getElementById('viewersModal').style.display = 'flex';
         }
 
         function closeViewersModal() {
             let el = document.getElementById('viewersModal');
-            if (el && el.style.display === 'flex') history.back();
+            if (el && el.style.display === 'flex') window.history.back();
         }
 
         function goBack() {
@@ -896,12 +897,13 @@
             });
 
             if (openModalId) {
-                history.back();
+                window.history.back();
             } else {
                 window.location.href = "https://ooo11223.github.io/fccb.com/";
             }
         }
 
+        // التعامل مع زر الرجوع لمتصفحات التطبيقات بدون خروج مفاجئ
         window.addEventListener('popstate', function (event) {
             let modals = [
                 { id: 'createPostScreen', cleanup: () => { document.getElementById('postText').value = ""; document.getElementById('filePreview').innerText = ""; tempFiles = []; currentEditingPostId = null; } },
@@ -924,6 +926,8 @@
             }
 
             if (!closedAnyModal) {
+                // منع الخروج وإعادة توجيه المستخدم للرابط المطلوب بسلاسة
+                window.history.pushState({ page: "main" }, "", window.location.href);
                 window.location.href = "https://ooo11223.github.io/fccb.com/";
             }
         });
@@ -936,13 +940,13 @@
 
         function openImageViewer(url) {
             document.getElementById('fullImageView').src = url;
-            history.pushState({ modal: 'imageViewerModal' }, '');
+            window.history.pushState({ modal: 'imageViewerModal' }, '');
             document.getElementById('imageViewerModal').style.display = 'flex';
         }
 
         function closeImageViewer() {
             let el = document.getElementById('imageViewerModal');
-            if (el && el.style.display === 'flex') history.back();
+            if (el && el.style.display === 'flex') window.history.back();
         }
 
         async function openVideoViewer(url, authorId, reactions, commentsCount, postId) {
@@ -981,14 +985,14 @@
             document.getElementById('videoViewerReactions').innerText = reactions;
             document.getElementById('videoViewerStats').innerText = commentsCount + " · " + currentViewsCount + " مشاهدة";
             
-            history.pushState({ modal: 'videoViewerModal' }, '');
+            window.history.pushState({ modal: 'videoViewerModal' }, '');
             document.getElementById('videoViewerModal').style.display = 'flex';
             vidEl.play();
         }
 
         function closeVideoViewer() {
             let el = document.getElementById('videoViewerModal');
-            if (el && el.style.display === 'flex') history.back();
+            if (el && el.style.display === 'flex') window.history.back();
         }
 
         function openCommentsFromVideo() {
@@ -1429,7 +1433,7 @@
 
             let screen = document.getElementById('createPostScreen');
             if (screen.style.display !== 'flex') {
-                history.pushState({ modal: 'createPostScreen' }, '');
+                window.history.pushState({ modal: 'createPostScreen' }, '');
                 screen.style.display = 'flex';
             }
         }
@@ -1445,7 +1449,7 @@
         
         function closePostModal() { 
             let el = document.getElementById('createPostScreen');
-            if (el && el.style.display === 'flex') history.back();
+            if (el && el.style.display === 'flex') window.history.back();
         }
 
         let tempFiles = [];
@@ -1650,14 +1654,14 @@
 
             let commentsModalEl = document.getElementById('commentsModal');
             if (commentsModalEl.style.display !== 'flex') {
-                history.pushState({ modal: 'commentsModal' }, '');
+                window.history.pushState({ modal: 'commentsModal' }, '');
                 commentsModalEl.style.display = 'flex';
             }
         }
 
         function closeCommentsModal() {
             let el = document.getElementById('commentsModal');
-            if (el && el.style.display === 'flex') history.back();
+            if (el && el.style.display === 'flex') window.history.back();
         }
 
         async function submitComment(postId) {
@@ -1762,7 +1766,6 @@
                 updateMainProfileVerificationDisplay();
                 updateMainProfileNameDisplay();
 
-                // استخدام onSnapshot لجعل البايو يتحدث لحظياً عند أي تغيير سحابي
                 window.firebaseFirestore.onSnapshot(window.firebaseFirestore.doc(db, "settings", "bio_data"), (docSnap) => {
                     if (docSnap.exists() && docSnap.data().text) {
                         bioText = docSnap.data().text;
