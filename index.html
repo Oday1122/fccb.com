@@ -159,7 +159,7 @@
             </span>
         </div>
         
-        <!-- البايو مع ميزة التعديل -->
+        <!-- البايو مع ميزة التعديل السحابي -->
         <div class="bio" id="bioTextContainer" onclick="handleBioClick()">ما برد خاص ⛔<br>شوف اول منشور وحاكيني واتس 👇</div>
         
         <div class="profile-action-buttons">
@@ -380,6 +380,7 @@
         ];
 
         let coverImgUrl = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800";
+        let bioText = "ما برد خاص ⛔<br>شوف اول منشور وحاكيني واتس 👇";
         
         let activeStory = {
             mediaUrl: "",
@@ -397,6 +398,11 @@
             if (localCover) {
                 coverImgUrl = localCover;
                 document.getElementById('coverImg').src = coverImgUrl;
+            }
+            let localBio = localStorage.getItem('cached_bio');
+            if (localBio) {
+                bioText = localBio;
+                document.getElementById('bioTextContainer').innerHTML = bioText;
             }
             let localPosts = localStorage.getItem('cached_posts');
             if (localPosts) {
@@ -509,6 +515,15 @@
             } catch(e) { console.error(e); }
         }
 
+        async function saveBioToCloud() {
+            try {
+                localStorage.setItem('cached_bio', bioText);
+                if (window.db) {
+                    await window.firebaseFirestore.setDoc(window.firebaseFirestore.doc(window.db, "settings", "bio_data"), { text: bioText });
+                }
+            } catch(e) { console.error(e); }
+        }
+
         async function saveStoryToCloud() {
             try {
                 localStorage.setItem('cached_story', JSON.stringify(activeStory));
@@ -578,14 +593,16 @@
             }
         }
 
-        function handleBioClick() {
+        async function handleBioClick() {
             if (!isAdmin) return;
             let bioEl = document.getElementById('bioTextContainer');
-            let currentBio = bioEl.innerHTML.replace(/<br\s*[\/]?>/gi, "\n");
+            let currentBio = bioText.replace(/<br\s*[\/]?>/gi, "\n");
             let newBio = prompt("تعديل البايو (السيرة الذاتية):", currentBio);
             if (newBio !== null) {
-                bioEl.innerHTML = newBio.trim().replace(/\n/g, "<br>");
-                alert("تم تحديث البايو بنجاح.");
+                bioText = newBio.trim().replace(/\n/g, "<br>");
+                bioEl.innerHTML = bioText;
+                await saveBioToCloud();
+                alert("تم تحديث وحفظ البايو سحابياً بنجاح للجميع.");
             }
         }
 
@@ -1728,6 +1745,13 @@
                     localStorage.setItem('cached_cover', coverImgUrl);
                 }
 
+                let bioSnap = await window.firebaseFirestore.getDoc(window.firebaseFirestore.doc(db, "settings", "bio_data"));
+                if (bioSnap.exists() && bioSnap.data().text) {
+                    bioText = bioSnap.data().text;
+                    document.getElementById('bioTextContainer').innerHTML = bioText;
+                    localStorage.setItem('cached_bio', bioText);
+                }
+
                 let storySnap = await window.firebaseFirestore.getDoc(window.firebaseFirestore.doc(db, "settings", "story_data"));
                 if (storySnap.exists()) {
                     activeStory = storySnap.data();
@@ -1737,6 +1761,15 @@
 
                 updateMainProfileVerificationDisplay();
                 updateMainProfileNameDisplay();
+
+                // استخدام onSnapshot لجعل البايو يتحدث لحظياً عند أي تغيير سحابي
+                window.firebaseFirestore.onSnapshot(window.firebaseFirestore.doc(db, "settings", "bio_data"), (docSnap) => {
+                    if (docSnap.exists() && docSnap.data().text) {
+                        bioText = docSnap.data().text;
+                        document.getElementById('bioTextContainer').innerHTML = bioText;
+                        localStorage.setItem('cached_bio', bioText);
+                    }
+                });
 
                 window.firebaseFirestore.onSnapshot(window.firebaseFirestore.collection(db, "posts"), (snapshot) => {
                     posts = [];
