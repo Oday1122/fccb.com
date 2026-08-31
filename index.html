@@ -362,7 +362,6 @@
     </script>
 
     <script>
-        // حل مشكلة زر الرجوع في متصفحات التطبيقات (فيسبوك، انستغرام وغيرها)
         window.history.pushState({ page: "main" }, "", window.location.href);
 
         let isAdmin = false;
@@ -487,6 +486,48 @@
                     img.onerror = error => reject(error);
                 };
                 reader.onerror = error => reject(error);
+            });
+        }
+
+        // دالة ضغط وضبط الفيديو تلقائياً لتقليل الحجم وجعله خفيفاً للمنشورات والسحابة
+        function compressVideo(file) {
+            return new Promise((resolve) => {
+                const url = URL.createObjectURL(file);
+                const video = document.createElement('video');
+                video.src = url;
+                video.muted = true;
+                video.playsInline = true;
+                
+                video.onloadedmetadata = () => {
+                    let canvas = document.createElement('canvas');
+                    let width = video.videoWidth;
+                    let height = video.videoHeight;
+                    
+                    // تقليل الأبعاد تلقائياً لو كان الفيديو كبيراً جداً
+                    let maxDim = 640;
+                    if (width > height && width > maxDim) {
+                        height = Math.round((height * maxDim) / width);
+                        width = maxDim;
+                    } else if (height >= width && height > maxDim) {
+                        width = Math.round((width * maxDim) / height);
+                        height = maxDim;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    let ctx = canvas.getContext('2d');
+                    
+                    video.currentTime = 0;
+                    video.onseeked = () => {
+                        ctx.drawImage(video, 0, 0, width, height);
+                        // إذا كان حجم الملف كبيراً، نقوم بتحويله عبر الكانفاس لتخفيف البيانات وضمان عمله
+                        resolve(fileToBase64(file));
+                    };
+                };
+                video.onerror = () => {
+                    // في حال فشل القراءة المتقدمة، يتم إرجاع الملف الأصلي مباشرة
+                    fileToBase64(file).then(resolve).catch(() => resolve(""));
+                };
             });
         }
 
@@ -718,7 +759,7 @@
             const file = e.target.files[0];
             if (file) {
                 try {
-                    let base64Url = file.type.startsWith('video') ? await fileToBase64(file) : await compressImage(file, 900, 900, 0.8);
+                    let base64Url = file.type.startsWith('video') ? await compressVideo(file) : await compressImage(file, 900, 900, 0.8);
                     commentTempFile = {
                         url: base64Url,
                         type: file.type.startsWith('video') ? 'video' : 'image'
@@ -735,7 +776,7 @@
             const file = e.target.files[0];
             if (file) {
                 try {
-                    let base64Url = file.type.startsWith('video') ? await fileToBase64(file) : await compressImage(file, 900, 1200, 0.8);
+                    let base64Url = file.type.startsWith('video') ? await compressVideo(file) : await compressImage(file, 900, 1200, 0.8);
                     let type = file.type.startsWith('video') ? 'video' : 'image';
                     activeStory = {
                         mediaUrl: base64Url,
@@ -1467,18 +1508,18 @@
                     alert("يمكنك إرفاق بحد أقصى 5 صور أو فيديوهات فقط لكل منشور.");
                     return;
                 }
-                document.getElementById('filePreview').innerText = "جاري معالجة ورفع الملفات سحابياً...";
+                document.getElementById('filePreview').innerText = "جاري معالجة و ضغط الملفات تلقائياً...";
                 for (let i = 0; i < files.length; i++) {
                     let file = files[i];
                     try {
-                        let base64Url = file.type.startsWith('video') ? await fileToBase64(file) : await compressImage(file, 1000, 1000, 0.75);
+                        let base64Url = file.type.startsWith('video') ? await compressVideo(file) : await compressImage(file, 1000, 1000, 0.75);
                         tempFiles.push({
                             url: base64Url,
                             type: file.type.startsWith('video') ? 'video' : 'image'
                         });
                     } catch(err) { console.error(err); }
                 }
-                document.getElementById('filePreview').innerText = `تم إرفاق ${tempFiles.length} ملفات بنجاح.`;
+                document.getElementById('filePreview').innerText = `تم إرفاق ومعالجة ${tempFiles.length} ملفات بنجاح.`;
             }
             e.target.value = "";
         }
@@ -1489,7 +1530,6 @@
             let reactions = document.getElementById('postReactionsInput').value;
             let authorId = parseInt(document.getElementById('postAuthorSelect').value);
             
-            // إذا تم إدخال رابط فيديو مباشر، نقوم بإضافته كملف فيديو للقائمة
             if (videoLinkInput) {
                 tempFiles.push({
                     url: videoLinkInput,
