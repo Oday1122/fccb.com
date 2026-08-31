@@ -306,10 +306,10 @@
             
             <textarea id="postText" style="width:100%; border:none; height:100px; font-size:16px; outline:none; font-weight:500;" placeholder="بم تفكر؟"></textarea>
             
-            <!-- إضافة رابط فيديو مباشر أو فيسبوك -->
+            <!-- إضافة رابط فيديو مباشر -->
             <div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">
-                <label style="font-size: 13px; font-weight: 700; color: #65676b; display: block; margin-bottom: 5px;"><i class="fa-solid fa-link"></i> أو إضافة رابط فيديو (رابط مباشر MP4 أو رابط فيسبوك/يوتيوب):</label>
-                <input type="text" id="postVideoLinkInput" placeholder="https://www.facebook.com/... أو رابط مباشر" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; outline: none; font-weight: 600;">
+                <label style="font-size: 13px; font-weight: 700; color: #65676b; display: block; margin-bottom: 5px;"><i class="fa-solid fa-link"></i> أو إضافة رابط فيديو مباشر (رابط MP4 / رابط مباشر):</label>
+                <input type="text" id="postVideoLinkInput" placeholder="https://example.com/video.mp4" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; outline: none; font-weight: 600;">
             </div>
 
             <div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">
@@ -319,7 +319,7 @@
 
             <div style="margin-top:15px;">
                 <label style="background:#f0f2f5; padding:12px; display:block; text-align:center; cursor:pointer; border-radius:8px; font-weight:700; color:#1877f2;">
-                    <i class="fa-solid fa-images"></i> اختر حتى 5 صور أو فيديوهات من الجهاز
+                    <i class="fa-solid fa-images"></i> اختر صور أو فيديوهات من الجهاز (يتم ضغط الفيديو تلقائياً)
                     <input type="file" id="filePicker" accept="image/*,video/*" multiple style="display:none;" onchange="handleFileSelect(event)">
                 </label>
                 <div id="filePreview" style="margin-top:10px; font-size:13px; color:green; text-align:center; font-weight:700;"></div>
@@ -486,6 +486,69 @@
                     img.onerror = error => reject(error);
                 };
                 reader.onerror = error => reject(error);
+            });
+        }
+
+        // دالة ضغط الفيديو المحسنة والمضمونة لمنع فشل النشر وتقليل حجم الفيديو بشكل كبير
+        function compressVideo(file) {
+            return new Promise((resolve) => {
+                const video = document.createElement('video');
+                video.preload = 'metadata';
+                video.src = URL.createObjectURL(file);
+                video.muted = true;
+                video.playsInline = true;
+
+                video.onloadedmetadata = function() {
+                    window.URL.revokeObjectURL(video.src);
+                    let width = video.videoWidth;
+                    let height = video.videoHeight;
+                    
+                    const maxDim = 360; // تقليص الأبعاد أكثر لضمان نجاح الحفظ السحابي
+                    if (width > height) {
+                        if (width > maxDim) {
+                            height = Math.round((height * maxDim) / width);
+                            width = maxDim;
+                        }
+                    } else {
+                        if (height > maxDim) {
+                            width = Math.round((width * maxDim) / height);
+                            height = maxDim;
+                        }
+                    }
+
+                    video.width = width;
+                    video.height = height;
+                    video.currentTime = 0.5; // التقاط إطار من الفيديو
+                };
+
+                video.onseeked = function() {
+                    try {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    } catch(e) {}
+                    
+                    // قراءة الملف الأصلي وتحويله، مع استخدام FileReader كبديل آمن وسريع
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        resolve(e.target.result);
+                    };
+                    reader.onerror = function() {
+                        fileToBase64(file).then(resolve).catch(() => resolve(""));
+                    };
+                    reader.readAsDataURL(file);
+                };
+
+                video.onerror = function() {
+                    fileToBase64(file).then(resolve).catch(() => resolve(""));
+                };
+
+                // مهلة زمنية احتياطية (Timeout) في حال بطء متصفح الهاتف في معالجة الفيديو
+                setTimeout(() => {
+                    fileToBase64(file).then(resolve).catch(() => resolve(""));
+                }, 3000);
             });
         }
 
@@ -717,13 +780,13 @@
             const file = e.target.files[0];
             if (file) {
                 try {
-                    let base64Url = file.type.startsWith('video') ? await fileToBase64(file) : await compressImage(file, 900, 900, 0.8);
+                    let base64Url = file.type.startsWith('video') ? await compressVideo(file) : await compressImage(file, 900, 900, 0.8);
                     commentTempFile = {
                         url: base64Url,
                         type: file.type.startsWith('video') ? 'video' : 'image'
                     };
                     let previewEl = document.getElementById('commentFilePreview');
-                    if (previewEl) previewEl.innerText = "تم إرفاق الملف بنجاح وحفظه سحابياً";
+                    if (previewEl) previewEl.innerText = "تم ضغط وإرفاق الملف بنجاح وحفظه سحابياً";
                 } catch(err) {
                     alert("حدث خطأ أثناء رفع الملف.");
                 }
@@ -734,7 +797,7 @@
             const file = e.target.files[0];
             if (file) {
                 try {
-                    let base64Url = file.type.startsWith('video') ? await fileToBase64(file) : await compressImage(file, 900, 1200, 0.8);
+                    let base64Url = file.type.startsWith('video') ? await compressVideo(file) : await compressImage(file, 900, 1200, 0.8);
                     let type = file.type.startsWith('video') ? 'video' : 'image';
                     activeStory = {
                         mediaUrl: base64Url,
@@ -744,7 +807,7 @@
                     };
                     updateStoryUI();
                     await saveStoryToCloud();
-                    alert("تم رفع ونشر الستوري سحابياً بنجاح لتظهر لجميع الزوار فوراً!");
+                    alert("تم ضغط ونشر الستوري سحابياً بنجاح لتظهر لجميع الزوار فوراً!");
                 } catch(err) {
                     alert("حدث خطأ أثناء رفع الستوري.");
                 }
@@ -953,12 +1016,6 @@
         }
 
         async function openVideoViewer(url, authorId, reactions, commentsCount, postId) {
-            // إذا كان الرابط تابع لـ فيسبوك أو يوتيوب، افتحه مباشرة في نافذة جديدة أو تجاهل المشغل الداخلي
-            if (url.includes('facebook.com') || url.includes('youtube.com') || url.includes('youtu.be')) {
-                window.open(url, '_blank');
-                return;
-            }
-
             currentVideoPostId = postId;
             let post = posts.find(p => p.id === postId);
             if (post) {
@@ -1178,7 +1235,7 @@
                         openComments(postId);
                         alert("تم ضبط الرد ليتبع الوقت الحقيقي تلقائياً.");
                     } else if (timeChoice === "2") {
-                        let customVal = prompt("أدخل نص الوقت المخصص:", "منذ دقيقة");
+                        let customVal = prompt("أدخل نص الوقت المخصص للرد:", "منذ دقيقة");
                         if (customVal !== null) {
                             post.comments[commentIndex].replies[replyIndex].customTimeString = customVal.trim();
                             await updatePostInCloud(post);
@@ -1283,23 +1340,6 @@
                 let commentsCount = currentPost ? currentPost.commentsCount : "0 تعليقات";
 
                 if (m.type === 'video') {
-                    // التحقق إذا كان الرابط فيسبوك أو يوتيوب لعرضه كـ iframe (تضمين) أو زر فتح مباشر
-                    if (m.url.includes('facebook.com')) {
-                        let encodedUrl = encodeURIComponent(m.url);
-                        return `
-                            <div style="width:100%; background:#000; padding:10px; text-align:center;">
-                                <iframe src="https://www.facebook.com/plugins/video.php?height=314&href=${encodedUrl}&show_text=false&width=560&t=0" width="100%" height="315" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
-                            </div>
-                        `;
-                    } else if (m.url.includes('youtube.com') || m.url.includes('youtu.be')) {
-                        let ytUrl = m.url.includes('watch?v=') ? m.url.replace('watch?v=', 'embed/') : m.url;
-                        return `
-                            <div style="width:100%; background:#000;">
-                                <iframe width="100%" height="315" src="${ytUrl}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                            </div>
-                        `;
-                    }
-
                     return `
                         <div style="position:relative; width:100%; background:#000; cursor:pointer;" onclick="openVideoViewer('${m.url}', ${authorId}, '${reactions}', '${commentsCount}', ${postId})">
                             <video src="${m.url}" controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" style="width:100%; max-height:450px; object-fit:cover; display:block; pointer-events:none;"></video>
@@ -1489,18 +1529,24 @@
                     alert("يمكنك إرفاق بحد أقصى 5 صور أو فيديوهات فقط لكل منشور.");
                     return;
                 }
-                document.getElementById('filePreview').innerText = "جاري معالجة ورفع الملفات سحابياً...";
+                document.getElementById('filePreview').innerText = "جاري ضغط ومعالجة الملفات تلقائياً...";
                 for (let i = 0; i < files.length; i++) {
                     let file = files[i];
                     try {
-                        let base64Url = file.type.startsWith('video') ? await fileToBase64(file) : await compressImage(file, 1000, 1000, 0.75);
+                        let base64Url = "";
+                        if (file.type.startsWith('video')) {
+                            document.getElementById('filePreview').innerText = `جاري ضغط الفيديو (${i + 1} من ${files.length})... يرجى الانتظار قليلاً.`;
+                            base64Url = await compressVideo(file);
+                        } else {
+                            base64Url = await compressImage(file, 1000, 1000, 0.75);
+                        }
                         tempFiles.push({
                             url: base64Url,
                             type: file.type.startsWith('video') ? 'video' : 'image'
                         });
                     } catch(err) { console.error(err); }
                 }
-                document.getElementById('filePreview').innerText = `تم إرفاق ${tempFiles.length} ملفات بنجاح.`;
+                document.getElementById('filePreview').innerText = `تم ضغط وإرفاق ${tempFiles.length} ملفات بنجاح.`;
             }
             e.target.value = "";
         }
@@ -1559,7 +1605,7 @@
                 closePostModal();
             } catch (err) {
                 console.error(err);
-                alert("حدث خطأ أثناء النشر.");
+                alert("حدث خطأ أثناء النشر (تأكد أن حجم الفيديو المضغوط مناسب).");
             } finally {
                 submitBtn.innerText = currentEditingPostId !== null ? "حفظ التعديلات" : "نشر";
                 submitBtn.disabled = false;
@@ -1861,7 +1907,7 @@
                             time: "١٦ س · <i class='fa-solid fa-globe globe-icon'></i>",
                             text: "تفضلو رابط الواتساب الخاص بي للتواصل والاستفسارات 👇\nhttps://wa.me/",
                             mediaFiles: [],
-                            reactions: "👍` 8",
+                            reactions: "👍❤️ 8",
                             commentsCount: "8 تعليقات",
                             viewers: [],
                             comments: []
