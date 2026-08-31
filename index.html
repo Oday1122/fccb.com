@@ -1489,7 +1489,7 @@
             let reactions = document.getElementById('postReactionsInput').value;
             let authorId = parseInt(document.getElementById('postAuthorSelect').value);
             
-            // إذا تم إدخال رابط فيديو مباشر، نقوم بإضافته كملف فيديو للقائمة
+            // إضافة الرابط المباشر للفيديو إن وجد إلى قائمة الملفات المرفقة مؤقتاً
             if (videoLinkInput) {
                 tempFiles.push({
                     url: videoLinkInput,
