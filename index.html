@@ -20,14 +20,12 @@
         .cover-wrapper { height: 210px; background: #ccc; position: relative; cursor: pointer; }
         .cover-img { width: 100%; height: 100%; object-fit: cover; }
         
-        /* إطار الستوري حول الصورة الشخصية */
         .avatar-wrapper { width: 140px; height: 140px; border-radius: 50%; border: 4px solid #fff; margin: -70px auto 10px; overflow: hidden; background: #e4e6eb; position: relative; z-index: 2; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; }
         .avatar-wrapper.has-story { border: 4px solid #1877f2; padding: 3px; background: linear-gradient(#fff, #fff) padding-box, linear-gradient(45deg, #1877f2, #e4405f, #f58529) border-box; }
         .avatar-img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
         
         .name { text-align: center; font-size: 24px; font-weight: 800; letter-spacing: -0.2px; display: flex; justify-content: center; align-items: center; gap: 6px; }
         
-        /* علامة التوثيق لفيسبوك بالشكل الصحيح والمضبوط */
         .verified-badge { color: #1877f2; font-size: 16px; display: inline-flex; align-items: center; vertical-align: middle; position: relative; }
 
         .bio { text-align: center; font-size: 14px; color: #65676b; margin: 8px 16px; line-height: 1.5; font-weight: 500; cursor: pointer; }
@@ -35,17 +33,14 @@
         .btn-add-friend { flex: 1; background: #1877f2; color: #fff; border: none; border-radius: 6px; padding: 8px; font-weight: 700; cursor: pointer; font-size: 15px; }
         .btn-message { flex: 1; background: #e4e6eb; color: #050505; border: none; border-radius: 6px; padding: 8px; font-weight: 700; cursor: pointer; font-size: 15px; }
         
-        /* التبويبات */
         .profile-tabs { display: flex; border-top: 1px solid #ddd; padding: 0 16px; margin-top: 10px; }
         .tab-item { padding: 15px 20px; font-weight: 700; color: #65676b; cursor: pointer; border-bottom: 3px solid transparent; font-size: 15px; }
         .tab-item.active { color: #1877f2; border-bottom-color: #1877f2; }
         
-        /* قسم التفاصيل */
         .details-section { padding: 15px 16px; border-top: 1px solid #eee; font-weight: 500; }
         .details-item { margin: 10px 0; display: flex; align-items: center; gap: 10px; color: #444; font-weight: 600; }
         .btn-about { width: 100%; background: #e4e6eb; border: none; padding: 10px; border-radius: 6px; font-weight: 700; margin-top: 10px; cursor: pointer; font-size: 14px; color: #050505; }
 
-        /* شكل المنشور */
         .post-card { background: #fff; margin-top: 10px; border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; }
         .post-header { display: flex; justify-content: space-between; align-items: flex-start; padding: 12px 16px 8px; }
         .post-user-area { display: flex; gap: 10px; align-items: center; cursor: pointer; }
@@ -65,7 +60,6 @@
         .post-action-btn { flex: 1; text-align: center; padding: 8px 0; color: #65676b; font-weight: 700; font-size: 14px; cursor: pointer; border-radius: 4px; display: flex; align-items: center; justify-content: center; gap: 6px; }
         .post-action-btn:hover { background: #f0f2f5; }
 
-        /* نافذة التعليقات */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
         .modal-content { background: #fff; width: 100%; max-width: 600px; height: 100%; border-radius: 0; display: flex; flex-direction: column; overflow: hidden; }
         .modal-header { padding: 12px 16px; border-bottom: 1px solid #ddd; font-weight: 700; text-align: center; position: relative; font-size: 16px; }
@@ -81,16 +75,13 @@
         .comment-badge { background: #e4e6eb; font-size: 11px; padding: 1px 6px; border-radius: 4px; color: #65676b; margin-right: 5px; font-weight: 600; }
         .comment-meta { font-size: 11px; color: #65676b; margin-top: 3px; padding-right: 10px; display: flex; gap: 10px; align-items: center; font-weight: 600; }
         .comment-meta span { font-weight: 700; }
-        .comment-attachment { width: 100%; border-radius: 8px; margin-top: 8px; max-height: 250px; object-fit: cover; border: 1px solid #ddd; cursor: pointer; display: block; }
+        .comment-attachment { width: 100%; border-radius: 8px; margin-top: 8px; max-height: 250px; object-fit: cover; border: none; cursor: pointer; display: block; }
 
-        /* نافذة عرض الصور الفردية */
         .image-viewer-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 3000; justify-content: center; align-items: center; }
         .image-viewer-content { max-width: 95%; max-height: 95%; object-fit: contain; border-radius: 4px; }
 
-        /* نافذة الفيديو */
         .video-viewer-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3500; flex-direction: column; justify-content: space-between; }
 
-        /* نافذة الستوري */
         .story-viewer-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 4000; justify-content: center; align-items: center; flex-direction: column; }
         .story-container { width: 100%; max-width: 450px; height: 100%; position: relative; display: flex; flex-direction: column; justify-content: space-between; padding: 20px 10px; }
         .story-header { display: flex; align-items: center; justify-content: space-between; z-index: 5; }
@@ -98,14 +89,11 @@
         .story-media { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; z-index: 1; }
         .story-footer-admin { z-index: 5; background: rgba(0,0,0,0.6); padding: 10px; border-radius: 8px; color: #fff; display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 14px; cursor: pointer; }
 
-        /* نافذة المشاهدين */
         .viewers-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 5000; justify-content: center; align-items: center; }
         .viewers-modal-content { background: #fff; width: 90%; max-width: 450px; border-radius: 12px; padding: 20px; max-height: 80vh; overflow-y: auto; font-weight: 600; }
 
-        /* نافذة إنشاء / تعديل منشور */
         .create-post-fullscreen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 2000; flex-direction: column; font-weight: 600; }
         
-        /* أزرار الأدمن والقفل المخفي */
         .admin-controls-container { position: fixed; bottom: 20px; left: 20px; display: none; flex-direction: column; gap: 10px; z-index: 99; }
         .admin-btn { background: #1877f2; color: #fff; width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 22px; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
         .admin-lock { position: fixed; bottom: 15px; left: 15px; width: 40px; height: 40px; cursor: pointer; z-index: 99; background: transparent; opacity: 0; }
@@ -113,7 +101,6 @@
 </head>
 <body>
 
-    <!-- حقول رفع الصور والملفات -->
     <input type="file" id="avatarFilePicker" accept="image/*" style="display:none;" onchange="handleAvatarFileSelect(event)">
     <input type="file" id="coverFilePicker" accept="image/*" style="display:none;" onchange="handleCoverFileSelect(event)">
     <input type="file" id="accountAvatarPicker" accept="image/*" style="display:none;" onchange="handleAccountAvatarFileSelect(event)">
@@ -139,12 +126,10 @@
             </div>
         </div>
 
-        <!-- الغلاف -->
         <div class="cover-wrapper" onclick="handleCoverClick()">
             <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800" class="cover-img" id="coverImg">
         </div>
         
-        <!-- الصورة الشخصية وإطار الستوري -->
         <div class="avatar-wrapper" id="avatarWrapper" onclick="handleAvatarClick()" title="انقر لعرض الستوري أو تغيير الصورة">
             <img src="" class="avatar-img" id="avatarImg" style="display: none;">
             <i class="fa-solid fa-user" id="avatarPlaceholderIcon" style="font-size: 55px; color: #8a8d91;"></i>
@@ -159,7 +144,6 @@
             </span>
         </div>
         
-        <!-- البايو مع ميزة التعديل السحابي -->
         <div class="bio" id="bioTextContainer" onclick="handleBioClick()">ما برد خاص ⛔<br>شوف اول منشور وحاكيني واتس 👇</div>
         
         <div class="profile-action-buttons">
@@ -179,11 +163,9 @@
             <button class="btn-about" id="aboutBtnText">عرض معلومات القسم "حول" لـ اسيل</button>
         </div>
 
-        <!-- خلاصة المنشورات -->
         <div id="postsFeed"></div>
     </div>
 
-    <!-- نافذة عرض الفيديو الكاملة -->
     <div id="videoViewerModal" class="video-viewer-overlay">
         <div style="display:flex; justify-content:space-between; align-items:center; padding:15px; background:rgba(0,0,0,0.8); color:#fff; z-index:10;">
             <div style="display:flex; align-items:center; gap:12px;">
@@ -199,7 +181,7 @@
         <div style="position:relative; flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; background:#000; overflow:hidden;">
             <div style="position:absolute; top:10px; right:15px; left:15px; display:flex; justify-content:space-between; align-items:center; z-index:5; pointer-events:none;">
                 <div style="display:flex; align-items:center; gap:10px; pointer-events:auto; cursor:pointer;" onclick="handleAccountClick(1)">
-                    <img id="videoViewerAvatar" src="" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:1px solid #fff; background:#e4e6eb;">
+                    <img id="videoViewerAvatar" src="" style="width:40px; height:40px; border-radius:50%; object-fit:cover; background:#e4e6eb;">
                     <div style="color:#fff; text-shadow:0 1px 3px rgba(0,0,0,0.8);">
                         <div style="font-size:14px; font-weight:700; display:flex; align-items:center; gap:4px;">
                             <span id="videoViewerName">Aseel Ali</span>
@@ -228,7 +210,6 @@
         </div>
     </div>
 
-    <!-- نافذة عرض الستوري -->
     <div id="storyViewerModal" class="story-viewer-overlay" onclick="closeStory()">
         <div class="story-container" onclick="event.stopPropagation()">
             <div class="story-header">
@@ -252,7 +233,6 @@
         </div>
     </div>
 
-    <!-- نافذة المشاهدين -->
     <div id="viewersModal" class="viewers-modal-overlay" onclick="if(event.target === this) closeViewersModal()">
         <div class="viewers-modal-content">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">
@@ -263,7 +243,6 @@
         </div>
     </div>
 
-    <!-- نافذة التعليقات كاملة الشاشة -->
     <div id="commentsModal" class="modal-overlay" onclick="if(event.target === this) closeCommentsModal()">
         <div class="modal-content">
             <div class="modal-header">
@@ -278,13 +257,11 @@
         </div>
     </div>
 
-    <!-- نافذة عرض الصور بالحجم الكامل -->
     <div id="imageViewerModal" class="image-viewer-overlay" onclick="closeImageViewer()">
         <span style="position:absolute; top:20px; right:20px; color:#fff; font-size:28px; cursor:pointer;" onclick="closeImageViewer()">✕</span>
         <img id="fullImageView" class="image-viewer-content">
     </div>
 
-    <!-- نافذة إنشاء / تعديل منشور -->
     <div id="createPostScreen" class="create-post-fullscreen">
         <div style="padding:15px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #ddd;">
             <span onclick="closePostModal()" style="cursor:pointer; font-weight:700;">✕ إغلاق</span>
@@ -306,12 +283,6 @@
             </div>
             
             <textarea id="postText" style="width:100%; border:none; height:100px; font-size:16px; outline:none; font-weight:500;" placeholder="بم تفكر؟"></textarea>
-            
-            <!-- إضافة رابط فيديو مباشر -->
-            <div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">
-                <label style="font-size: 13px; font-weight: 700; color: #65676b; display: block; margin-bottom: 5px;"><i class="fa-solid fa-link"></i> أو إضافة رابط فيديو مباشر (يوتيوب / فيسبوك / MP4):</label>
-                <input type="text" id="postVideoLinkInput" placeholder="https://www.youtube.com/watch?v=... أو رابط فيسبوك" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; outline: none; font-weight: 600;">
-            </div>
 
             <div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">
                 <label style="font-size: 13px; font-weight: 700; color: #65676b; display: block; margin-bottom: 5px;">تخصيص التفاعلات (الإيكات):</label>
@@ -320,7 +291,7 @@
 
             <div style="margin-top:15px;">
                 <label style="background:#f0f2f5; padding:12px; display:block; text-align:center; cursor:pointer; border-radius:8px; font-weight:700; color:#1877f2;">
-                    <i class="fa-solid fa-images"></i> اختر صور أو فيديوهات من الجهاز (يتم ضغط الفيديو تلقائياً)
+                    <i class="fa-solid fa-images"></i> اختر صور أو فيديوهات من ملفات الهاتف (يتم ضغط الفيديو تلقائياً)
                     <input type="file" id="filePicker" accept="image/*,video/*" multiple style="display:none;" onchange="handleFileSelect(event)">
                 </label>
                 <div id="filePreview" style="margin-top:10px; font-size:13px; color:green; text-align:center; font-weight:700;"></div>
@@ -328,7 +299,6 @@
         </div>
     </div>
 
-    <!-- أزرار التحكم للأدمن والقفل -->
     <div id="adminControls" class="admin-controls-container">
         <div class="admin-btn" onclick="openPostModal()" title="إنشاء منشور جديد"><i class="fa-solid fa-plus"></i></div>
         <div class="admin-btn" onclick="document.getElementById('storyFilePicker').click()" title="إضافة أو تغيير الستوري" style="background: #ff4500;"><i class="fa-solid fa-circle-plus"></i></div>
@@ -336,7 +306,6 @@
     </div>
     <div class="admin-lock" onclick="handleLockClick()"></div>
 
-    <!-- ربط Firebase SDKs واستكمال المنطق البرمجي -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
@@ -540,25 +509,6 @@
                     fileToBase64(file).then(resolve).catch(() => resolve(""));
                 }, 3000);
             });
-        }
-
-        // --- دوال تحليل ومعالجة روابط يوتيوب وفيسبوك الذكية ---
-        function getYouTubeEmbedUrl(url) {
-            let regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-            let match = url.match(regExp);
-            return (match && match[2].length === 11) ? `https://www.youtube.com/embed/${match[2]}?autoplay=1` : null;
-        }
-
-        function getFacebookEmbedUrl(url) {
-            if (url.includes('facebook.com') || url.includes('fb.watch')) {
-                return `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=false&width=500&autoplay=true`;
-            }
-            return null;
-        }
-
-        function isExternalVideoUrl(url) {
-            if (!url) return false;
-            return url.includes('youtube.com') || url.includes('youtu.be') || url.includes('facebook.com') || url.includes('fb.watch');
         }
 
         function handleLockClick() {
@@ -982,7 +932,7 @@
 
         window.addEventListener('popstate', function (event) {
             let modals = [
-                { id: 'createPostScreen', cleanup: () => { document.getElementById('postText').value = ""; document.getElementById('postVideoLinkInput').value = ""; document.getElementById('filePreview').innerText = ""; tempFiles = []; currentEditingPostId = null; } },
+                { id: 'createPostScreen', cleanup: () => { document.getElementById('postText').value = ""; document.getElementById('filePreview').innerText = ""; tempFiles = []; currentEditingPostId = null; } },
                 { id: 'imageViewerModal', cleanup: () => {} },
                 { id: 'viewersModal', cleanup: () => {} },
                 { id: 'storyViewerModal', cleanup: () => { let vid = document.getElementById('storyMediaVid'); if(vid) vid.pause(); } },
@@ -1054,23 +1004,9 @@
             embedContainer.style.display = 'none';
             embedContainer.innerHTML = '';
 
-            if (isExternalVideoUrl(url)) {
-                let ytEmbed = getYouTubeEmbedUrl(url);
-                let fbEmbed = getFacebookEmbedUrl(url);
-                let embedSrc = ytEmbed || fbEmbed;
-
-                if (embedSrc) {
-                    embedContainer.innerHTML = `<iframe src="${embedSrc}" width="100%" height="100%" style="border:none;" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" allowfullscreen></iframe>`;
-                    embedContainer.style.display = 'flex';
-                } else {
-                    window.open(url, '_blank');
-                    return;
-                }
-            } else {
-                vidEl.src = url;
-                vidEl.style.display = 'block';
-                vidEl.play();
-            }
+            vidEl.src = url;
+            vidEl.style.display = 'block';
+            vidEl.play();
             
             let currentViewsCount = post && post.viewers ? post.viewers.length : 1;
             let vAvatarEl = document.getElementById('videoViewerAvatar');
@@ -1375,20 +1311,6 @@
                 let commentsCount = currentPost ? currentPost.commentsCount : "0 تعليقات";
 
                 if (m.type === 'video') {
-                    if (isExternalVideoUrl(m.url)) {
-                        let ytEmbed = getYouTubeEmbedUrl(m.url);
-                        let fbEmbed = getFacebookEmbedUrl(m.url);
-                        let embedSrc = ytEmbed || fbEmbed;
-
-                        if (embedSrc) {
-                            return `
-                                <div style="position:relative; width:100%; height:320px; background:#000;">
-                                    <iframe src="${embedSrc}" width="100%" height="100%" style="border:none;" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" allowfullscreen></iframe>
-                                </div>
-                            `;
-                        }
-                    }
-
                     return `
                         <div style="position:relative; width:100%; background:#000; cursor:pointer;" onclick="openVideoViewer('${m.url}', ${authorId}, '${reactions}', '${commentsCount}', ${postId})">
                             <video src="${m.url}" controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" style="width:100%; max-height:450px; object-fit:cover; display:block; pointer-events:none;"></video>
@@ -1512,13 +1434,11 @@
             let titleEl = document.getElementById('postModalTitle');
             let submitBtn = document.getElementById('postModalSubmitBtn');
             let textEl = document.getElementById('postText');
-            let videoLinkInput = document.getElementById('postVideoLinkInput');
             let reactionsEl = document.getElementById('postReactionsInput');
             let filePreviewEl = document.getElementById('filePreview');
             let filePickerEl = document.getElementById('filePicker');
             
             filePickerEl.value = "";
-            videoLinkInput.value = "";
             tempFiles = [];
 
             let authorSelect = document.getElementById('postAuthorSelect');
@@ -1541,7 +1461,6 @@
                 titleEl.innerText = "إنشاء منشور";
                 submitBtn.innerText = "نشر";
                 textEl.value = "";
-                videoLinkInput.value = "";
                 reactionsEl.value = "👍❤️ 1";
                 filePreviewEl.innerText = "";
             }
@@ -1602,19 +1521,11 @@
 
         async function publishPost() {
             let text = document.getElementById('postText').value;
-            let videoLinkInput = document.getElementById('postVideoLinkInput').value.trim();
             let reactions = document.getElementById('postReactionsInput').value;
             let authorId = parseInt(document.getElementById('postAuthorSelect').value);
             
-            if (videoLinkInput) {
-                tempFiles.push({
-                    url: videoLinkInput,
-                    type: 'video'
-                });
-            }
-
             if(!text.trim() && tempFiles.length === 0 && currentEditingPostId === null) {
-                alert("اكتب شيئاً أو أرفق صور/فيديو أو ضع رابط فيديو للنشر.");
+                alert("اكتب شيئاً أو أرفق صور أو فيديوهات من هاتفك للنشر.");
                 return;
             }
             
@@ -1654,7 +1565,7 @@
                 closePostModal();
             } catch (err) {
                 console.error(err);
-                alert("حدث خطأ أثناء النشر (تأكد أن حجم الفيديو المضغوط مناسب).");
+                alert("حدث خطأ أثناء النشر.");
             } finally {
                 submitBtn.innerText = currentEditingPostId !== null ? "حفظ التعديلات" : "نشر";
                 submitBtn.disabled = false;
