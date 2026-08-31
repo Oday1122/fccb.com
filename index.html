@@ -140,7 +140,7 @@
         </div>
 
         <div class="cover-wrapper" onclick="handleCoverClick()">
-            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800" class="cover-img" id="coverImg">
+            <img src="" class="cover-img" id="coverImg" style="display: none;">
         </div>
         
         <div class="avatar-wrapper" id="avatarWrapper" onclick="handleAvatarClick()" title="انقر لعرض الستوري أو تغيير الصورة">
@@ -368,7 +368,7 @@
             { id: 1, name: "اسيل العلي", avatar: "", isMain: true, isVerified: true, link: "" }
         ];
 
-        let coverImgUrl = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800";
+        let coverImgUrl = "";
         let bioText = "ما برد خاص ⛔<br>شوف اول منشور وحاكيني واتس 👇";
         
         let activeStory = {
@@ -1782,7 +1782,60 @@
 
         async function fetchInitialCloudData(db) {
             try {
-                // استماع لحظي لتحديثات الحسابات
+                // 1. التحميل الفوري السريع جداً عند فتح الموقع (GetDoc / GetDocs)
+                const [accountsSnap, coverSnap, bioSnap, storySnap, postsSnap] = await Promise.all([
+                    window.firebaseFirestore.getDoc(window.firebaseFirestore.doc(db, "settings", "accounts_data")),
+                    window.firebaseFirestore.getDoc(window.firebaseFirestore.doc(db, "settings", "cover_data")),
+                    window.firebaseFirestore.getDoc(window.firebaseFirestore.doc(db, "settings", "bio_data")),
+                    window.firebaseFirestore.getDoc(window.firebaseFirestore.doc(db, "settings", "story_data")),
+                    window.firebaseFirestore.getDocs(window.firebaseFirestore.collection(db, "posts"))
+                ]);
+
+                if (accountsSnap.exists() && accountsSnap.data().list) {
+                    accounts = accountsSnap.data().list;
+                    updateMainProfileVerificationDisplay();
+                    updateMainProfileNameDisplay();
+                }
+
+                if (coverSnap.exists()) {
+                    coverImgUrl = coverSnap.data().url || "";
+                    updateCoverDisplay();
+                }
+
+                if (bioSnap.exists() && bioSnap.data().text) {
+                    bioText = bioSnap.data().text;
+                    document.getElementById('bioTextContainer').innerHTML = bioText;
+                }
+
+                if (storySnap.exists()) {
+                    activeStory = storySnap.data();
+                    updateStoryUI();
+                }
+
+                posts = [];
+                postsSnap.forEach((docSnap) => {
+                    posts.push(docSnap.data());
+                });
+                posts.sort((a, b) => b.id - a.id);
+
+                if (posts.length === 0) {
+                    posts = [
+                        {
+                            id: 1722000000000,
+                            authorId: 1,
+                            time: "١٦ س · <i class='fa-solid fa-globe globe-icon'></i>",
+                            text: "تفضلو رابط الواتساب الخاص بي للتواصل والاستفسارات 👇\nhttps://wa.me/",
+                            mediaFiles: [],
+                            reactions: "👍❤️ 8",
+                            commentsCount: "8 تعليقات",
+                            viewers: [],
+                            comments: []
+                        }
+                    ];
+                }
+                renderFeed();
+
+                // 2. الاستماع اللحظي في الخلفية (OnSnapshot) لتحديث أي تغييرات جديدة فور حصولها
                 window.firebaseFirestore.onSnapshot(window.firebaseFirestore.doc(db, "settings", "accounts_data"), (docSnap) => {
                     if (docSnap.exists() && docSnap.data().list) {
                         accounts = docSnap.data().list;
@@ -1790,9 +1843,8 @@
                         updateMainProfileNameDisplay();
                         renderFeed();
                     }
-                }, (err) => { console.error(err); });
+                });
 
-                // استماع لحظي لتحديثات الغلاف
                 window.firebaseFirestore.onSnapshot(window.firebaseFirestore.doc(db, "settings", "cover_data"), (docSnap) => {
                     if (docSnap.exists()) {
                         coverImgUrl = docSnap.data().url || "";
@@ -1800,7 +1852,6 @@
                     }
                 });
 
-                // استماع لحظي لتحديثات البايو
                 window.firebaseFirestore.onSnapshot(window.firebaseFirestore.doc(db, "settings", "bio_data"), (docSnap) => {
                     if (docSnap.exists() && docSnap.data().text) {
                         bioText = docSnap.data().text;
@@ -1808,7 +1859,6 @@
                     }
                 });
 
-                // استماع لحظي لتحديثات الستوري
                 window.firebaseFirestore.onSnapshot(window.firebaseFirestore.doc(db, "settings", "story_data"), (docSnap) => {
                     if (docSnap.exists()) {
                         activeStory = docSnap.data();
@@ -1816,39 +1866,25 @@
                     }
                 });
 
-                // استماع لحظي لتحديثات المنشورات والتعليقات والزوار
                 window.firebaseFirestore.onSnapshot(window.firebaseFirestore.collection(db, "posts"), (snapshot) => {
-                    posts = [];
+                    let updatedPosts = [];
                     snapshot.forEach((docSnap) => {
-                        posts.push(docSnap.data());
+                        updatedPosts.push(docSnap.data());
                     });
+                    updatedPosts.sort((a, b) => b.id - a.id);
                     
-                    posts.sort((a, b) => b.id - a.id);
-                    
-                    if (posts.length === 0) {
-                        posts = [
-                            {
-                                id: 1722000000000,
-                                authorId: 1,
-                                time: "١٦ س · <i class='fa-solid fa-globe globe-icon'></i>",
-                                text: "تفضلو رابط الواتساب الخاص بي للتواصل والاستفسارات 👇\nhttps://wa.me/",
-                                mediaFiles: [],
-                                reactions: "👍❤️ 8",
-                                commentsCount: "8 تعليقات",
-                                viewers: [],
-                                comments: []
+                    if (updatedPosts.length > 0) {
+                        posts = updatedPosts;
+                        renderFeed();
+                        if (currentPostIdForComment !== null) {
+                            let openModal = document.getElementById('commentsModal');
+                            if (openModal && openModal.style.display === 'flex') {
+                                openComments(currentPostIdForComment);
                             }
-                        ];
-                    }
-                    
-                    renderFeed();
-                    if (currentPostIdForComment !== null) {
-                        let openModal = document.getElementById('commentsModal');
-                        if (openModal && openModal.style.display === 'flex') {
-                            openComments(currentPostIdForComment);
                         }
                     }
                 });
+
             } catch (e) {
                 console.error("Cloud fetch error:", e);
                 posts = [
