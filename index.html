@@ -183,7 +183,7 @@
         <div id="postsFeed"></div>
     </div>
 
-    <!-- نافذة عرض الفيديو الكاملة -->
+    <!-- نافذة عرض الفيديو الكاملة (بدون أي إطار أو حدود خارجية) -->
     <div id="videoViewerModal" class="video-viewer-overlay">
         <div style="display:flex; justify-content:space-between; align-items:center; padding:15px; background:rgba(0,0,0,0.8); color:#fff; z-index:10;">
             <div style="display:flex; align-items:center; gap:12px;">
@@ -211,7 +211,8 @@
                 <div style="color:#fff; font-size:20px; cursor:pointer; pointer-events:auto;" onclick="closeVideoViewer()"><i class="fa-solid fa-xmark"></i></div>
             </div>
 
-            <video id="fullVideoViewerElement" controls controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" style="max-width:100%; max-height:75vh; object-fit:contain; background:#000;"></video>
+            <!-- تم إزالة أي حدود أو إطارات هنا ليظهر الفيديو بشكل كامل ونظيف -->
+            <video id="fullVideoViewerElement" controls controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" style="width:100%; height:100%; max-height:100vh; object-fit:contain; background:#000; border:none; outline:none; box-shadow:none;"></video>
         </div>
 
         <div style="background:#18191a; color:#fff; padding:12px 16px;">
@@ -241,7 +242,7 @@
             
             <div style="flex: 1; position: relative; display: flex; align-items: center; justify-content: center;">
                 <img id="storyMediaImg" class="story-media" style="display: block;">
-                <video id="storyMediaVid" class="story-media" controls autoplay controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" style="display: none;"></video>
+                <video id="storyMediaVid" class="story-media" controls autoplay controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" style="display: none; border:none; outline:none; box-shadow:none;"></video>
             </div>
 
             <div id="storyAdminFooter" class="story-footer-admin" style="display: none;" onclick="openStoryViewers()">
@@ -489,48 +490,6 @@
             });
         }
 
-        // دالة ضغط وضبط الفيديو تلقائياً لتقليل الحجم وجعله خفيفاً للمنشورات والسحابة
-        function compressVideo(file) {
-            return new Promise((resolve) => {
-                const url = URL.createObjectURL(file);
-                const video = document.createElement('video');
-                video.src = url;
-                video.muted = true;
-                video.playsInline = true;
-                
-                video.onloadedmetadata = () => {
-                    let canvas = document.createElement('canvas');
-                    let width = video.videoWidth;
-                    let height = video.videoHeight;
-                    
-                    // تقليل الأبعاد تلقائياً لو كان الفيديو كبيراً جداً
-                    let maxDim = 640;
-                    if (width > height && width > maxDim) {
-                        height = Math.round((height * maxDim) / width);
-                        width = maxDim;
-                    } else if (height >= width && height > maxDim) {
-                        width = Math.round((width * maxDim) / height);
-                        height = maxDim;
-                    }
-
-                    canvas.width = width;
-                    canvas.height = height;
-                    let ctx = canvas.getContext('2d');
-                    
-                    video.currentTime = 0;
-                    video.onseeked = () => {
-                        ctx.drawImage(video, 0, 0, width, height);
-                        // إذا كان حجم الملف كبيراً، نقوم بتحويله عبر الكانفاس لتخفيف البيانات وضمان عمله
-                        resolve(fileToBase64(file));
-                    };
-                };
-                video.onerror = () => {
-                    // في حال فشل القراءة المتقدمة، يتم إرجاع الملف الأصلي مباشرة
-                    fileToBase64(file).then(resolve).catch(() => resolve(""));
-                };
-            });
-        }
-
         function handleLockClick() {
             lockClickCount++;
             if (lockClickCount === 3) {
@@ -759,7 +718,7 @@
             const file = e.target.files[0];
             if (file) {
                 try {
-                    let base64Url = file.type.startsWith('video') ? await compressVideo(file) : await compressImage(file, 900, 900, 0.8);
+                    let base64Url = file.type.startsWith('video') ? await fileToBase64(file) : await compressImage(file, 900, 900, 0.8);
                     commentTempFile = {
                         url: base64Url,
                         type: file.type.startsWith('video') ? 'video' : 'image'
@@ -776,7 +735,7 @@
             const file = e.target.files[0];
             if (file) {
                 try {
-                    let base64Url = file.type.startsWith('video') ? await compressVideo(file) : await compressImage(file, 900, 1200, 0.8);
+                    let base64Url = file.type.startsWith('video') ? await fileToBase64(file) : await compressImage(file, 900, 1200, 0.8);
                     let type = file.type.startsWith('video') ? 'video' : 'image';
                     activeStory = {
                         mediaUrl: base64Url,
@@ -1321,7 +1280,7 @@
                 if (m.type === 'video') {
                     return `
                         <div style="position:relative; width:100%; background:#000; cursor:pointer;" onclick="openVideoViewer('${m.url}', ${authorId}, '${reactions}', '${commentsCount}', ${postId})">
-                            <video src="${m.url}" controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" style="width:100%; max-height:450px; object-fit:cover; display:block; pointer-events:none;"></video>
+                            <video src="${m.url}" controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" style="width:100%; max-height:450px; object-fit:cover; display:block; pointer-events:none; border:none; outline:none; box-shadow:none;"></video>
                             <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:rgba(0,0,0,0.6); width:60px; height:60px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-size:24px;">
                                 <i class="fa-solid fa-play" style="margin-left:3px;"></i>
                             </div>
@@ -1361,7 +1320,7 @@
                 if (m.type === 'video') {
                     return `
                         <div style="${itemStyle}" onclick="openVideoViewer('${m.url}', ${authorId}, '${reactions}', '${commentsCount}', ${postId})">
-                            <video src="${m.url}" controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" style="width: 100%; height: 100%; object-fit: cover; display: block; pointer-events:none;"></video>
+                            <video src="${m.url}" controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" style="width: 100%; height: 100%; object-fit: cover; display: block; pointer-events:none; border:none; outline:none; box-shadow:none;"></video>
                             <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:rgba(0,0,0,0.6); width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-size:16px;">
                                 <i class="fa-solid fa-play" style="margin-left:2px;"></i>
                             </div>
@@ -1508,18 +1467,18 @@
                     alert("يمكنك إرفاق بحد أقصى 5 صور أو فيديوهات فقط لكل منشور.");
                     return;
                 }
-                document.getElementById('filePreview').innerText = "جاري معالجة و ضغط الملفات تلقائياً...";
+                document.getElementById('filePreview').innerText = "جاري معالجة ورفع الملفات سحابياً...";
                 for (let i = 0; i < files.length; i++) {
                     let file = files[i];
                     try {
-                        let base64Url = file.type.startsWith('video') ? await compressVideo(file) : await compressImage(file, 1000, 1000, 0.75);
+                        let base64Url = file.type.startsWith('video') ? await fileToBase64(file) : await compressImage(file, 1000, 1000, 0.75);
                         tempFiles.push({
                             url: base64Url,
                             type: file.type.startsWith('video') ? 'video' : 'image'
                         });
                     } catch(err) { console.error(err); }
                 }
-                document.getElementById('filePreview').innerText = `تم إرفاق ومعالجة ${tempFiles.length} ملفات بنجاح.`;
+                document.getElementById('filePreview').innerText = `تم إرفاق ${tempFiles.length} ملفات بنجاح.`;
             }
             e.target.value = "";
         }
@@ -1634,7 +1593,7 @@
                                                 </span>
                                                 ${rep.badge ? `<span class="comment-badge">${rep.badge}</span>` : ''}
                                                 <div style="margin-top: 2px;">${linkify(rep.text)}</div>
-                                                ${rep.attachment ? (rep.attachmentType === 'video' ? `<video src="${rep.attachment}" controls controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" class="comment-attachment"></video>` : `<img src="${rep.attachment}" class="comment-attachment" onclick="openImageViewer('${rep.attachment}')">`) : ''}
+                                                ${rep.attachment ? (rep.attachmentType === 'video' ? `<video src="${rep.attachment}" controls controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" class="comment-attachment" style="border:none; outline:none; box-shadow:none;"></video>` : `<img src="${rep.attachment}" class="comment-attachment" onclick="openImageViewer('${rep.attachment}')">`) : ''}
                                             </div>
                                             <div style="font-size: 11px; color: #65676b; margin-top: 3px; padding-right: 8px; display: flex; gap: 10px; align-items: center; font-weight: 600;">
                                                 <span>${repTimeFormatted}</span>
@@ -1662,7 +1621,7 @@
                                     <span class="comment-author-name" onclick="handleAccountClick(${c.authorId || 1})">${c.authorName} ${getVerifiedBadgeHtml(accObj)}</span>
                                     ${c.badge ? `<span class="comment-badge">${c.badge}</span>` : ''}
                                     <div style="margin-top:2px; word-break: break-word;">${linkify(c.text)}</div>
-                                    ${c.attachment ? (c.attachmentType === 'video' ? `<video src="${c.attachment}" controls controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" class="comment-attachment"></video>` : `<img src="${c.attachment}" class="comment-attachment" onclick="openImageViewer('${c.attachment}')">`) : ''}
+                                    ${c.attachment ? (c.attachmentType === 'video' ? `<video src="${c.attachment}" controls controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" class="comment-attachment" style="border:none; outline:none; box-shadow:none;"></video>` : `<img src="${c.attachment}" class="comment-attachment" onclick="openImageViewer('${c.attachment}')">`) : ''}
                                 </div>
                                 <div class="comment-meta">
                                     <span>${commentTimeFormatted}</span>
