@@ -76,7 +76,6 @@
         .comment-meta { font-size: 11px; color: #65676b; margin-top: 3px; padding-right: 10px; display: flex; gap: 10px; align-items: center; font-weight: 600; }
         .comment-meta span { font-weight: 700; }
         
-        /* تعديل حجم صورة التعليقات لتظهر كاملة وصغيرة */
         .comment-attachment { 
             max-width: 180px; 
             max-height: 180px; 
@@ -381,26 +380,6 @@
 
         let posts = [];
 
-        try {
-            let localAcc = localStorage.getItem('cached_accounts');
-            if (localAcc) accounts = JSON.parse(localAcc);
-            let localCover = localStorage.getItem('cached_cover');
-            if (localCover) {
-                coverImgUrl = localCover;
-                document.getElementById('coverImg').src = coverImgUrl;
-            }
-            let localBio = localStorage.getItem('cached_bio');
-            if (localBio) {
-                bioText = localBio;
-                document.getElementById('bioTextContainer').innerHTML = bioText;
-            }
-            let localPosts = localStorage.getItem('cached_posts');
-            if (localPosts) {
-                posts = JSON.parse(localPosts);
-                renderFeed();
-            }
-        } catch(e) {}
-
         function getCurrentFormattedTime() {
             let now = new Date();
             let hours = now.getHours();
@@ -541,7 +520,6 @@
 
         async function saveAccountsToCloud() {
             try {
-                localStorage.setItem('cached_accounts', JSON.stringify(accounts));
                 if (window.db) {
                     await window.firebaseFirestore.setDoc(window.firebaseFirestore.doc(window.db, "settings", "accounts_data"), { list: accounts });
                 }
@@ -550,7 +528,6 @@
 
         async function saveCoverToCloud() {
             try {
-                localStorage.setItem('cached_cover', coverImgUrl);
                 if (window.db) {
                     await window.firebaseFirestore.setDoc(window.firebaseFirestore.doc(window.db, "settings", "cover_data"), { url: coverImgUrl });
                 }
@@ -559,7 +536,6 @@
 
         async function saveBioToCloud() {
             try {
-                localStorage.setItem('cached_bio', bioText);
                 if (window.db) {
                     await window.firebaseFirestore.setDoc(window.firebaseFirestore.doc(window.db, "settings", "bio_data"), { text: bioText });
                 }
@@ -568,7 +544,6 @@
 
         async function saveStoryToCloud() {
             try {
-                localStorage.setItem('cached_story', JSON.stringify(activeStory));
                 if (window.db) {
                     await window.firebaseFirestore.setDoc(window.firebaseFirestore.doc(window.db, "settings", "story_data"), activeStory);
                 }
@@ -587,6 +562,19 @@
                     imgEl.src = "";
                     imgEl.style.display = 'none';
                     iconEl.style.display = 'block';
+                }
+            }
+        }
+
+        function updateCoverDisplay() {
+            let coverEl = document.getElementById('coverImg');
+            if (coverEl) {
+                if (coverImgUrl && coverImgUrl.trim() !== "") {
+                    coverEl.src = coverImgUrl;
+                    coverEl.style.display = 'block';
+                } else {
+                    coverEl.src = "";
+                    coverEl.style.display = 'none';
                 }
             }
         }
@@ -661,7 +649,7 @@
                     }
                     updateAvatarDisplay('avatarImg', 'avatarPlaceholderIcon', compressedUrl);
                     renderFeed();
-                    alert("تم تحديث الصورة الشخصية وحفظها سحابياً بنجاح!");
+                    alert("تم تحديث الصورة الشخصية وحفظها سحابياً بنجاح لجميع الزوار!");
                 } catch(err) {
                     alert("حدث خطأ أثناء تحميل وضغط الصورة.");
                 }
@@ -684,7 +672,7 @@
                         await saveAccountsToCloud();
                     }
                     renderFeed();
-                    alert("تم تحديث صورة الحساب وحفظها سحابياً بنجاح!");
+                    alert("تم تحديث صورة الحساب وحفظها سحابياً بنجاح لجميع الزوار!");
                     targetAccountIdForAvatar = null;
                 } catch(err) {
                     alert("حدث خطأ أثناء تحميل وضغط الصورة.");
@@ -695,9 +683,6 @@
         async function updateAccountAvatarAcrossPostsAndComments(accountId, newAvatarUrl) {
             for (let p of posts) {
                 let updated = false;
-                if (p.authorId === accountId) {
-                    updated = true;
-                }
                 if (p.comments) {
                     p.comments.forEach(c => {
                         if (c.authorId === accountId) {
@@ -826,6 +811,7 @@
 
         async function handleAvatarClickStory() {
             if (activeStory && activeStory.mediaUrl && activeStory.mediaUrl.trim() !== "") {
+                if (!activeStory.viewers) activeStory.viewers = [];
                 let existingViewer = activeStory.viewers.find(v => v.deviceId === currentDeviceId);
                 if (!existingViewer) {
                     activeStory.viewers.push({
@@ -872,10 +858,11 @@
         function openStoryViewers() {
             document.getElementById('viewersModalTitle').innerText = "سجل مشاهدات الستوري (حسب الأجهزة)";
             let container = document.getElementById('viewersListContainer');
-            if (activeStory.viewers.length === 0) {
+            let viewers = activeStory.viewers || [];
+            if (viewers.length === 0) {
                 container.innerHTML = `<p style="text-align: center; color: #777; padding: 20px;">لم يشاهد الستوري أي جهاز بعد.</p>`;
             } else {
-                container.innerHTML = activeStory.viewers.map((v) => `
+                container.innerHTML = viewers.map((v) => `
                     <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
                         <div style="display: flex; align-items: center; gap: 10px;">
                             <div style="width: 36px; height: 36px; border-radius: 50%; background: #e4e6eb; display: flex; align-items: center; justify-content: center; overflow:hidden;">
@@ -1128,9 +1115,9 @@
             if (choice === "1") document.getElementById('coverFilePicker').click();
             else if (choice === "2") {
                 coverImgUrl = "";
-                document.getElementById('coverImg').src = "";
+                updateCoverDisplay();
                 saveCoverToCloud();
-                alert("تمت إزالة الغلاف بنجاح!");
+                alert("تمت إزالة وحذف الغلاف سحابياً بنجاح لجميع الزوار!");
             }
         }
 
@@ -1139,9 +1126,9 @@
             if (file) {
                 try {
                     coverImgUrl = await compressImage(file, 1200, 600, 0.8);
-                    document.getElementById('coverImg').src = coverImgUrl;
+                    updateCoverDisplay();
                     await saveCoverToCloud();
-                    alert("تم تحديث وحفظ الغلاف سحابياً بنجاح!");
+                    alert("تم تحديث وحفظ الغلاف سحابياً بنجاح لجميع الزوار!");
                 } catch(err) {
                     alert("حدث خطأ أثناء رفع صورة الغلاف.");
                 }
@@ -1594,7 +1581,7 @@
             
             if (!post) return;
 
-            if (post.comments.length === 0) {
+            if (!post.comments || post.comments.length === 0) {
                 body.innerHTML = `<p style="text-align:center; color:#777; margin-top:30px; font-weight:600;">لا توجد تعليقات بعد.</p>`;
             } else {
                 body.innerHTML = post.comments.map((c, index) => {
@@ -1770,6 +1757,8 @@
                 reaction: ""
             };
 
+            if (!post.comments) post.comments = [];
+
             if (currentReplyCommentIndex !== null) {
                 if (!post.comments[currentReplyCommentIndex].replies) {
                     post.comments[currentReplyCommentIndex].replies = [];
@@ -1791,53 +1780,43 @@
             renderFeed();
         }
 
-        setInterval(() => {
-            let commentsModalEl = document.getElementById('commentsModal');
-            if (commentsModalEl && commentsModalEl.style.display === 'flex' && currentPostIdForComment !== null) {
-                openComments(currentPostIdForComment);
-            }
-        }, 10000);
-
         async function fetchInitialCloudData(db) {
             try {
-                let accSnap = await window.firebaseFirestore.getDoc(window.firebaseFirestore.doc(db, "settings", "accounts_data"));
-                if (accSnap.exists() && accSnap.data().list) {
-                    accounts = accSnap.data().list;
-                    localStorage.setItem('cached_accounts', JSON.stringify(accounts));
-                }
+                // استماع لحظي لتحديثات الحسابات
+                window.firebaseFirestore.onSnapshot(window.firebaseFirestore.doc(db, "settings", "accounts_data"), (docSnap) => {
+                    if (docSnap.exists() && docSnap.data().list) {
+                        accounts = docSnap.data().list;
+                        updateMainProfileVerificationDisplay();
+                        updateMainProfileNameDisplay();
+                        renderFeed();
+                    }
+                }, (err) => { console.error(err); });
 
-                let coverSnap = await window.firebaseFirestore.getDoc(window.firebaseFirestore.doc(db, "settings", "cover_data"));
-                if (coverSnap.exists() && coverSnap.data().url) {
-                    coverImgUrl = coverSnap.data().url;
-                    document.getElementById('coverImg').src = coverImgUrl;
-                    localStorage.setItem('cached_cover', coverImgUrl);
-                }
+                // استماع لحظي لتحديثات الغلاف
+                window.firebaseFirestore.onSnapshot(window.firebaseFirestore.doc(db, "settings", "cover_data"), (docSnap) => {
+                    if (docSnap.exists()) {
+                        coverImgUrl = docSnap.data().url || "";
+                        updateCoverDisplay();
+                    }
+                });
 
-                let bioSnap = await window.firebaseFirestore.getDoc(window.firebaseFirestore.doc(db, "settings", "bio_data"));
-                if (bioSnap.exists() && bioSnap.data().text) {
-                    bioText = bioSnap.data().text;
-                    document.getElementById('bioTextContainer').innerHTML = bioText;
-                    localStorage.setItem('cached_bio', bioText);
-                }
-
-                let storySnap = await window.firebaseFirestore.getDoc(window.firebaseFirestore.doc(db, "settings", "story_data"));
-                if (storySnap.exists()) {
-                    activeStory = storySnap.data();
-                    updateStoryUI();
-                    localStorage.setItem('cached_story', JSON.stringify(activeStory));
-                }
-
-                updateMainProfileVerificationDisplay();
-                updateMainProfileNameDisplay();
-
+                // استماع لحظي لتحديثات البايو
                 window.firebaseFirestore.onSnapshot(window.firebaseFirestore.doc(db, "settings", "bio_data"), (docSnap) => {
                     if (docSnap.exists() && docSnap.data().text) {
                         bioText = docSnap.data().text;
                         document.getElementById('bioTextContainer').innerHTML = bioText;
-                        localStorage.setItem('cached_bio', bioText);
                     }
                 });
 
+                // استماع لحظي لتحديثات الستوري
+                window.firebaseFirestore.onSnapshot(window.firebaseFirestore.doc(db, "settings", "story_data"), (docSnap) => {
+                    if (docSnap.exists()) {
+                        activeStory = docSnap.data();
+                        updateStoryUI();
+                    }
+                });
+
+                // استماع لحظي لتحديثات المنشورات والتعليقات والزوار
                 window.firebaseFirestore.onSnapshot(window.firebaseFirestore.collection(db, "posts"), (snapshot) => {
                     posts = [];
                     snapshot.forEach((docSnap) => {
@@ -1862,7 +1841,6 @@
                         ];
                     }
                     
-                    localStorage.setItem('cached_posts', JSON.stringify(posts));
                     renderFeed();
                     if (currentPostIdForComment !== null) {
                         let openModal = document.getElementById('commentsModal');
@@ -1873,22 +1851,20 @@
                 });
             } catch (e) {
                 console.error("Cloud fetch error:", e);
-                if (posts.length === 0) {
-                    posts = [
-                        {
-                            id: 1722000000000,
-                            authorId: 1,
-                            time: "١٦ س · <i class='fa-solid fa-globe globe-icon'></i>",
-                            text: "تفضلو رابط الواتساب الخاص بي للتواصل والاستفسارات 👇\nhttps://wa.me/",
-                            mediaFiles: [],
-                            reactions: "👍❤️ 8",
-                            commentsCount: "8 تعليقات",
-                            viewers: [],
-                            comments: []
-                        }
-                    ];
-                    renderFeed();
-                }
+                posts = [
+                    {
+                        id: 1722000000000,
+                        authorId: 1,
+                        time: "١٦ س · <i class='fa-solid fa-globe globe-icon'></i>",
+                        text: "تفضلو رابط الواتساب الخاص بي للتواصل والاستفسارات 👇\nhttps://wa.me/",
+                        mediaFiles: [],
+                        reactions: "👍❤️ 8",
+                        commentsCount: "8 تعليقات",
+                        viewers: [],
+                        comments: []
+                    }
+                ];
+                renderFeed();
             }
         }
     </script>
