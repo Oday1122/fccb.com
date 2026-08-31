@@ -75,7 +75,21 @@
         .comment-badge { background: #e4e6eb; font-size: 11px; padding: 1px 6px; border-radius: 4px; color: #65676b; margin-right: 5px; font-weight: 600; }
         .comment-meta { font-size: 11px; color: #65676b; margin-top: 3px; padding-right: 10px; display: flex; gap: 10px; align-items: center; font-weight: 600; }
         .comment-meta span { font-weight: 700; }
-        .comment-attachment { width: 100%; border-radius: 8px; margin-top: 8px; max-height: 250px; object-fit: cover; border: none; cursor: pointer; display: block; }
+        
+        /* تعديل حجم صورة التعليقات لتظهر كاملة وصغيرة */
+        .comment-attachment { 
+            max-width: 180px; 
+            max-height: 180px; 
+            width: auto; 
+            height: auto; 
+            border-radius: 8px; 
+            margin-top: 8px; 
+            object-fit: contain; 
+            border: none; 
+            cursor: pointer; 
+            display: block; 
+            background: #fff;
+        }
 
         .image-viewer-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 3000; justify-content: center; align-items: center; }
         .image-viewer-content { max-width: 95%; max-height: 95%; object-fit: contain; border-radius: 4px; }
