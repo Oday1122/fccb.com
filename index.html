@@ -176,7 +176,9 @@
             <button class="btn-about" id="aboutBtnText">عرض معلومات القسم "حول" لـ اسيل</button>
         </div>
 
-        <div id="postsFeed"></div>
+        <div id="postsFeed">
+            <div style="text-align: center; padding: 30px; color: #65676b; font-weight: 600;">جاري تحميل المنشورات...</div>
+        </div>
     </div>
 
     <div id="videoViewerModal" class="video-viewer-overlay">
@@ -796,7 +798,6 @@
                 if (hasStoryActive) {
                     handleAvatarClickStory();
                 }
-                // تم إزالة تنبيه "لا توجد ستوري لعرضها حالياً" بناءً على طلبك
             }
         }
 
@@ -1782,12 +1783,48 @@
 
         async function fetchInitialCloudData(db) {
             try {
-                const [accountsSnap, coverSnap, bioSnap, storySnap, postsSnap] = await Promise.all([
+                // إعداد المراقبة المباشرة (Real-time listener) للمنشورات لتظهر بأقصى سرعة فور الاتصال
+                window.firebaseFirestore.onSnapshot(window.firebaseFirestore.collection(db, "posts"), (snapshot) => {
+                    let updatedPosts = [];
+                    snapshot.forEach((docSnap) => {
+                        updatedPosts.push(docSnap.data());
+                    });
+                    updatedPosts.sort((a, b) => b.id - a.id);
+                    
+                    if (updatedPosts.length > 0) {
+                        posts = updatedPosts;
+                        renderFeed();
+                    } else if (posts.length === 0) {
+                        // إذا كانت القاعدة فارغة تماماً، نعرض المنشور الافتراضي
+                        posts = [
+                            {
+                                id: 1722000000000,
+                                authorId: 1,
+                                time: "١٦ س · <i class='fa-solid fa-globe globe-icon'></i>",
+                                text: "تفضلو رابط الواتساب الخاص بي للتواصل والاستفسارات 👇\nhttps://wa.me/",
+                                mediaFiles: [],
+                                reactions: "👍❤️ 8",
+                                commentsCount: "8 تعليقات",
+                                viewers: [],
+                                comments: []
+                            }
+                        ];
+                        renderFeed();
+                    }
+                    if (currentPostIdForComment !== null) {
+                        let openModal = document.getElementById('commentsModal');
+                        if (openModal && openModal.style.display === 'flex') {
+                            openComments(currentPostIdForComment);
+                        }
+                    }
+                });
+
+                // جلب باقي الإعدادات (الحسابات، الغلاف، البايو، الستوري) بشكل متزامن
+                const [accountsSnap, coverSnap, bioSnap, storySnap] = await Promise.all([
                     window.firebaseFirestore.getDoc(window.firebaseFirestore.doc(db, "settings", "accounts_data")),
                     window.firebaseFirestore.getDoc(window.firebaseFirestore.doc(db, "settings", "cover_data")),
                     window.firebaseFirestore.getDoc(window.firebaseFirestore.doc(db, "settings", "bio_data")),
-                    window.firebaseFirestore.getDoc(window.firebaseFirestore.doc(db, "settings", "story_data")),
-                    window.firebaseFirestore.getDocs(window.firebaseFirestore.collection(db, "posts"))
+                    window.firebaseFirestore.getDoc(window.firebaseFirestore.doc(db, "settings", "story_data"))
                 ]);
 
                 if (accountsSnap.exists() && accountsSnap.data().list) {
@@ -1811,29 +1848,7 @@
                     updateStoryUI();
                 }
 
-                posts = [];
-                postsSnap.forEach((docSnap) => {
-                    posts.push(docSnap.data());
-                });
-                posts.sort((a, b) => b.id - a.id);
-
-                if (posts.length === 0) {
-                    posts = [
-                        {
-                            id: 1722000000000,
-                            authorId: 1,
-                            time: "١٦ س · <i class='fa-solid fa-globe globe-icon'></i>",
-                            text: "تفضلو رابط الواتساب الخاص بي للتواصل والاستفسارات 👇\nhttps://wa.me/",
-                            mediaFiles: [],
-                            reactions: "👍❤️ 8",
-                            commentsCount: "8 تعليقات",
-                            viewers: [],
-                            comments: []
-                        }
-                    ];
-                }
-                renderFeed();
-
+                // مستمعات السحابة للإعدادات الأخرى
                 window.firebaseFirestore.onSnapshot(window.firebaseFirestore.doc(db, "settings", "accounts_data"), (docSnap) => {
                     if (docSnap.exists() && docSnap.data().list) {
                         accounts = docSnap.data().list;
@@ -1861,25 +1876,6 @@
                     if (docSnap.exists()) {
                         activeStory = docSnap.data();
                         updateStoryUI();
-                    }
-                });
-
-                window.firebaseFirestore.onSnapshot(window.firebaseFirestore.collection(db, "posts"), (snapshot) => {
-                    let updatedPosts = [];
-                    snapshot.forEach((docSnap) => {
-                        updatedPosts.push(docSnap.data());
-                    });
-                    updatedPosts.sort((a, b) => b.id - a.id);
-                    
-                    if (updatedPosts.length > 0) {
-                        posts = updatedPosts;
-                        renderFeed();
-                        if (currentPostIdForComment !== null) {
-                            let openModal = document.getElementById('commentsModal');
-                            if (openModal && openModal.style.display === 'flex') {
-                                openComments(currentPostIdForComment);
-                            }
-                        }
                     }
                 });
 
