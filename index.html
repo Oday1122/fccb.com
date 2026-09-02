@@ -42,6 +42,7 @@
         .btn-about { width: 100%; background: #e4e6eb; border: none; padding: 10px; border-radius: 6px; font-weight: 700; margin-top: 10px; cursor: pointer; font-size: 14px; color: #050505; }
 
         .post-card { background: #fff; margin-top: 10px; border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; }
+        .post-card.locked-post { opacity: 0.75; border: 2px dashed #ff4500; }
         .post-header { display: flex; justify-content: space-between; align-items: flex-start; padding: 12px 16px 8px; }
         .post-user-area { display: flex; gap: 10px; align-items: center; cursor: pointer; }
         .post-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: #e4e6eb; }
@@ -302,6 +303,11 @@
             <div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">
                 <label style="font-size: 13px; font-weight: 700; color: #65676b; display: block; margin-bottom: 5px;">تخصيص التفاعلات (الإيكات):</label>
                 <input type="text" id="postReactionsInput" value="👍❤️ 5" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; outline: none; font-weight: 600;">
+            </div>
+
+            <div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; display: flex; align-items: center; gap: 10px;">
+                <input type="checkbox" id="postLockedCheckbox" style="width: 20px; height: 20px; cursor: pointer;">
+                <label for="postLockedCheckbox" style="font-size: 14px; font-weight: 700; color: #333; cursor: pointer;">قفل المنشور (إخفاء عن الزوار ولا يراه سوى الأدمن)</label>
             </div>
 
             <div style="margin-top:15px;">
@@ -1152,6 +1158,25 @@
             }
         }
 
+        async function movePost(index, direction) {
+            let newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= posts.length) return;
+            
+            let temp = posts[index];
+            posts[index] = posts[newIndex];
+            posts[newIndex] = temp;
+
+            renderFeed();
+
+            try {
+                if (window.db) {
+                    for (let i = 0; i < posts.length; i++) {
+                        await updatePostInCloud(posts[i]);
+                    }
+                }
+            } catch(e) { console.error(e); }
+        }
+
         async function editComment(postId, commentIndex) {
             if (!isAdmin) return;
             let post = posts.find(p => p.id === postId);
@@ -1381,7 +1406,19 @@
                 feed.innerHTML = `<div style="text-align: center; padding: 30px; color: #65676b; font-weight: 600;">جاري تحميل المنشورات...</div>`;
                 return;
             }
-            feed.innerHTML = posts.map(p => {
+
+            // فلترة المنشورات: إذا كان المنشور مقفلاً، يظهر فقط للأدمن ولا يظهر للزوار
+            let filteredPosts = posts.filter(p => {
+                if (p.isLocked && !isAdmin) return false;
+                return true;
+            });
+
+            if (filteredPosts.length === 0) {
+                feed.innerHTML = `<div style="text-align: center; padding: 30px; color: #65676b; font-weight: 600;">لا توجد منشورات حالياً.</div>`;
+                return;
+            }
+
+            feed.innerHTML = filteredPosts.map((p, index) => {
                 let author = accounts.find(a => a.id === p.authorId) || accounts[0];
                 let mediaFilesList = p.mediaFiles || (p.mediaUrl ? [{url: p.mediaUrl, type: p.mediaType}] : []);
                 
@@ -1389,18 +1426,23 @@
                     ? `<img src="${author.avatar}" class="post-avatar">`
                     : `<div class="post-avatar" style="background:#e4e6eb; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-user" style="font-size:18px; color:#8a8d91;"></i></div>`;
 
+                let lockedClass = p.isLocked ? ' locked-post' : '';
+                let lockedBadge = p.isLocked ? `<span style="background: #ff4500; color: #fff; font-size: 11px; padding: 2px 6px; border-radius: 4px; margin-right: 6px; font-weight: 700;"><i class="fa-solid fa-lock"></i> مقفل (مخفي عن الزوار)</span>` : '';
+
                 return `
-                    <div class="post-card">
+                    <div class="post-card${lockedClass}">
                         <div class="post-header">
                             <div class="post-user-area" onclick="handleAccountClick(${author.id})">
                                 ${avatarHtml}
                                 <div class="post-info">
-                                    <span style="display:inline-flex; align-items:center; gap:4px;">${author.name} ${getVerifiedBadgeHtml(author)}</span><br>
+                                    <span style="display:inline-flex; align-items:center; gap:4px;">${author.name} ${getVerifiedBadgeHtml(author)} ${lockedBadge}</span><br>
                                     <span class="post-time">${p.time}</span>
                                 </div>
                             </div>
                             ${isAdmin ? `
-                                <div style="display: flex; gap: 12px; align-items: center;">
+                                <div style="display: flex; gap: 8px; align-items: center;">
+                                    ${index > 0 ? `<span onclick="movePost(${index}, -1)" style="cursor:pointer; color: #1877f2; font-weight:700;" title="نقل للأعلى"><i class="fa-solid fa-arrow-up"></i></span>` : ''}
+                                    ${index < filteredPosts.length - 1 ? `<span onclick="movePost(${index}, 1)" style="cursor:pointer; color: #1877f2; font-weight:700;" title="نقل للأسفل"><i class="fa-solid fa-arrow-down"></i></span>` : ''}
                                     <span onclick="openPostModal(${p.id})" style="cursor:pointer; color: #1877f2;" title="تعديل المنشور"><i class="fa-solid fa-pen"></i></span>
                                     <span onclick="deletePost(${p.id})" style="cursor:pointer; color: red;" title="حذف المنشور"><i class="fa-solid fa-trash"></i></span>
                                 </div>
@@ -1437,6 +1479,7 @@
             let submitBtn = document.getElementById('postModalSubmitBtn');
             let textEl = document.getElementById('postText');
             let reactionsEl = document.getElementById('postReactionsInput');
+            let lockedCheckbox = document.getElementById('postLockedCheckbox');
             let filePreviewEl = document.getElementById('filePreview');
             let filePickerEl = document.getElementById('filePicker');
             
@@ -1452,6 +1495,7 @@
                 submitBtn.innerText = "حفظ التعديلات";
                 textEl.value = post ? post.text : "";
                 reactionsEl.value = post ? post.reactions : "👍❤️ 5";
+                lockedCheckbox.checked = post ? !!post.isLocked : false;
                 if (post && post.authorId) authorSelect.value = post.authorId;
                 if (post && post.mediaFiles && post.mediaFiles.length > 0) {
                     tempFiles = [...post.mediaFiles];
@@ -1464,6 +1508,7 @@
                 submitBtn.innerText = "نشر";
                 textEl.value = "";
                 reactionsEl.value = "👍❤️ 1";
+                lockedCheckbox.checked = false;
                 filePreviewEl.innerText = "";
             }
             
@@ -1524,6 +1569,7 @@
         async function publishPost() {
             let text = document.getElementById('postText').value;
             let reactions = document.getElementById('postReactionsInput').value;
+            let isLocked = document.getElementById('postLockedCheckbox').checked;
             let authorId = parseInt(document.getElementById('postAuthorSelect').value);
             
             if(!text.trim() && tempFiles.length === 0 && currentEditingPostId === null) {
@@ -1541,6 +1587,7 @@
                     if (post) {
                         post.text = text;
                         post.reactions = reactions;
+                        post.isLocked = isLocked;
                         post.authorId = authorId;
                         post.mediaFiles = [...tempFiles];
                         await updatePostInCloud(post);
@@ -1554,10 +1601,12 @@
                         text: text, 
                         mediaFiles: [...tempFiles],
                         reactions: reactions,
+                        isLocked: isLocked,
                         commentsCount: "0 تعليقات",
                         viewers: [],
                         comments: []
                     };
+                    posts.unshift(newPost);
                     await updatePostInCloud(newPost);
                     alert("تم النشر بنجاح!");
                 }
@@ -1783,49 +1832,41 @@
 
         async function fetchInitialCloudData(db) {
             try {
-                // إعداد المراقبة المباشرة (Real-time listener) للمنشورات لتظهر بأقصى سرعة فور الاتصال
-                window.firebaseFirestore.onSnapshot(window.firebaseFirestore.collection(db, "posts"), (snapshot) => {
-                    let updatedPosts = [];
-                    snapshot.forEach((docSnap) => {
-                        updatedPosts.push(docSnap.data());
-                    });
-                    updatedPosts.sort((a, b) => b.id - a.id);
-                    
-                    if (updatedPosts.length > 0) {
-                        posts = updatedPosts;
-                        renderFeed();
-                    } else if (posts.length === 0) {
-                        // إذا كانت القاعدة فارغة تماماً، نعرض المنشور الافتراضي
-                        posts = [
-                            {
-                                id: 1722000000000,
-                                authorId: 1,
-                                time: "١٦ س · <i class='fa-solid fa-globe globe-icon'></i>",
-                                text: "تفضلو رابط الواتساب الخاص بي للتواصل والاستفسارات 👇\nhttps://wa.me/",
-                                mediaFiles: [],
-                                reactions: "👍❤️ 8",
-                                commentsCount: "8 تعليقات",
-                                viewers: [],
-                                comments: []
-                            }
-                        ];
-                        renderFeed();
-                    }
-                    if (currentPostIdForComment !== null) {
-                        let openModal = document.getElementById('commentsModal');
-                        if (openModal && openModal.style.display === 'flex') {
-                            openComments(currentPostIdForComment);
-                        }
-                    }
+                const postsQuery = window.firebaseFirestore.getDocs(window.firebaseFirestore.collection(db, "posts"));
+                const accountsDoc = window.firebaseFirestore.getDoc(window.firebaseFirestore.doc(db, "settings", "accounts_data"));
+                const coverDoc = window.firebaseFirestore.getDoc(window.firebaseFirestore.doc(db, "settings", "cover_data"));
+                const bioDoc = window.firebaseFirestore.getDoc(window.firebaseFirestore.doc(db, "settings", "bio_data"));
+                const storyDoc = window.firebaseFirestore.getDoc(window.firebaseFirestore.doc(db, "settings", "story_data"));
+
+                const [postsSnap, accountsSnap, coverSnap, bioSnap, storySnap] = await Promise.all([
+                    postsQuery, accountsDoc, coverDoc, bioDoc, storyDoc
+                ]);
+
+                let loadedPosts = [];
+                postsSnap.forEach((docSnap) => {
+                    loadedPosts.push(docSnap.data());
                 });
 
-                // جلب باقي الإعدادات (الحسابات، الغلاف، البايو، الستوري) بشكل متزامن
-                const [accountsSnap, coverSnap, bioSnap, storySnap] = await Promise.all([
-                    window.firebaseFirestore.getDoc(window.firebaseFirestore.doc(db, "settings", "accounts_data")),
-                    window.firebaseFirestore.getDoc(window.firebaseFirestore.doc(db, "settings", "cover_data")),
-                    window.firebaseFirestore.getDoc(window.firebaseFirestore.doc(db, "settings", "bio_data")),
-                    window.firebaseFirestore.getDoc(window.firebaseFirestore.doc(db, "settings", "story_data"))
-                ]);
+                if (loadedPosts.length > 0) {
+                    loadedPosts.sort((a, b) => b.id - a.id);
+                    posts = loadedPosts;
+                } else {
+                    posts = [
+                        {
+                            id: 1722000000000,
+                            authorId: 1,
+                            time: "١٦ س · <i class='fa-solid fa-globe globe-icon'></i>",
+                            text: "تفضلو رابط الواتساب الخاص بي للتواصل والاستفسارات 👇\nhttps://wa.me/",
+                            mediaFiles: [],
+                            reactions: "👍❤️ 8",
+                            isLocked: false,
+                            commentsCount: "8 تعليقات",
+                            viewers: [],
+                            comments: []
+                        }
+                    ];
+                }
+                renderFeed();
 
                 if (accountsSnap.exists() && accountsSnap.data().list) {
                     accounts = accountsSnap.data().list;
@@ -1848,7 +1889,24 @@
                     updateStoryUI();
                 }
 
-                // مستمعات السحابة للإعدادات الأخرى
+                window.firebaseFirestore.onSnapshot(window.firebaseFirestore.collection(db, "posts"), (snapshot) => {
+                    let updatedPosts = [];
+                    snapshot.forEach((docSnap) => {
+                        updatedPosts.push(docSnap.data());
+                    });
+                    if (updatedPosts.length > 0) {
+                        updatedPosts.sort((a, b) => b.id - a.id);
+                        posts = updatedPosts;
+                        renderFeed();
+                        if (currentPostIdForComment !== null) {
+                            let openModal = document.getElementById('commentsModal');
+                            if (openModal && openModal.style.display === 'flex') {
+                                openComments(currentPostIdForComment);
+                            }
+                        }
+                    }
+                });
+
                 window.firebaseFirestore.onSnapshot(window.firebaseFirestore.doc(db, "settings", "accounts_data"), (docSnap) => {
                     if (docSnap.exists() && docSnap.data().list) {
                         accounts = docSnap.data().list;
@@ -1889,6 +1947,7 @@
                         text: "تفضلو رابط الواتساب الخاص بي للتواصل والاستفسارات 👇\nhttps://wa.me/",
                         mediaFiles: [],
                         reactions: "👍❤️ 8",
+                        isLocked: false,
                         commentsCount: "8 تعليقات",
                         viewers: [],
                         comments: []
