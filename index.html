@@ -774,8 +774,9 @@
 
         function handleAvatarClick() {
             let mainAcc = accounts.find(a => a.isMain);
+            let hasStoryActive = activeStory && activeStory.mediaUrl && activeStory.mediaUrl.trim() !== "";
+
             if (isAdmin) {
-                let hasStoryActive = activeStory && activeStory.mediaUrl && activeStory.mediaUrl.trim() !== "";
                 let storyStatus = hasStoryActive ? "1. تغيير الصورة الشخصية مباشرة (فتح ملفات الهاتف)\n2. عرض الستوري الحالي\n3. إزالة / حذف الستوري الحالي\n4. رفع / تغيير الستوري" : "1. تغيير الصورة الشخصية مباشرة (فتح ملفات الهاتف)\n2. رفع / إضافة ستوري جديد";
                 let choice = prompt(`إدارة الصورة الشخصية والستوري:\n${storyStatus}\n5. إدارة الحسابات والصور والتوثيق`);
                 
@@ -792,11 +793,10 @@
                     else if (choice === "5") manageAccounts();
                 }
             } else {
-                if (activeStory && activeStory.mediaUrl && activeStory.mediaUrl.trim() !== "") {
+                if (hasStoryActive) {
                     handleAvatarClickStory();
-                } else {
-                    alert("لا توجد ستوري لعرضها حالياً.");
                 }
+                // تم إزالة تنبيه "لا توجد ستوري لعرضها حالياً" بناءً على طلبك
             }
         }
 
@@ -1782,7 +1782,6 @@
 
         async function fetchInitialCloudData(db) {
             try {
-                // 1. التحميل الفوري السريع جداً عند فتح الموقع (GetDoc / GetDocs)
                 const [accountsSnap, coverSnap, bioSnap, storySnap, postsSnap] = await Promise.all([
                     window.firebaseFirestore.getDoc(window.firebaseFirestore.doc(db, "settings", "accounts_data")),
                     window.firebaseFirestore.getDoc(window.firebaseFirestore.doc(db, "settings", "cover_data")),
@@ -1835,7 +1834,6 @@
                 }
                 renderFeed();
 
-                // 2. الاستماع اللحظي في الخلفية (OnSnapshot) لتحديث أي تغييرات جديدة فور حصولها
                 window.firebaseFirestore.onSnapshot(window.firebaseFirestore.doc(db, "settings", "accounts_data"), (docSnap) => {
                     if (docSnap.exists() && docSnap.data().list) {
                         accounts = docSnap.data().list;
