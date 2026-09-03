@@ -890,7 +890,7 @@
 
         function openVideoViewersList() {
             if (!isAdmin) return;
-            let post = posts.find(p => p.id === currentVideoPostId);
+            let post = posts.find(p => String(p.id) === String(currentVideoPostId));
             if (!post) return;
             
             document.getElementById('viewersModalTitle').innerText = "سجل مشاهدات الفيديو (حسب الأجهزة)";
@@ -966,7 +966,7 @@
 
             if (!closedAnyModal) {
                 window.history.pushState({ page: "main" }, "", window.location.href);
-                window.location.href = "https://ooo11223.github.io/fccb.com/";
+                window.location.href = "https://oo11223.github.io/facbii/";
             }
         });
 
@@ -988,8 +988,8 @@
         }
 
         async function openVideoViewer(url, authorId, reactions, commentsCount, postId) {
-            currentVideoPostId = postId;
-            let post = posts.find(p => p.id === postId);
+            currentVideoPostId = String(postId);
+            let post = posts.find(p => String(p.id) === String(postId));
             if (post) {
                 if (!post.viewers) post.viewers = [];
                 let existingViewer = post.viewers.find(v => v.deviceId === currentDeviceId);
@@ -1150,7 +1150,7 @@
         async function deletePost(id) {
             if(confirm("هل أنت متأكد من حذف هذا المنشور؟")) {
                 try {
-                    posts = posts.filter(p => p.id != id);
+                    posts = posts.filter(p => String(p.id) !== String(id));
                     renderFeed();
 
                     if (window.db) {
@@ -1185,7 +1185,7 @@
 
         async function editComment(postId, commentIndex) {
             if (!isAdmin) return;
-            let post = posts.find(p => p.id === postId);
+            let post = posts.find(p => String(p.id) === String(postId));
             if (post && post.comments[commentIndex]) {
                 let choice = prompt("اختر ما تريد تعديله للتعليق:\n1. تعديل نص التعليق\n2. تعديل وقت التعليق (أو جعله حسب الوقت الحقيقي)");
                 if (choice === "1") {
@@ -1219,7 +1219,7 @@
 
         async function editReply(postId, commentIndex, replyIndex) {
             if (!isAdmin) return;
-            let post = posts.find(p => p.id === postId);
+            let post = posts.find(p => String(p.id) === String(postId));
             if (post && post.comments[commentIndex] && post.comments[commentIndex].replies[replyIndex]) {
                 let choice = prompt("اختر ما تريد تعديله للرد:\n1. تعديل نص الرد\n2. تعديل وقت الرد (أو جعله حسب الوقت الحقيقي)");
                 if (choice === "1") {
@@ -1253,7 +1253,7 @@
 
         async function deleteComment(postId, commentIndex) {
             if (confirm("هل أنت متأكد من حذف هذا التعليق؟")) {
-                let post = posts.find(p => p.id === postId);
+                let post = posts.find(p => String(p.id) === String(postId));
                 if (post) {
                     post.comments.splice(commentIndex, 1);
                     updateCommentsCount(post);
@@ -1266,7 +1266,7 @@
 
         async function deleteReply(postId, commentIndex, replyIndex) {
             if (confirm("هل أنت متأكد من حذف هذا الرد؟")) {
-                let post = posts.find(p => p.id === postId);
+                let post = posts.find(p => String(p.id) === String(postId));
                 if (post && post.comments[commentIndex] && post.comments[commentIndex].replies) {
                     post.comments[commentIndex].replies.splice(replyIndex, 1);
                     updateCommentsCount(post);
@@ -1286,7 +1286,7 @@
         async function reactToComment(postId, commentIndex) {
             if (!isAdmin) return;
             let choice = prompt("اختر نوع التفاعل:\n1. 👍 لايك\n2. ❤️ قلب\n3. 😍 أحببته\n4. 😢 أحزنني\n5. 😮 واو\n6. 🗑️ إزالة التفاعل");
-            let post = posts.find(p => p.id === postId);
+            let post = posts.find(p => String(p.id) === String(postId));
             if (!post || !post.comments[commentIndex]) return;
             let reactionMap = { "1": "👍 لايك", "2": "❤️ قلب", "3": "😍 أحببته", "4": "😢 أحزنني", "5": "😮 واو", "6": "" };
             if (reactionMap[choice] !== undefined) {
@@ -1299,7 +1299,7 @@
         async function reactToReply(postId, commentIndex, replyIndex) {
             if (!isAdmin) return;
             let choice = prompt("اختر نوع التفاعل:\n1. 👍 لايك\n2. ❤️ قلب\n3. 😍 أحببته\n4. 😢 أحزنني\n5. 😮 واو\n6. 🗑️ إزالة التفاعل");
-            let post = posts.find(p => p.id === postId);
+            let post = posts.find(p => String(p.id) === String(postId));
             if (!post || !post.comments[commentIndex] || !post.comments[commentIndex].replies[replyIndex]) return;
             let reactionMap = { "1": "👍 لايك", "2": "❤️ قلب", "3": "😍 أحببته", "4": "😢 أحزنني", "5": "😮 واو", "6": "" };
             if (reactionMap[choice] !== undefined) {
@@ -1338,14 +1338,14 @@
             
             if (mediaFiles.length === 1) {
                 let m = mediaFiles[0];
-                let currentPost = posts.find(p => p.id === postId);
+                let currentPost = posts.find(p => String(p.id) === String(postId));
                 let authorId = currentPost ? currentPost.authorId : 1;
                 let reactions = currentPost ? currentPost.reactions : "👍❤️ 1";
                 let commentsCount = currentPost ? currentPost.commentsCount : "0 تعليقات";
 
                 if (m.type === 'video') {
                     return `
-                        <div style="position:relative; width:100%; background:#000; cursor:pointer;" onclick="openVideoViewer('${m.url}', ${authorId}, '${reactions}', '${commentsCount}', ${postId})">
+                        <div style="position:relative; width:100%; background:#000; cursor:pointer;" onclick="openVideoViewer('${m.url}', ${authorId}, '${reactions}', '${commentsCount}', '${postId}')">
                             <video src="${m.url}" controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" style="width:100%; max-height:450px; object-fit:cover; display:block; pointer-events:none;"></video>
                             <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:rgba(0,0,0,0.6); width:60px; height:60px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-size:24px;">
                                 <i class="fa-solid fa-play" style="margin-left:3px;"></i>
@@ -1369,7 +1369,7 @@
             }
 
             let itemsHtml = mediaFiles.slice(0, 4).map((m, idx) => {
-                let currentPost = posts.find(p => p.id === postId);
+                let currentPost = posts.find(p => String(p.id) === String(postId));
                 let authorId = currentPost ? currentPost.authorId : 1;
                 let reactions = currentPost ? currentPost.reactions : "👍❤️ 1";
                 let commentsCount = currentPost ? currentPost.commentsCount : "0 تعليقات";
@@ -1385,7 +1385,7 @@
 
                 if (m.type === 'video') {
                     return `
-                        <div style="${itemStyle}" onclick="openVideoViewer('${m.url}', ${authorId}, '${reactions}', '${commentsCount}', ${postId})">
+                        <div style="${itemStyle}" onclick="openVideoViewer('${m.url}', ${authorId}, '${reactions}', '${commentsCount}', '${postId}')">
                             <video src="${m.url}" controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" style="width: 100%; height: 100%; object-fit: cover; display: block; pointer-events:none;"></video>
                             <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:rgba(0,0,0,0.6); width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-size:16px;">
                                 <i class="fa-solid fa-play" style="margin-left:2px;"></i>
@@ -1448,8 +1448,8 @@
                                 <div style="display: flex; gap: 8px; align-items: center;">
                                     ${index > 0 ? `<span onclick="movePost(${index}, -1)" style="cursor:pointer; color: #1877f2; font-weight:700;" title="نقل للأعلى"><i class="fa-solid fa-arrow-up"></i></span>` : ''}
                                     ${index < filteredPosts.length - 1 ? `<span onclick="movePost(${index}, 1)" style="cursor:pointer; color: #1877f2; font-weight:700;" title="نقل للأسفل"><i class="fa-solid fa-arrow-down"></i></span>` : ''}
-                                    <span onclick="openPostModal(${p.id})" style="cursor:pointer; color: #1877f2;" title="تعديل المنشور"><i class="fa-solid fa-pen"></i></span>
-                                    <span onclick="deletePost(${p.id})" style="cursor:pointer; color: red;" title="حذف المنشور"><i class="fa-solid fa-trash"></i></span>
+                                    <span onclick="openPostModal('${p.id}')" style="cursor:pointer; color: #1877f2;" title="تعديل المنشور"><i class="fa-solid fa-pen"></i></span>
+                                    <span onclick="deletePost('${p.id}')" style="cursor:pointer; color: red;" title="حذف المنشور"><i class="fa-solid fa-trash"></i></span>
                                 </div>
                             ` : `<i class="fa-solid fa-ellipsis" style="color: #65676b; cursor: pointer;"></i>`}
                         </div>
@@ -1461,12 +1461,12 @@
                         
                         <div class="post-stats">
                             <span>${p.reactions}</span>
-                            <span class="clickable-comments" style="cursor: pointer;" onclick="openComments(${p.id})">${p.commentsCount}</span>
+                            <span class="clickable-comments" style="cursor: pointer;" onclick="openComments('${p.id}')">${p.commentsCount}</span>
                         </div>
 
                         <div class="post-actions-bar">
                             <div class="post-action-btn"><i class="fa-regular fa-thumbs-up"></i> أعجبني</div>
-                            <div class="post-action-btn" onclick="openComments(${p.id})"><i class="fa-regular fa-comment"></i> تعليق</div>
+                            <div class="post-action-btn" onclick="openComments('${p.id}')"><i class="fa-regular fa-comment"></i> تعليق</div>
                             <div class="post-action-btn"><i class="fa-solid fa-share"></i> مشاركة</div>
                         </div>
                     </div>
@@ -1479,7 +1479,7 @@
                 alert("يجب تسجيل دخول الأدمن أولاً للنشر!");
                 return;
             }
-            currentEditingPostId = postId;
+            currentEditingPostId = postId !== null ? String(postId) : null;
             let titleEl = document.getElementById('postModalTitle');
             let submitBtn = document.getElementById('postModalSubmitBtn');
             let textEl = document.getElementById('postText');
@@ -1494,8 +1494,8 @@
             let authorSelect = document.getElementById('postAuthorSelect');
             authorSelect.innerHTML = accounts.map(acc => `<option value="${acc.id}">${acc.name} ${acc.isVerified ? '✓' : ''}</option>`).join('');
 
-            if (postId !== null) {
-                let post = posts.find(p => p.id === postId);
+            if (currentEditingPostId !== null) {
+                let post = posts.find(p => String(p.id) === currentEditingPostId);
                 titleEl.innerText = "تعديل المنشور";
                 submitBtn.innerText = "حفظ التعديلات";
                 textEl.value = post ? post.text : "";
@@ -1588,7 +1588,7 @@
 
             try {
                 if (currentEditingPostId !== null) {
-                    let post = posts.find(p => p.id === currentEditingPostId);
+                    let post = posts.find(p => String(p.id) === String(currentEditingPostId));
                     if (post) {
                         post.text = text;
                         post.reactions = reactions;
@@ -1629,8 +1629,8 @@
         }
 
         function openComments(postId) {
-            currentPostIdForComment = postId;
-            let post = posts.find(p => p.id === postId);
+            currentPostIdForComment = String(postId);
+            let post = posts.find(p => String(p.id) === String(postId));
             let body = document.getElementById('modalBody');
             let footer = document.getElementById('modalFooter');
             
@@ -1652,7 +1652,7 @@
                         let key = `${postId}_${index}`;
                         let isVisible = visibleRepliesMap[key] === true;
                         
-                        let toggleRepliesBtn = `<div style="margin-top: 6px; font-size: 12px; color: #1877f2; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;" onclick="toggleReplies(${postId}, ${index})">
+                        let toggleRepliesBtn = `<div style="margin-top: 6px; font-size: 12px; color: #1877f2; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;" onclick="toggleReplies('${postId}', ${index})">
                             <i class="fa-solid fa-reply fa-rotate-180" style="font-size: 10px;"></i> ${isVisible ? 'إخفاء الردود' : `إظهار الردود (${c.replies.length})`}
                         </div>`;
 
@@ -1681,9 +1681,9 @@
                                             </div>
                                             <div style="font-size: 11px; color: #65676b; margin-top: 3px; padding-right: 8px; display: flex; gap: 10px; align-items: center; font-weight: 600;">
                                                 <span>${repTimeFormatted}</span>
-                                                <span onclick="reactToReply(${postId}, ${index}, ${repIndex})" style="color:${rep.reaction ? '#1877f2' : 'inherit'}; font-weight:700; cursor:${isAdmin ? 'pointer' : 'default'};">${rep.reaction || 'أعجبني'}</span>
-                                                ${isAdmin ? `<span onclick="editReply(${postId}, ${index}, ${repIndex})" style="color:#1877f2; cursor:pointer; font-weight:700;">تعديل</span>` : ''}
-                                                ${isAdmin ? `<span onclick="deleteReply(${postId}, ${index}, ${repIndex})" style="color:red; cursor:pointer; font-weight:700;">حذف</span>` : ''}
+                                                <span onclick="reactToReply('${postId}', ${index}, ${repIndex})" style="color:${rep.reaction ? '#1877f2' : 'inherit'}; font-weight:700; cursor:${isAdmin ? 'pointer' : 'default'};">${rep.reaction || 'أعجبني'}</span>
+                                                ${isAdmin ? `<span onclick="editReply('${postId}', ${index}, ${repIndex})" style="color:#1877f2; cursor:pointer; font-weight:700;">تعديل</span>` : ''}
+                                                ${isAdmin ? `<span onclick="deleteReply('${postId}', ${index}, ${repIndex})" style="color:red; cursor:pointer; font-weight:700;">حذف</span>` : ''}
                                             </div>
                                         </div>
                                     </div>
@@ -1709,10 +1709,10 @@
                                 </div>
                                 <div class="comment-meta">
                                     <span>${commentTimeFormatted}</span>
-                                    <span onclick="reactToComment(${postId}, ${index})" style="color:${c.reaction ? '#1877f2' : 'inherit'}; font-weight:700; cursor:${isAdmin ? 'pointer' : 'default'};">${c.reaction || 'أعجبني'}</span>
-                                    <span onclick="startReply(${postId}, ${index})" style="color: #1877f2; cursor: pointer; font-weight:700;">رد</span>
-                                    ${isAdmin ? `<span onclick="editComment(${postId}, ${index})" style="color:#1877f2; cursor:pointer; font-weight:700;">تعديل</span>` : ''}
-                                    ${isAdmin ? `<span onclick="deleteComment(${postId}, ${index})" style="color:red; cursor:pointer; font-weight:700;">حذف</span>` : ''}
+                                    <span onclick="reactToComment('${postId}', ${index})" style="color:${c.reaction ? '#1877f2' : 'inherit'}; font-weight:700; cursor:${isAdmin ? 'pointer' : 'default'};">${c.reaction || 'أعجبني'}</span>
+                                    <span onclick="startReply('${postId}', ${index})" style="color: #1877f2; cursor: pointer; font-weight:700;">رد</span>
+                                    ${isAdmin ? `<span onclick="editComment('${postId}', ${index})" style="color:#1877f2; cursor:pointer; font-weight:700;">تعديل</span>` : ''}
+                                    ${isAdmin ? `<span onclick="deleteComment('${postId}', ${index})" style="color:red; cursor:pointer; font-weight:700;">حذف</span>` : ''}
                                 </div>
                                 ${repliesHtml}
                             </div>
@@ -1729,7 +1729,7 @@
             ` : '';
 
             let inputFieldHtml = isAdmin 
-                ? `<input type="text" id="commentTextInput" placeholder="اكتب تعليقاً..." style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none; font-size: 14px; background: #f0f2f5; font-weight: 500;" onkeydown="if(event.key === 'Enter') submitComment(${postId})">`
+                ? `<input type="text" id="commentTextInput" placeholder="اكتب تعليقاً..." style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none; font-size: 14px; background: #f0f2f5; font-weight: 500;" onkeydown="if(event.key === 'Enter') submitComment('${postId}')">`
                 : `<input type="text" id="commentTextInput" readonly placeholder="اكتب تعليقاً..." style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none; font-size: 14px; background: #f0f2f5; font-weight: 500; cursor: default;">`;
 
             let authorSelectHtml = isAdmin ? `
@@ -1751,7 +1751,7 @@
                             <i class="fa-solid fa-camera"></i>
                             <input type="file" id="commentFilePickerInput" accept="image/*,video/*" style="display: none;" onchange="handleCommentFileSelect(event)">
                         </label>
-                        <button onclick="submitComment(${postId})" style="background: #1877f2; color: #fff; border: none; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><i class="fa-solid fa-paper-plane" style="font-size: 14px;"></i></button>
+                        <button onclick="submitComment('${postId}')" style="background: #1877f2; color: #fff; border: none; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer;"><i class="fa-solid fa-paper-plane" style="font-size: 14px;"></i></button>
                     ` : ''}
                 </div>
                 <div id="commentFilePreview" style="font-size: 11px; color: green; font-weight: 600; text-align: center;"></div>
@@ -1778,7 +1778,7 @@
                 return;
             }
 
-            let post = posts.find(p => p.id === postId);
+            let post = posts.find(p => String(p.id) === String(postId));
             if (!post) return;
 
             let authorId = 1;
