@@ -54,12 +54,17 @@
         .post-body { padding: 0 16px 12px; font-size: 15px; line-height: 1.5; color: #050505; word-break: break-word; font-weight: 500; }
         .post-body a { color: #1877f2; text-decoration: none; font-weight: 600; }
         
-        .post-stats { display: flex; justify-content: space-between; padding: 10px 16px; font-size: 13px; color: #65676b; border-bottom: 1px solid #eee; font-weight: 600; }
+        .post-stats { display: flex; justify-content: space-between; padding: 10px 16px; font-size: 13px; color: #65676b; border-bottom: 1px solid #eee; font-weight: 600; align-items: center; }
         .post-stats span.clickable-comments:hover { text-decoration: underline; color: #1877f2; }
         
         .post-actions-bar { display: flex; justify-content: space-around; padding: 4px 0; }
         .post-action-btn { flex: 1; text-align: center; padding: 8px 0; color: #65676b; font-weight: 700; font-size: 14px; cursor: pointer; border-radius: 4px; display: flex; align-items: center; justify-content: center; gap: 6px; }
         .post-action-btn:hover { background: #f0f2f5; }
+
+        .fb-reactions-display { display: inline-flex; align-items: center; gap: 4px; }
+        .fb-reaction-icon { width: 18px; height: 18px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+        .fb-reaction-icon.like { background: #1877f2; color: #fff; font-size: 10px; }
+        .fb-reaction-icon.love { background: #e4405f; color: #fff; font-size: 9px; }
 
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
         .modal-content { background: #fff; width: 100%; max-width: 600px; height: 100%; border-radius: 0; display: flex; flex-direction: column; overflow: hidden; }
@@ -203,7 +208,7 @@
                             <span id="videoViewerName">Aseel Ali</span>
                             <span id="videoViewerBadge"></span>
                         </div>
-                        <div style="font-size:11px; color:#ccc;" id="videoViewerTime">١٦ س · <i class="fa-solid fa-globe globe-icon"></i></div>
+                        <div style="font-size:11px; color:#ccc;" id="videoViewerTime">08/12/2011 · <i class="fa-solid fa-globe globe-icon"></i></div>
                     </div>
                 </div>
                 <div style="color:#fff; font-size:20px; cursor:pointer; pointer-events:auto;" onclick="closeVideoViewer()"><i class="fa-solid fa-xmark"></i></div>
@@ -214,8 +219,10 @@
         </div>
 
         <div style="background:#18191a; color:#fff; padding:12px 16px;">
-            <div style="display:flex; justify-content:space-between; font-size:13px; color:#b0b3b8; margin-bottom:10px; font-weight:600;">
-                <span id="videoViewerReactions">👍❤️ 8</span>
+            <div style="display:flex; justify-content:space-between; font-size:13px; color:#b0b3b8; margin-bottom:10px; font-weight:600; align-items:center;">
+                <span id="videoViewerReactions" style="display:inline-flex; align-items:center; gap:6px;">
+                    <span style="display:inline-flex; align-items:center;"><span class="fb-reaction-icon like"><i class="fa-solid fa-thumbs-up"></i></span><span class="fb-reaction-icon love" style="margin-right:-6px;"><i class="fa-solid fa-heart"></i></span></span> <span id="videoViewerReactionsCount">8</span>
+                </span>
                 <span id="videoViewerStats" style="cursor:pointer;" onclick="openVideoViewersList()" title="عرض قائمة الأجهزة المشاهدة">٨ تعليقات · 0 مشاهدة</span>
             </div>
             <div style="display:flex; justify-content:space-around; border-top:1px solid #3a3b3c; padding-top:8px;">
@@ -232,7 +239,7 @@
                 <div class="story-user-info" style="cursor: pointer;" onclick="handleAccountClick(1)">
                     <img id="storyHeaderAvatar" src="" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; background: #e4e6eb;">
                     <span id="storyHeaderName">Hadeel AL-Shami <span class="verified-badge"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6.3 13l1.4-1.4 2.4 2.4 6.6-6.6 1.4 1.4-8 8z"/></svg></span></span>
-                    <span style="font-size: 11px; color: #ccc; margin-right: 5px;" id="storyTimeText">منذ ساعة</span>
+                    <span style="font-size: 11px; color: #ccc; margin-right: 5px;" id="storyTimeText">08/12/2011</span>
                 </div>
                 <span style="color: #fff; font-size: 24px; cursor: pointer; padding: 5px;" onclick="closeStory()">✕</span>
             </div>
@@ -301,8 +308,8 @@
             <textarea id="postText" style="width:100%; border:none; height:100px; font-size:16px; outline:none; font-weight:500;" placeholder="بم تفكر؟"></textarea>
 
             <div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">
-                <label style="font-size: 13px; font-weight: 700; color: #65676b; display: block; margin-bottom: 5px;">تخصيص التفاعلات (الإيكات):</label>
-                <input type="text" id="postReactionsInput" value="👍❤️ 5" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; outline: none; font-weight: 600;">
+                <label style="font-size: 13px; font-weight: 700; color: #65676b; display: block; margin-bottom: 5px;">تخصيص عدد التفاعلات (أو النص الظاهر بجانب اللايك والقلب):</label>
+                <input type="text" id="postReactionsInput" value="5" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; outline: none; font-weight: 600;">
             </div>
 
             <div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; display: flex; align-items: center; gap: 10px;">
@@ -382,39 +389,32 @@
         let activeStory = {
             mediaUrl: "",
             mediaType: "",
-            time: "",
+            time: "2011/12/08",
             viewers: []
         };
 
         let posts = [];
 
+        function renderReactionsHtml(reactionsStr) {
+            let countVal = reactionsStr !== undefined && reactionsStr !== null && reactionsStr !== "undefined" ? String(reactionsStr).replace(/[^\d]/g, '') : "";
+            if (!countVal) countVal = "5";
+            return `
+                <div class="fb-reactions-display">
+                    <span style="display:inline-flex; align-items:center;">
+                        <span class="fb-reaction-icon like"><i class="fa-solid fa-thumbs-up"></i></span>
+                        <span class="fb-reaction-icon love" style="margin-right:-6px;"><i class="fa-solid fa-heart"></i></span>
+                    </span>
+                    <span style="margin-right: 4px;">${countVal}</span>
+                </div>
+            `;
+        }
+
         function getCurrentFormattedTime() {
-            let now = new Date();
-            let hours = now.getHours();
-            let minutes = now.getMinutes();
-            let ampm = hours >= 12 ? 'م' : 'ص';
-            hours = hours % 12;
-            hours = hours ? hours : 12;
-            minutes = minutes < 10 ? '0' + minutes : minutes;
-            return hours + ':' + minutes + ' ' + ampm;
+            return "2011/12/08";
         }
 
         function getTimeAgo(timestamp) {
-            if (!timestamp) return "الآن";
-            let now = Date.now();
-            let diffSeconds = Math.floor((now - timestamp) / 1000);
-
-            if (diffSeconds < 10) return "الآن";
-            if (diffSeconds < 60) return `منذ ${diffSeconds} ثوانٍ`;
-            
-            let diffMinutes = Math.floor(diffSeconds / 60);
-            if (diffMinutes < 60) return `منذ ${diffMinutes} د`;
-            
-            let diffHours = Math.floor(diffMinutes / 60);
-            if (diffHours < 24) return `منذ ${diffHours} س`;
-            
-            let diffDays = Math.floor(diffHours / 24);
-            return `منذ ${diffDays} يوم`;
+            return "2011/12/08";
         }
 
         function fileToBase64(file) {
@@ -768,7 +768,7 @@
                     activeStory = {
                         mediaUrl: base64Url,
                         mediaType: type,
-                        time: "الآن " + getCurrentFormattedTime(),
+                        time: "2011/12/08",
                         viewers: []
                     };
                     updateStoryUI();
@@ -809,7 +809,7 @@
 
         async function removeActiveStory() {
             if (confirm("هل أنت متأكد من إزالة الستوري الحالي؟")) {
-                activeStory = { mediaUrl: "", mediaType: "", time: "", viewers: [] };
+                activeStory = { mediaUrl: "", mediaType: "", time: "2011/12/08", viewers: [] };
                 updateStoryUI();
                 await saveStoryToCloud();
                 alert("تمت إزالة الستوري وحذفه من السحابة بنجاح.");
@@ -824,7 +824,7 @@
                     activeStory.viewers.push({
                         deviceId: currentDeviceId,
                         name: isAdmin ? "الأدمن (أنت)" : "زائر (" + currentDeviceId.substring(0, 8) + ")",
-                        time: "الآن " + getCurrentFormattedTime(),
+                        time: "2011/12/08",
                         avatar: ""
                     });
                     await saveStoryToCloud();
@@ -966,7 +966,7 @@
 
             if (!closedAnyModal) {
                 window.history.pushState({ page: "main" }, "", window.location.href);
-                window.location.href = "https://oo11223.github.io/facbii/";
+                window.location.href = "https://ooo11223.github.io/fccb.com/";
             }
         });
 
@@ -997,7 +997,7 @@
                     post.viewers.push({
                         deviceId: currentDeviceId,
                         name: isAdmin ? "الأدمن (أنت)" : "زائر (" + currentDeviceId.substring(0, 8) + ")",
-                        time: "الآن " + getCurrentFormattedTime(),
+                        time: "2011/12/08",
                         avatar: ""
                     });
                     await updatePostInCloud(post);
@@ -1028,8 +1028,13 @@
 
             document.getElementById('videoViewerName').innerText = author.name;
             document.getElementById('videoViewerBadge').innerHTML = getVerifiedBadgeHtml(author);
-            document.getElementById('videoViewerReactions').innerText = reactions;
-            document.getElementById('videoViewerStats').innerText = commentsCount + " · " + currentViewsCount + " مشاهدة";
+            
+            let reactionsCountVal = reactions !== undefined && reactions !== null && reactions !== "undefined" ? String(reactions).replace(/[^\d]/g, '') : "8";
+            if(!reactionsCountVal) reactionsCountVal = "8";
+            document.getElementById('videoViewerReactionsCount').innerText = reactionsCountVal;
+
+            let safeCommentsCount = commentsCount && commentsCount !== "undefined" ? commentsCount : "٨ تعليقات";
+            document.getElementById('videoViewerStats').innerText = safeCommentsCount + " · " + currentViewsCount + " مشاهدة";
             
             window.history.pushState({ modal: 'videoViewerModal' }, '');
             document.getElementById('videoViewerModal').style.display = 'flex';
@@ -1187,7 +1192,7 @@
             if (!isAdmin) return;
             let post = posts.find(p => String(p.id) === String(postId));
             if (post && post.comments[commentIndex]) {
-                let choice = prompt("اختر ما تريد تعديله للتعليق:\n1. تعديل نص التعليق\n2. تعديل وقت التعليق (أو جعله حسب الوقت الحقيقي)");
+                let choice = prompt("اختر ما تريد تعديله للتعليق:\n1. تعديل نص التعليق\n2. تعديل وقت التعليق");
                 if (choice === "1") {
                     let newText = prompt("تعديل نص التعليق:", post.comments[commentIndex].text);
                     if (newText !== null) {
@@ -1197,21 +1202,12 @@
                         renderFeed();
                     }
                 } else if (choice === "2") {
-                    let timeChoice = prompt("اختر وضع الوقت:\n1. تعليق بـ وقت حقيقي تلقائي (يتم احتسابه تصاعدياً)\n2. كتابة وقت مخصص (مثلاً: منذ ساعتين، أمس، 10 ص)", post.comments[commentIndex].customTimeString || "");
-                    if (timeChoice === "1") {
-                        delete post.comments[commentIndex].customTimeString;
-                        post.comments[commentIndex].timestamp = Date.now();
+                    let customVal = prompt("أدخل نص الوقت المخصص:", "2011/12/08");
+                    if (customVal !== null) {
+                        post.comments[commentIndex].customTimeString = customVal.trim();
                         await updatePostInCloud(post);
                         openComments(postId);
-                        alert("تم ضبط التعليق ليتبع الوقت الحقيقي تلقائياً.");
-                    } else if (timeChoice === "2") {
-                        let customVal = prompt("أدخل نص الوقت المخصص:", "منذ ساعة");
-                        if (customVal !== null) {
-                            post.comments[commentIndex].customTimeString = customVal.trim();
-                            await updatePostInCloud(post);
-                            openComments(postId);
-                            alert("تم تحديث الوقت المخصص بنجاح.");
-                        }
+                        alert("تم تحديث الوقت بنجاح.");
                     }
                 }
             }
@@ -1221,7 +1217,7 @@
             if (!isAdmin) return;
             let post = posts.find(p => String(p.id) === String(postId));
             if (post && post.comments[commentIndex] && post.comments[commentIndex].replies[replyIndex]) {
-                let choice = prompt("اختر ما تريد تعديله للرد:\n1. تعديل نص الرد\n2. تعديل وقت الرد (أو جعله حسب الوقت الحقيقي)");
+                let choice = prompt("اختر ما تريد تعديله للرد:\n1. تعديل نص الرد\n2. تعديل وقت الرد");
                 if (choice === "1") {
                     let newText = prompt("تعديل نص الرد:", post.comments[commentIndex].replies[replyIndex].text);
                     if (newText !== null) {
@@ -1231,21 +1227,12 @@
                         renderFeed();
                     }
                 } else if (choice === "2") {
-                    let timeChoice = prompt("اختر وضع الوقت للرد:\n1. رد بـ وقت حقيقي تلقائي\n2. كتابة وقت مخصص", post.comments[commentIndex].replies[replyIndex].customTimeString || "");
-                    if (timeChoice === "1") {
-                        delete post.comments[commentIndex].replies[replyIndex].customTimeString;
-                        post.comments[commentIndex].replies[replyIndex].timestamp = Date.now();
+                    let customVal = prompt("أدخل نص الوقت المخصص للرد:", "2011/12/08");
+                    if (customVal !== null) {
+                        post.comments[commentIndex].replies[replyIndex].customTimeString = customVal.trim();
                         await updatePostInCloud(post);
                         openComments(postId);
-                        alert("تم ضبط الرد ليتبع الوقت الحقيقي تلقائياً.");
-                    } else if (timeChoice === "2") {
-                        let customVal = prompt("أدخل نص الوقت المخصص للرد:", "منذ دقيقة");
-                        if (customVal !== null) {
-                            post.comments[commentIndex].replies[replyIndex].customTimeString = customVal.trim();
-                            await updatePostInCloud(post);
-                            openComments(postId);
-                            alert("تم تحديث الوقت المخصص للرد بنجاح.");
-                        }
+                        alert("تم تحديث الوقت المخصص للرد بنجاح.");
                     }
                 }
             }
@@ -1340,8 +1327,8 @@
                 let m = mediaFiles[0];
                 let currentPost = posts.find(p => String(p.id) === String(postId));
                 let authorId = currentPost ? currentPost.authorId : 1;
-                let reactions = currentPost ? currentPost.reactions : "👍❤️ 1";
-                let commentsCount = currentPost ? currentPost.commentsCount : "0 تعليقات";
+                let reactions = currentPost && currentPost.reactions && currentPost.reactions !== "undefined" ? currentPost.reactions : "5";
+                let commentsCount = currentPost && currentPost.commentsCount && currentPost.commentsCount !== "undefined" ? currentPost.commentsCount : "0 تعليقات";
 
                 if (m.type === 'video') {
                     return `
@@ -1371,8 +1358,8 @@
             let itemsHtml = mediaFiles.slice(0, 4).map((m, idx) => {
                 let currentPost = posts.find(p => String(p.id) === String(postId));
                 let authorId = currentPost ? currentPost.authorId : 1;
-                let reactions = currentPost ? currentPost.reactions : "👍❤️ 1";
-                let commentsCount = currentPost ? currentPost.commentsCount : "0 تعليقات";
+                let reactions = currentPost && currentPost.reactions && currentPost.reactions !== "undefined" ? currentPost.reactions : "5";
+                let commentsCount = currentPost && currentPost.commentsCount && currentPost.commentsCount !== "undefined" ? currentPost.commentsCount : "0 تعليقات";
 
                 let extraOverlay = '';
                 if (idx === 3 && count > 4) {
@@ -1434,6 +1421,10 @@
                 let lockedClass = p.isLocked ? ' locked-post' : '';
                 let lockedBadge = p.isLocked ? `<span style="background: #ff4500; color: #fff; font-size: 11px; padding: 2px 6px; border-radius: 4px; margin-right: 6px; font-weight: 700;"><i class="fa-solid fa-lock"></i> مقفل (مخفي عن الزوار)</span>` : '';
 
+                let postTime = p.time && p.time !== "undefined" ? p.time : "2011/12/08 · <i class='fa-solid fa-globe globe-icon'></i>";
+                let postReactionsHtml = renderReactionsHtml(p.reactions);
+                let postCommentsCount = p.commentsCount && p.commentsCount !== "undefined" ? p.commentsCount : "0 تعليقات";
+
                 return `
                     <div class="post-card${lockedClass}">
                         <div class="post-header">
@@ -1441,7 +1432,7 @@
                                 ${avatarHtml}
                                 <div class="post-info">
                                     <span style="display:inline-flex; align-items:center; gap:4px;">${author.name} ${getVerifiedBadgeHtml(author)} ${lockedBadge}</span><br>
-                                    <span class="post-time">${p.time}</span>
+                                    <span class="post-time">${postTime}</span>
                                 </div>
                             </div>
                             ${isAdmin ? `
@@ -1460,8 +1451,8 @@
                         ${renderMediaFiles(mediaFilesList, p.id)}
                         
                         <div class="post-stats">
-                            <span>${p.reactions}</span>
-                            <span class="clickable-comments" style="cursor: pointer;" onclick="openComments('${p.id}')">${p.commentsCount}</span>
+                            <span>${postReactionsHtml}</span>
+                            <span class="clickable-comments" style="cursor: pointer;" onclick="openComments('${p.id}')">${postCommentsCount}</span>
                         </div>
 
                         <div class="post-actions-bar">
@@ -1499,7 +1490,10 @@
                 titleEl.innerText = "تعديل المنشور";
                 submitBtn.innerText = "حفظ التعديلات";
                 textEl.value = post ? post.text : "";
-                reactionsEl.value = post ? post.reactions : "👍❤️ 5";
+                
+                let extractedCount = post && post.reactions !== undefined ? String(post.reactions).replace(/[^\d]/g, '') : "";
+                reactionsEl.value = extractedCount ? extractedCount : "5";
+                
                 lockedCheckbox.checked = post ? !!post.isLocked : false;
                 if (post && post.authorId) authorSelect.value = post.authorId;
                 if (post && post.mediaFiles && post.mediaFiles.length > 0) {
@@ -1512,7 +1506,7 @@
                 titleEl.innerText = "إنشاء منشور";
                 submitBtn.innerText = "نشر";
                 textEl.value = "";
-                reactionsEl.value = "👍❤️ 1";
+                reactionsEl.value = "5";
                 lockedCheckbox.checked = false;
                 filePreviewEl.innerText = "";
             }
@@ -1586,12 +1580,14 @@
             submitBtn.innerText = "جاري النشر...";
             submitBtn.disabled = true;
 
+            let finalReactionsVal = reactions && reactions.trim() !== "" ? reactions.trim() : "5";
+
             try {
                 if (currentEditingPostId !== null) {
                     let post = posts.find(p => String(p.id) === String(currentEditingPostId));
                     if (post) {
                         post.text = text;
-                        post.reactions = reactions;
+                        post.reactions = finalReactionsVal;
                         post.isLocked = isLocked;
                         post.authorId = authorId;
                         post.mediaFiles = [...tempFiles];
@@ -1602,10 +1598,10 @@
                     let newPost = { 
                         id: Date.now(), 
                         authorId: authorId,
-                        time: getCurrentFormattedTime() + " · <i class='fa-solid fa-globe globe-icon'></i>", 
+                        time: "2011/12/08 · <i class='fa-solid fa-globe globe-icon'></i>", 
                         text: text, 
                         mediaFiles: [...tempFiles],
-                        reactions: reactions,
+                        reactions: finalReactionsVal,
                         isLocked: isLocked,
                         commentsCount: "0 تعليقات",
                         viewers: [],
@@ -1665,7 +1661,7 @@
                                     ? `<img src="${repAvatar}" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex-shrink: 0; cursor: pointer;" onclick="handleAccountClick(${rep.authorId || 1})">`
                                     : `<div style="width: 28px; height: 28px; border-radius: 50%; background:#e4e6eb; display:flex; align-items:center; justify-content:center; flex-shrink: 0; cursor: pointer;" onclick="handleAccountClick(${rep.authorId || 1})"><i class="fa-solid fa-user" style="font-size:12px; color:#8a8d91;"></i></div>`;
 
-                                let repTimeFormatted = rep.customTimeString ? rep.customTimeString : (rep.timestamp ? getTimeAgo(rep.timestamp) : "الآن");
+                                let repTimeFormatted = rep.customTimeString && rep.customTimeString !== "undefined" ? rep.customTimeString : "2011/12/08";
 
                                 return `
                                     <div style="display: flex; gap: 8px; margin-top: 10px; margin-right: 20px; align-items: flex-start;">
@@ -1695,7 +1691,7 @@
                         }
                     }
 
-                    let commentTimeFormatted = c.customTimeString ? c.customTimeString : (c.timestamp ? getTimeAgo(c.timestamp) : "الآن");
+                    let commentTimeFormatted = c.customTimeString && c.customTimeString !== "undefined" ? c.customTimeString : "2011/12/08";
 
                     return `
                         <div class="comment-item">
@@ -1806,7 +1802,7 @@
                 authorAvatar: authorAvatar,
                 badge: badge,
                 text: text,
-                timestamp: Date.now(),
+                customTimeString: "2011/12/08",
                 attachment: commentTempFile.url,
                 attachmentType: commentTempFile.type,
                 reaction: ""
@@ -1860,10 +1856,10 @@
                         {
                             id: 1722000000000,
                             authorId: 1,
-                            time: "١٦ س · <i class='fa-solid fa-globe globe-icon'></i>",
+                            time: "2011/12/08 · <i class='fa-solid fa-globe globe-icon'></i>",
                             text: "تفضلو رابط الواتساب الخاص بي للتواصل والاستفسارات 👇\nhttps://wa.me/",
                             mediaFiles: [],
-                            reactions: "👍❤️ 8",
+                            reactions: "8",
                             isLocked: false,
                             commentsCount: "8 تعليقات",
                             viewers: [],
@@ -1950,10 +1946,10 @@
                     {
                         id: 1722000000000,
                         authorId: 1,
-                        time: "١٦ س · <i class='fa-solid fa-globe globe-icon'></i>",
+                        time: "2011/12/08 · <i class='fa-solid fa-globe globe-icon'></i>",
                         text: "تفضلو رابط الواتساب الخاص بي للتواصل والاستفسارات 👇\nhttps://wa.me/",
                         mediaFiles: [],
-                        reactions: "👍❤️ 8",
+                        reactions: "8",
                         isLocked: false,
                         commentsCount: "8 تعليقات",
                         viewers: [],
