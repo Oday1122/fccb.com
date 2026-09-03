@@ -62,9 +62,10 @@
         .post-action-btn:hover { background: #f0f2f5; }
 
         .fb-reactions-display { display: inline-flex; align-items: center; gap: 4px; }
-        .fb-reaction-icon { width: 18px; height: 18px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
-        .fb-reaction-icon.like { background: #1877f2; color: #fff; font-size: 10px; }
+        .fb-reaction-icon { width: 18px; height: 18px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.2); font-size: 10px; }
+        .fb-reaction-icon.like { background: #1877f2; color: #fff; }
         .fb-reaction-icon.love { background: #e4405f; color: #fff; font-size: 9px; }
+        .fb-reaction-icon.emoji { background: transparent; font-size: 14px; box-shadow: none; }
 
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
         .modal-content { background: #fff; width: 100%; max-width: 600px; height: 100%; border-radius: 0; display: flex; flex-direction: column; overflow: hidden; }
@@ -308,7 +309,15 @@
             <textarea id="postText" style="width:100%; border:none; height:100px; font-size:16px; outline:none; font-weight:500;" placeholder="بم تفكر؟"></textarea>
 
             <div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">
-                <label style="font-size: 13px; font-weight: 700; color: #65676b; display: block; margin-bottom: 5px;">تخصيص عدد التفاعلات (أو النص الظاهر بجانب اللايك والقلب):</label>
+                <label style="font-size: 13px; font-weight: 700; color: #65676b; display: block; margin-bottom: 5px;">اختر نوع التفاعل بجانب اللايك والقلب:</label>
+                <select id="postReactionTypeSelect" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; outline: none; font-weight: 600; margin-bottom: 10px;">
+                    <option value="😆">😆 (ضحك)</option>
+                    <option value="😮">😮 (صدمة)</option>
+                    <option value="😢">😢 (حزن)</option>
+                    <option value="😡">😡 (غضب)</option>
+                </select>
+
+                <label style="font-size: 13px; font-weight: 700; color: #65676b; display: block; margin-bottom: 5px;">عدد التفاعلات (أو النص الظاهر):</label>
                 <input type="text" id="postReactionsInput" value="5" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; outline: none; font-weight: 600;">
             </div>
 
@@ -395,14 +404,16 @@
 
         let posts = [];
 
-        function renderReactionsHtml(reactionsStr) {
+        function renderReactionsHtml(reactionsStr, reactionType = "😆") {
             let countVal = reactionsStr !== undefined && reactionsStr !== null && reactionsStr !== "undefined" ? String(reactionsStr).replace(/[^\d]/g, '') : "";
             if (!countVal) countVal = "5";
+            let emojiToShow = reactionType ? reactionType : "😆";
             return `
                 <div class="fb-reactions-display">
                     <span style="display:inline-flex; align-items:center;">
                         <span class="fb-reaction-icon like"><i class="fa-solid fa-thumbs-up"></i></span>
                         <span class="fb-reaction-icon love" style="margin-right:-6px;"><i class="fa-solid fa-heart"></i></span>
+                        <span class="fb-reaction-icon emoji" style="margin-right:-6px;">${emojiToShow}</span>
                     </span>
                     <span style="margin-right: 4px;">${countVal}</span>
                 </div>
@@ -987,7 +998,7 @@
             if (el && el.style.display === 'flex') window.history.back();
         }
 
-        async function openVideoViewer(url, authorId, reactions, commentsCount, postId) {
+        async function openVideoViewer(url, authorId, reactions, commentsCount, postId, reactionType) {
             currentVideoPostId = String(postId);
             let post = posts.find(p => String(p.id) === String(postId));
             if (post) {
@@ -1328,11 +1339,12 @@
                 let currentPost = posts.find(p => String(p.id) === String(postId));
                 let authorId = currentPost ? currentPost.authorId : 1;
                 let reactions = currentPost && currentPost.reactions && currentPost.reactions !== "undefined" ? currentPost.reactions : "5";
+                let reactionType = currentPost && currentPost.reactionType ? currentPost.reactionType : "😆";
                 let commentsCount = currentPost && currentPost.commentsCount && currentPost.commentsCount !== "undefined" ? currentPost.commentsCount : "0 تعليقات";
 
                 if (m.type === 'video') {
                     return `
-                        <div style="position:relative; width:100%; background:#000; cursor:pointer;" onclick="openVideoViewer('${m.url}', ${authorId}, '${reactions}', '${commentsCount}', '${postId}')">
+                        <div style="position:relative; width:100%; background:#000; cursor:pointer;" onclick="openVideoViewer('${m.url}', ${authorId}, '${reactions}', '${commentsCount}', '${postId}', '${reactionType}')">
                             <video src="${m.url}" controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" style="width:100%; max-height:450px; object-fit:cover; display:block; pointer-events:none;"></video>
                             <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:rgba(0,0,0,0.6); width:60px; height:60px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-size:24px;">
                                 <i class="fa-solid fa-play" style="margin-left:3px;"></i>
@@ -1359,6 +1371,7 @@
                 let currentPost = posts.find(p => String(p.id) === String(postId));
                 let authorId = currentPost ? currentPost.authorId : 1;
                 let reactions = currentPost && currentPost.reactions && currentPost.reactions !== "undefined" ? currentPost.reactions : "5";
+                let reactionType = currentPost && currentPost.reactionType ? currentPost.reactionType : "😆";
                 let commentsCount = currentPost && currentPost.commentsCount && currentPost.commentsCount !== "undefined" ? currentPost.commentsCount : "0 تعليقات";
 
                 let extraOverlay = '';
@@ -1372,7 +1385,7 @@
 
                 if (m.type === 'video') {
                     return `
-                        <div style="${itemStyle}" onclick="openVideoViewer('${m.url}', ${authorId}, '${reactions}', '${commentsCount}', '${postId}')">
+                        <div style="${itemStyle}" onclick="openVideoViewer('${m.url}', ${authorId}, '${reactions}', '${commentsCount}', '${postId}', '${reactionType}')">
                             <video src="${m.url}" controlslist="nodownload noplaybackrate" disablepictureinpicture oncontextmenu="return false;" style="width: 100%; height: 100%; object-fit: cover; display: block; pointer-events:none;"></video>
                             <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:rgba(0,0,0,0.6); width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-size:16px;">
                                 <i class="fa-solid fa-play" style="margin-left:2px;"></i>
@@ -1422,7 +1435,7 @@
                 let lockedBadge = p.isLocked ? `<span style="background: #ff4500; color: #fff; font-size: 11px; padding: 2px 6px; border-radius: 4px; margin-right: 6px; font-weight: 700;"><i class="fa-solid fa-lock"></i> مقفل (مخفي عن الزوار)</span>` : '';
 
                 let postTime = p.time && p.time !== "undefined" ? p.time : "2011/12/08 · <i class='fa-solid fa-globe globe-icon'></i>";
-                let postReactionsHtml = renderReactionsHtml(p.reactions);
+                let postReactionsHtml = renderReactionsHtml(p.reactions, p.reactionType);
                 let postCommentsCount = p.commentsCount && p.commentsCount !== "undefined" ? p.commentsCount : "0 تعليقات";
 
                 return `
@@ -1475,6 +1488,7 @@
             let submitBtn = document.getElementById('postModalSubmitBtn');
             let textEl = document.getElementById('postText');
             let reactionsEl = document.getElementById('postReactionsInput');
+            let reactionTypeSelect = document.getElementById('postReactionTypeSelect');
             let lockedCheckbox = document.getElementById('postLockedCheckbox');
             let filePreviewEl = document.getElementById('filePreview');
             let filePickerEl = document.getElementById('filePicker');
@@ -1493,6 +1507,11 @@
                 
                 let extractedCount = post && post.reactions !== undefined ? String(post.reactions).replace(/[^\d]/g, '') : "";
                 reactionsEl.value = extractedCount ? extractedCount : "5";
+                if (post && post.reactionType) {
+                    reactionTypeSelect.value = post.reactionType;
+                } else {
+                    reactionTypeSelect.value = "😆";
+                }
                 
                 lockedCheckbox.checked = post ? !!post.isLocked : false;
                 if (post && post.authorId) authorSelect.value = post.authorId;
@@ -1507,6 +1526,7 @@
                 submitBtn.innerText = "نشر";
                 textEl.value = "";
                 reactionsEl.value = "5";
+                reactionTypeSelect.value = "😆";
                 lockedCheckbox.checked = false;
                 filePreviewEl.innerText = "";
             }
@@ -1568,6 +1588,7 @@
         async function publishPost() {
             let text = document.getElementById('postText').value;
             let reactions = document.getElementById('postReactionsInput').value;
+            let reactionType = document.getElementById('postReactionTypeSelect').value;
             let isLocked = document.getElementById('postLockedCheckbox').checked;
             let authorId = parseInt(document.getElementById('postAuthorSelect').value);
             
@@ -1588,6 +1609,7 @@
                     if (post) {
                         post.text = text;
                         post.reactions = finalReactionsVal;
+                        post.reactionType = reactionType;
                         post.isLocked = isLocked;
                         post.authorId = authorId;
                         post.mediaFiles = [...tempFiles];
@@ -1602,6 +1624,7 @@
                         text: text, 
                         mediaFiles: [...tempFiles],
                         reactions: finalReactionsVal,
+                        reactionType: reactionType,
                         isLocked: isLocked,
                         commentsCount: "0 تعليقات",
                         viewers: [],
@@ -1860,6 +1883,7 @@
                             text: "تفضلو رابط الواتساب الخاص بي للتواصل والاستفسارات 👇\nhttps://wa.me/",
                             mediaFiles: [],
                             reactions: "8",
+                            reactionType: "😆",
                             isLocked: false,
                             commentsCount: "8 تعليقات",
                             viewers: [],
@@ -1950,6 +1974,7 @@
                         text: "تفضلو رابط الواتساب الخاص بي للتواصل والاستفسارات 👇\nhttps://wa.me/",
                         mediaFiles: [],
                         reactions: "8",
+                        reactionType: "😆",
                         isLocked: false,
                         commentsCount: "8 تعليقات",
                         viewers: [],
