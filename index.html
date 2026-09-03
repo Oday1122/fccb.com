@@ -934,7 +934,7 @@
             if (openModalId) {
                 window.history.back();
             } else {
-                window.location.href = "https://ooo11223.github.io/fccb.com/";
+                window.location.href = "https://oo11223.github.io/facbii/";
             }
         }
 
@@ -1150,11 +1150,18 @@
         async function deletePost(id) {
             if(confirm("هل أنت متأكد من حذف هذا المنشور؟")) {
                 try {
+                    // التعديل هنا لضمان الحذف الفعلي وتحديث واجهة المستخدم فوراً لتجاوز مشكلة عدم انحذاف المنشور الأخير
+                    posts = posts.filter(p => p.id != id);
+                    renderFeed();
+
                     if (window.db) {
                         await window.firebaseFirestore.deleteDoc(window.firebaseFirestore.doc(window.db, "posts", String(id)));
                         alert("تم حذف المنشور بنجاح.");
                     }
-                } catch(e) { console.error(e); }
+                } catch(e) { 
+                    console.error(e); 
+                    alert("حدث خطأ أثناء حذف المنشور من السحابة.");
+                }
             }
         }
 
@@ -1403,11 +1410,10 @@
         function renderFeed() {
             let feed = document.getElementById('postsFeed');
             if (!posts || posts.length === 0) {
-                feed.innerHTML = `<div style="text-align: center; padding: 30px; color: #65676b; font-weight: 600;">جاري تحميل المنشورات...</div>`;
+                feed.innerHTML = `<div style="text-align: center; padding: 30px; color: #65676b; font-weight: 600;">لا توجد منشورات حالياً.</div>`;
                 return;
             }
 
-            // فلترة المنشورات: إذا كان المنشور مقفلاً، يظهر فقط للأدمن ولا يظهر للزوار
             let filteredPosts = posts.filter(p => {
                 if (p.isLocked && !isAdmin) return false;
                 return true;
