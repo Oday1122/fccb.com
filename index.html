@@ -934,7 +934,7 @@
             if (openModalId) {
                 window.history.back();
             } else {
-                window.location.href = "https://oo11223.github.io/facbii/";
+                window.location.href = "https://ooo11223.github.io/fccb.com/";
             }
         }
 
@@ -1150,13 +1150,12 @@
         async function deletePost(id) {
             if(confirm("هل أنت متأكد من حذف هذا المنشور؟")) {
                 try {
-                    // التعديل هنا لضمان الحذف الفعلي وتحديث واجهة المستخدم فوراً لتجاوز مشكلة عدم انحذاف المنشور الأخير
                     posts = posts.filter(p => p.id != id);
                     renderFeed();
 
                     if (window.db) {
                         await window.firebaseFirestore.deleteDoc(window.firebaseFirestore.doc(window.db, "posts", String(id)));
-                        alert("تم حذف المنشور بنجاح.");
+                        alert("تم حذف المنشور بنجاح من السحابة.");
                     }
                 } catch(e) { 
                     console.error(e); 
@@ -1903,12 +1902,14 @@
                     if (updatedPosts.length > 0) {
                         updatedPosts.sort((a, b) => b.id - a.id);
                         posts = updatedPosts;
-                        renderFeed();
-                        if (currentPostIdForComment !== null) {
-                            let openModal = document.getElementById('commentsModal');
-                            if (openModal && openModal.style.display === 'flex') {
-                                openComments(currentPostIdForComment);
-                            }
+                    } else {
+                        posts = [];
+                    }
+                    renderFeed();
+                    if (currentPostIdForComment !== null) {
+                        let openModal = document.getElementById('commentsModal');
+                        if (openModal && openModal.style.display === 'flex') {
+                            openComments(currentPostIdForComment);
                         }
                     }
                 });
