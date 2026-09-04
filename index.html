@@ -209,7 +209,7 @@
                             <span id="videoViewerName">Aseel Ali</span>
                             <span id="videoViewerBadge"></span>
                         </div>
-                        <div style="font-size:11px; color:#ccc;" id="videoViewerTime">08/12/2011 · <i class="fa-solid fa-globe globe-icon"></i></div>
+                        <div style="font-size:11px; color:#ccc;" id="videoViewerTime">منذ لحظات · <i class="fa-solid fa-globe globe-icon"></i></div>
                     </div>
                 </div>
                 <div style="color:#fff; font-size:20px; cursor:pointer; pointer-events:auto;" onclick="closeVideoViewer()"><i class="fa-solid fa-xmark"></i></div>
@@ -240,7 +240,7 @@
                 <div class="story-user-info" style="cursor: pointer;" onclick="handleAccountClick(1)">
                     <img id="storyHeaderAvatar" src="" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; background: #e4e6eb;">
                     <span id="storyHeaderName">Hadeel AL-Shami <span class="verified-badge"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6.3 13l1.4-1.4 2.4 2.4 6.6-6.6 1.4 1.4-8 8z"/></svg></span></span>
-                    <span style="font-size: 11px; color: #ccc; margin-right: 5px;" id="storyTimeText">08/12/2011</span>
+                    <span style="font-size: 11px; color: #ccc; margin-right: 5px;" id="storyTimeText">منذ لحظات</span>
                 </div>
                 <span style="color: #fff; font-size: 24px; cursor: pointer; padding: 5px;" onclick="closeStory()">✕</span>
             </div>
@@ -398,11 +398,41 @@
         let activeStory = {
             mediaUrl: "",
             mediaType: "",
-            time: "2011/12/08",
+            time: Date.now(),
             viewers: []
         };
 
         let posts = [];
+
+        // دالة تحويل الوقت إلى نظام زمني حقيقي متجدد
+        function getTimeAgo(timestamp) {
+            if (!timestamp) return "منذ لحظات";
+            
+            if (typeof timestamp === 'string' && !/^\d+$/.test(timestamp)) {
+                return timestamp;
+            }
+
+            let now = Date.now();
+            let elapsed = Math.floor((now - Number(timestamp)) / 1000);
+
+            if (elapsed < 30) return "منذ لحظات";
+            if (elapsed < 60) return `منذ ${elapsed} ثانية`;
+            
+            let minutes = Math.floor(elapsed / 60);
+            if (minutes < 60) return `منذ ${minutes} دقيقة`;
+            
+            let hours = Math.floor(minutes / 60);
+            if (hours < 24) return `منذ ${hours} ساعة`;
+            
+            let days = Math.floor(hours / 24);
+            if (days < 30) return `منذ ${days} يوم`;
+            
+            let months = Math.floor(days / 30);
+            if (months < 12) return `منذ ${months} شهر`;
+            
+            let years = Math.floor(days / 365);
+            return `منذ ${years} سنة`;
+        }
 
         function renderReactionsHtml(reactionsStr, reactionType = "😆") {
             let countVal = reactionsStr !== undefined && reactionsStr !== null && reactionsStr !== "undefined" ? String(reactionsStr).replace(/[^\d]/g, '') : "";
@@ -418,14 +448,6 @@
                     <span style="margin-right: 4px;">${countVal}</span>
                 </div>
             `;
-        }
-
-        function getCurrentFormattedTime() {
-            return "2011/12/08";
-        }
-
-        function getTimeAgo(timestamp) {
-            return "2011/12/08";
         }
 
         function fileToBase64(file) {
@@ -779,7 +801,7 @@
                     activeStory = {
                         mediaUrl: base64Url,
                         mediaType: type,
-                        time: "2011/12/08",
+                        time: Date.now(),
                         viewers: []
                     };
                     updateStoryUI();
@@ -820,7 +842,7 @@
 
         async function removeActiveStory() {
             if (confirm("هل أنت متأكد من إزالة الستوري الحالي؟")) {
-                activeStory = { mediaUrl: "", mediaType: "", time: "2011/12/08", viewers: [] };
+                activeStory = { mediaUrl: "", mediaType: "", time: Date.now(), viewers: [] };
                 updateStoryUI();
                 await saveStoryToCloud();
                 alert("تمت إزالة الستوري وحذفه من السحابة بنجاح.");
@@ -835,7 +857,7 @@
                     activeStory.viewers.push({
                         deviceId: currentDeviceId,
                         name: isAdmin ? "الأدمن (أنت)" : "زائر (" + currentDeviceId.substring(0, 8) + ")",
-                        time: "2011/12/08",
+                        time: Date.now(),
                         avatar: ""
                     });
                     await saveStoryToCloud();
@@ -854,7 +876,7 @@
                     vidEl.style.display = 'none';
                 }
 
-                document.getElementById('storyTimeText').innerText = activeStory.time;
+                document.getElementById('storyTimeText').innerText = getTimeAgo(activeStory.time);
                 document.getElementById('storyViewCount').innerText = activeStory.viewers.length;
 
                 if (isAdmin) {
@@ -891,7 +913,7 @@
                                 <div style="font-size: 11px; color: #65676b;">معرف الجهاز: ${v.deviceId}</div>
                             </div>
                         </div>
-                        <span style="font-size: 12px; color: #1877f2; font-weight: 600;">${v.time}</span>
+                        <span style="font-size: 12px; color: #1877f2; font-weight: 600;">${getTimeAgo(v.time)}</span>
                     </div>
                 `).join('');
             }
@@ -922,7 +944,7 @@
                                 <div style="font-size: 11px; color: #65676b;">معرف الجهاز: ${v.deviceId}</div>
                             </div>
                         </div>
-                        <span style="font-size: 12px; color: #1877f2; font-weight: 600;">${v.time}</span>
+                        <span style="font-size: 12px; color: #1877f2; font-weight: 600;">${getTimeAgo(v.time)}</span>
                     </div>
                 `).join('');
             }
@@ -1008,7 +1030,7 @@
                     post.viewers.push({
                         deviceId: currentDeviceId,
                         name: isAdmin ? "الأدمن (أنت)" : "زائر (" + currentDeviceId.substring(0, 8) + ")",
-                        time: "2011/12/08",
+                        time: Date.now(),
                         avatar: ""
                     });
                     await updatePostInCloud(post);
@@ -1213,9 +1235,9 @@
                         renderFeed();
                     }
                 } else if (choice === "2") {
-                    let customVal = prompt("أدخل نص الوقت المخصص:", "2011/12/08");
+                    let customVal = prompt("أدخل نص الوقت المخصص (أو اتركه ليعود تلقائياً):", "منذ دقيقة");
                     if (customVal !== null) {
-                        post.comments[commentIndex].customTimeString = customVal.trim();
+                        post.comments[commentIndex].time = customVal.trim();
                         await updatePostInCloud(post);
                         openComments(postId);
                         alert("تم تحديث الوقت بنجاح.");
@@ -1238,9 +1260,9 @@
                         renderFeed();
                     }
                 } else if (choice === "2") {
-                    let customVal = prompt("أدخل نص الوقت المخصص للرد:", "2011/12/08");
+                    let customVal = prompt("أدخل نص الوقت المخصص للرد:", "منذ دقيقة");
                     if (customVal !== null) {
-                        post.comments[commentIndex].replies[replyIndex].customTimeString = customVal.trim();
+                        post.comments[commentIndex].replies[replyIndex].time = customVal.trim();
                         await updatePostInCloud(post);
                         openComments(postId);
                         alert("تم تحديث الوقت المخصص للرد بنجاح.");
@@ -1434,7 +1456,7 @@
                 let lockedClass = p.isLocked ? ' locked-post' : '';
                 let lockedBadge = p.isLocked ? `<span style="background: #ff4500; color: #fff; font-size: 11px; padding: 2px 6px; border-radius: 4px; margin-right: 6px; font-weight: 700;"><i class="fa-solid fa-lock"></i> مقفل (مخفي عن الزوار)</span>` : '';
 
-                let postTime = p.time && p.time !== "undefined" ? p.time : "2011/12/08 · <i class='fa-solid fa-globe globe-icon'></i>";
+                let postTime = `${getTimeAgo(p.id)} · <i class='fa-solid fa-globe globe-icon'></i>`;
                 let postReactionsHtml = renderReactionsHtml(p.reactions, p.reactionType);
                 let postCommentsCount = p.commentsCount && p.commentsCount !== "undefined" ? p.commentsCount : "0 تعليقات";
 
@@ -1620,7 +1642,6 @@
                     let newPost = { 
                         id: Date.now(), 
                         authorId: authorId,
-                        time: "2011/12/08 · <i class='fa-solid fa-globe globe-icon'></i>", 
                         text: text, 
                         mediaFiles: [...tempFiles],
                         reactions: finalReactionsVal,
@@ -1684,7 +1705,7 @@
                                     ? `<img src="${repAvatar}" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex-shrink: 0; cursor: pointer;" onclick="handleAccountClick(${rep.authorId || 1})">`
                                     : `<div style="width: 28px; height: 28px; border-radius: 50%; background:#e4e6eb; display:flex; align-items:center; justify-content:center; flex-shrink: 0; cursor: pointer;" onclick="handleAccountClick(${rep.authorId || 1})"><i class="fa-solid fa-user" style="font-size:12px; color:#8a8d91;"></i></div>`;
 
-                                let repTimeFormatted = rep.customTimeString && rep.customTimeString !== "undefined" ? rep.customTimeString : "2011/12/08";
+                                let repTimeFormatted = getTimeAgo(rep.time);
 
                                 return `
                                     <div style="display: flex; gap: 8px; margin-top: 10px; margin-right: 20px; align-items: flex-start;">
@@ -1714,7 +1735,7 @@
                         }
                     }
 
-                    let commentTimeFormatted = c.customTimeString && c.customTimeString !== "undefined" ? c.customTimeString : "2011/12/08";
+                    let commentTimeFormatted = getTimeAgo(c.time);
 
                     return `
                         <div class="comment-item">
@@ -1825,7 +1846,7 @@
                 authorAvatar: authorAvatar,
                 badge: badge,
                 text: text,
-                customTimeString: "2011/12/08",
+                time: Date.now(),
                 attachment: commentTempFile.url,
                 attachmentType: commentTempFile.type,
                 reaction: ""
@@ -1879,7 +1900,6 @@
                         {
                             id: 1722000000000,
                             authorId: 1,
-                            time: "2011/12/08 · <i class='fa-solid fa-globe globe-icon'></i>",
                             text: "تفضلو رابط الواتساب الخاص بي للتواصل والاستفسارات 👇\nhttps://wa.me/",
                             mediaFiles: [],
                             reactions: "8",
@@ -1970,7 +1990,6 @@
                     {
                         id: 1722000000000,
                         authorId: 1,
-                        time: "2011/12/08 · <i class='fa-solid fa-globe globe-icon'></i>",
                         text: "تفضلو رابط الواتساب الخاص بي للتواصل والاستفسارات 👇\nhttps://wa.me/",
                         mediaFiles: [],
                         reactions: "8",
